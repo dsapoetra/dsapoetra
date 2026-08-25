@@ -115,11 +115,29 @@ place the programmer half shows in the aesthetic — everywhere else it shows in
 
 ### Colour
 
-Near-monochrome, warm paper tone rather than pure white. Light and dark themes, both defined
-explicitly as CSS custom properties in `globals.css` under Tailwind v4's `@theme`. Dark mode
-follows `prefers-color-scheme` with no toggle in v1.
+Amended 2026-08-25, at the owner's direction: the palette was originally near-monochrome
+warm greys. It is now **warm yellow paper with deep blue ink** — brighter and more cheerful,
+while still built for long-form reading.
 
-Accent colour is used sparingly and only for interactive affordance — never decoration.
+Light and dark themes are both defined explicitly as CSS custom properties in `globals.css`
+under Tailwind v4's `@theme`. Dark mode follows `prefers-color-scheme` with no toggle in v1.
+
+**The rule that makes yellow work: yellow is only ever a background, never a foreground.**
+Measured on this paper, saturated yellow as text gives 1.35:1 — effectively invisible. The
+same yellow *behind* ink gives 9.47:1. So there are two distinct roles:
+
+- `--accent` is **blue**, and carries every link, hover and interactive affordance, because
+  it has to be readable as text.
+- `--highlight` is **yellow**, and is only ever a background — currently the marker-pen
+  block behind each section label.
+
+Do not use `--highlight` as a text colour, and do not set body text on a saturated yellow
+background: it passes contrast but is fatiguing across a ten-minute short story, which is
+the length this site is built for.
+
+Measured contrast, light: ink/paper 12.83:1, muted/paper 5.61:1, accent/paper 6.64:1,
+ink/highlight 9.47:1. Dark: ink/paper 15.11:1, muted/paper 7.31:1, accent/paper 8.56:1.
+All exceed WCAG AA; body text exceeds AAA in both themes.
 
 ### Where it gets visual
 

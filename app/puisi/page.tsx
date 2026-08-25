@@ -12,7 +12,7 @@ export default async function PuisiIndex() {
 
   return (
     <div className="mx-auto max-w-prose-measure px-6 py-16">
-      <h1 className="font-mono text-xs uppercase tracking-widest text-muted">Puisi</h1>
+      <h1 className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-ink">Puisi</h1>
 
       {poems.length === 0 ? (
         <p className="mt-8 text-muted">Belum ada puisi di sini.</p>

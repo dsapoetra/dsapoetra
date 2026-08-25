@@ -13,7 +13,7 @@ export default async function CeritaIndex() {
 
   return (
     <div className="mx-auto max-w-prose-measure px-6 py-16">
-      <h1 className="font-mono text-xs uppercase tracking-widest text-muted">Cerita</h1>
+      <h1 className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-ink">Cerita</h1>
 
       {stories.length === 0 ? (
         <p className="mt-8 text-muted">Belum ada cerita di sini.</p>

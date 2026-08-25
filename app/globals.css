@@ -1,20 +1,36 @@
 @import "tailwindcss";
 
+/*
+ * Palette: warm yellow paper, deep blue ink.
+ *
+ * The one rule that keeps this readable: YELLOW IS ONLY EVER A BACKGROUND,
+ * never a foreground. Saturated yellow text on this paper measures 1.35:1 —
+ * effectively invisible. The same yellow as a background behind ink measures
+ * 9.47:1. So `--highlight` is for backgrounds and `--accent` (blue) carries
+ * every link and interactive affordance.
+ *
+ * Measured contrast, light: ink/paper 12.83:1, muted/paper 5.61:1,
+ * accent/paper 6.64:1, ink/highlight 9.47:1.
+ * Dark: ink/paper 15.11:1, muted/paper 7.31:1, accent/paper 8.56:1.
+ */
+
 :root {
-  --paper: #fbfaf7;
-  --ink: #1c1b19;
-  --muted: #6b6862;
-  --rule: #e3e0d8;
-  --accent: #7a5c3e;
+  --paper: #fffbea;
+  --ink: #12314f;
+  --muted: #55677a;
+  --rule: #efe0b8;
+  --accent: #1256b8;
+  --highlight: #ffd641;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14130f;
-    --ink: #ece8e0;
-    --muted: #8f8b83;
-    --rule: #2c2a25;
-    --accent: #c3a17a;
+    --paper: #0d1b2b;
+    --ink: #f4efe0;
+    --muted: #9aaabb;
+    --rule: #22374d;
+    --accent: #83b9ff;
+    --highlight: #ffd641;
   }
 }
 
@@ -24,6 +40,7 @@
   --color-muted: var(--muted);
   --color-rule: var(--rule);
   --color-accent: var(--accent);
+  --color-highlight: var(--highlight);
 
   --font-serif: var(--font-newsreader);
   --font-sans: var(--font-inter);
