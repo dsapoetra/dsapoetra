@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { loadLatest, labelFor } from '@/lib/content/latest'
 import { site } from '@/lib/site'
+import SectionLabel from '@/components/section-label'
 
 export const metadata: Metadata = {
   title: 'dsapoetra',
@@ -30,9 +31,9 @@ export default async function Home() {
         </p>
       </div>
 
-      <h2 className="mt-16 inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-on-highlight">
+      <SectionLabel as="h2" className="mt-16">
         Terbaru
-      </h2>
+      </SectionLabel>
 
       {items.length === 0 ? (
         <p className="mt-8 text-muted">Belum ada tulisan.</p>
@@ -41,11 +42,11 @@ export default async function Home() {
           {items.map((item) => (
             <li key={item.href}>
               <Link href={item.href} className="group block">
-                <p className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-on-highlight">
+                <SectionLabel as="p">
                   {labelFor(item.kind)}
                   {' · '}
                   <time dateTime={item.date}>{item.date}</time>
-                </p>
+                </SectionLabel>
                 <h3 className="mt-1 text-xl leading-snug transition-colors group-hover:text-accent group-focus-visible:text-accent">
                   {item.title}
                 </h3>

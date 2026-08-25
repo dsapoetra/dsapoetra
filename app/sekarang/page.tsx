@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { loadSekarang } from '@/lib/content/sekarang'
 import MdxContent from '@/components/mdx-content'
+import SectionLabel from '@/components/section-label'
 
 export const metadata: Metadata = {
   title: 'Sekarang — dsapoetra',
@@ -12,7 +13,7 @@ export default async function SekarangPage() {
 
   return (
     <div className="mx-auto max-w-prose-measure px-6 py-16">
-      <h1 className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-on-highlight">Sekarang</h1>
+      <SectionLabel>Sekarang</SectionLabel>
 
       {sekarang === null ? (
         <p className="mt-8 text-muted">Belum diisi.</p>

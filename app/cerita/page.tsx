@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { loadStories } from '@/lib/content/load'
 import { readingTimeMinutes } from '@/lib/content/reading-time'
+import SectionLabel from '@/components/section-label'
 
 export const metadata: Metadata = {
   title: 'Cerita — dsapoetra',
@@ -13,7 +14,7 @@ export default async function CeritaIndex() {
 
   return (
     <div className="mx-auto max-w-prose-measure px-6 py-16">
-      <h1 className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-on-highlight">Cerita</h1>
+      <SectionLabel>Cerita</SectionLabel>
 
       {stories.length === 0 ? (
         <p className="mt-8 text-muted">Belum ada cerita di sini.</p>

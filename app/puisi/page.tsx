@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { loadPoems } from '@/lib/content/load'
+import SectionLabel from '@/components/section-label'
 
 export const metadata: Metadata = {
   title: 'Puisi — dsapoetra',
@@ -12,7 +13,7 @@ export default async function PuisiIndex() {
 
   return (
     <div className="mx-auto max-w-prose-measure px-6 py-16">
-      <h1 className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-on-highlight">Puisi</h1>
+      <SectionLabel>Puisi</SectionLabel>
 
       {poems.length === 0 ? (
         <p className="mt-8 text-muted">Belum ada puisi di sini.</p>
