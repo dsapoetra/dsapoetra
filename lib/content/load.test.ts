@@ -1,7 +1,19 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
 import { mkdir, writeFile, rm, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { loadPoems, loadPoem, loadStories, loadStory } from '@/lib/content/load'
+
+// `readdir` is wrapped in a spy-able vi.fn (delegating to the real
+// implementation by default) so individual tests can force a rejection
+// without hitting Vitest's "module namespace is not configurable in ESM"
+// limitation when spying on a built-in module's named export directly.
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>()
+  return {
+    ...actual,
+    readdir: vi.fn(actual.readdir),
+  }
+})
 
 const poemDir = path.join(process.cwd(), 'content/puisi')
 const storyDir = path.join(process.cwd(), 'content/cerita')
@@ -114,5 +126,23 @@ describe('validation', () => {
     )
     await expect(loadPoems()).rejects.toThrow('__uji-rusak.mdx')
     await rm(path.join(poemDir, '__uji-rusak.mdx'), { force: true })
+  })
+})
+
+describe('readdir failure handling', () => {
+  it('returns an empty array when the collection directory is missing (ENOENT)', async () => {
+    const missing = Object.assign(new Error('ENOENT: no such file or directory'), {
+      code: 'ENOENT',
+    })
+    vi.mocked(readdir).mockRejectedValueOnce(missing)
+    await expect(loadStories()).resolves.toEqual([])
+  })
+
+  it('rethrows a non-ENOENT readdir error instead of silently returning an empty array', async () => {
+    const permissionDenied = Object.assign(new Error('EACCES: permission denied'), {
+      code: 'EACCES',
+    })
+    vi.mocked(readdir).mockRejectedValueOnce(permissionDenied)
+    await expect(loadStories()).rejects.toThrow('EACCES')
   })
 })

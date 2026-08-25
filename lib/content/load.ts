@@ -1,5 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
+import { cache } from 'react'
 import matter from 'gray-matter'
 import { z } from 'zod'
 import { slugFromFilename } from './slug'
@@ -31,8 +32,11 @@ async function readCollection<T extends { date: string }>(
   let filenames: string[]
   try {
     filenames = await readdir(absolute)
-  } catch {
-    return []
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      return []
+    }
+    throw error
   }
 
   const entries = await Promise.all(
@@ -61,18 +65,18 @@ async function readCollection<T extends { date: string }>(
   return entries.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
 }
 
-export async function loadPoems(): Promise<Poem[]> {
+export const loadPoems = cache(async function loadPoems(): Promise<Poem[]> {
   return readCollection('puisi', poemSchema)
-}
+})
 
 export async function loadPoem(slug: string): Promise<Poem | null> {
   const poems = await loadPoems()
   return poems.find((poem) => poem.slug === slug) ?? null
 }
 
-export async function loadStories(): Promise<Story[]> {
+export const loadStories = cache(async function loadStories(): Promise<Story[]> {
   return readCollection('cerita', storySchema)
-}
+})
 
 export async function loadStory(slug: string): Promise<Story | null> {
   const stories = await loadStories()
