@@ -1,11 +1,18 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { mkdir, writeFile, rm } from 'node:fs/promises'
+import { mkdir, writeFile, rm, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { loadPoems, loadPoem, loadStories, loadStory } from '@/lib/content/load'
 
 const poemDir = path.join(process.cwd(), 'content/puisi')
 const storyDir = path.join(process.cwd(), 'content/cerita')
-const fixtures = ['__uji-satu.mdx', '__uji-dua.mdx', '__uji-rusak.mdx']
+const fixtures = [
+  '__uji-satu.mdx',
+  '__uji-dua.mdx',
+  '__uji-rusak.mdx',
+  '__uji-sama-a.mdx',
+  '__uji-sama-b.mdx',
+  '__uji-sama-c.mdx',
+]
 
 beforeAll(async () => {
   await mkdir(poemDir, { recursive: true })
@@ -47,6 +54,35 @@ describe('loadPoems', () => {
   it('preserves the poet line breaks in the body', async () => {
     const poem = await loadPoem('__uji-satu')
     expect(poem?.body).toContain('baris pertama\nbaris kedua')
+  })
+
+  it('keeps a deterministic, stable order for entries sharing the same date', async () => {
+    const sameDateFiles = ['__uji-sama-a.mdx', '__uji-sama-b.mdx', '__uji-sama-c.mdx']
+    for (const [index, name] of sameDateFiles.entries()) {
+      await writeFile(
+        path.join(poemDir, name),
+        `---\ntitle: Sama ${index}\ndate: 2026-05-05\n---\n\nisi ${index}\n`
+      )
+    }
+
+    const onDiskOrder = (await readdir(poemDir))
+      .filter((name) => sameDateFiles.includes(name))
+      .map((name) => name.replace(/\.mdx$/, ''))
+
+    const poems = await loadPoems()
+    const sameDateSlugs = poems
+      .filter((p) => p.date === '2026-05-05')
+      .map((p) => p.slug)
+
+    expect(sameDateSlugs).toEqual(onDiskOrder)
+
+    // Distinct dates must still sort newest first alongside the equal-date group.
+    const slugs = poems.map((p) => p.slug)
+    expect(slugs.indexOf('__uji-dua')).toBeLessThan(slugs.indexOf('__uji-satu'))
+
+    for (const name of sameDateFiles) {
+      await rm(path.join(poemDir, name), { force: true })
+    }
   })
 })
 
