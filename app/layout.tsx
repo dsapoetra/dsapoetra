@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Newsreader, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import SiteNav from '@/components/site-nav'
+import SiteFooter from '@/components/site-footer'
 
 const serif = Newsreader({
   variable: '--font-newsreader',
@@ -32,7 +34,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       className={`${serif.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-paper text-ink font-serif">
-        {children}
+        <SiteNav />
+        <main className="flex-1">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   )
