@@ -1,3 +1,17 @@
+/**
+ * One row in the homepage's "ask me anything" block.
+ *
+ * Declared explicitly, and applied to `links` with `as SiteLink[]`, so `href`
+ * stays a plain `string`. Without it, the `as const` below narrows each href to
+ * a string literal and the component's empty-href check becomes a type error
+ * the moment every row is filled in.
+ */
+export type SiteLink = {
+  label: string
+  href: string
+  icon: string
+}
+
 export const site = {
   /** Site identity. Matches the domain. */
   name: 'dsapoetra',
@@ -40,10 +54,7 @@ export const site = {
    * `icon` picks the glyph — see components/ask-me.tsx for the available names.
    */
   links: [
-    { label: 'Instagram', href: '', icon: 'instagram' },
-    { label: 'Threads', href: '', icon: 'threads' },
-    { label: 'GitHub', href: '', icon: 'github' },
-    { label: 'WhatsApp', href: '', icon: 'whatsapp' },
-    { label: 'Email', href: '', icon: 'email' },
-  ],
+    { label: 'Instagram', href: 'https://www.instagram.com/dsapoetra/', icon: 'instagram' },
+    { label: 'GitHub', href: 'https://github.com/dsapoetra', icon: 'github' },
+  ] as SiteLink[],
 } as const
