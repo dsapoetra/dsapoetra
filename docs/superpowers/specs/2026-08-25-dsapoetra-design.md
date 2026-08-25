@@ -12,59 +12,83 @@ A personal site for **dsapoetra**. The original brief was "a profile and some di
 products to sell," modelled on kotarois.me. Brainstorming changed the shape of it
 substantially, and the reasoning matters more than the conclusion:
 
-- The site's primary job is to **establish the person**, not to move units. The store is a
-  quiet second act.
-- **No digital products exist yet.** Shipping a populated storefront would mean shipping
-  fiction. The store ships as an honest waitlist instead.
-- The owner already **writes long-form** and **publishes a book review every week, on video
-  and in writing**. That weekly cadence is the site's real engine — rarer and more valuable
-  than any product.
-- The owner also makes (or plans to make) **digital printables**. Scope narrowed these to
-  reading- and writing-adjacent goods so that one coherent person sells them.
+- The site's primary job is to **establish the person**, not to move units.
+- **No digital products exist yet**, and none are planned for v1. See §10.
+- The owner **writes poetry and short stories, is working on a novel, and reviews books**.
+  Publishing a review every week is the intended cadence, and that cadence — not any product
+  — is the site's engine.
 
-The resulting positioning: **a programmer who writes, reviews a book a week, and makes tools
-for readers.**
+The resulting positioning: **a programmer in Jakarta who writes, and reviews the books he
+reads.**
+
+### Amendment, 2026-08-25 — actual scale at launch
+
+The original spec was written believing there was an existing archive to draw on: an
+established weekly review habit, long-form posts on a platform to migrate, and video reviews
+with an audience. The real numbers are **two written reviews and two videos**, with the
+poems and stories similarly early.
+
+Nothing about the positioning changes. Three things about the build do, and they are recorded
+in place rather than here: the homepage carries a combined stream so the site does not read as
+abandoned (§5), video becomes optional and linked rather than embedded (§7, §8), and migration
+is not a launch concern (§9). The store is removed outright (§10).
+
+The honest framing: this is a site for a writer who is starting, not one with a back catalogue.
+Building it as though the archive already exists would produce a lot of empty scaffolding —
+pagination, filters, grids — dressed up as capability.
 
 ## 2. Goals
 
-1. A stranger arriving from a video knows who this person is within ten seconds.
+1. A stranger knows who this person is within ten seconds.
 2. Every form of writing — review, poem, story — is presented in the way that form deserves.
-3. The weekly review is effortless to publish: one file, one commit.
-4. The store exists as an honest, converting waitlist, and becomes a real store later without
-   a rewrite.
-5. Existing published posts move in without sacrificing the reach they already have.
+3. Publishing is effortless: one file, one commit.
+4. The site reads as active and deliberate from its very first handful of pieces, rather than
+   as an empty frame waiting to be filled.
 
 ## 3. Non-goals
 
-- No cart, payments, orders, or file delivery. Checkout, when it exists, is external.
+- No store, cart, payments, or product delivery of any kind. See §10.
 - No CMS, database, or admin UI. Content is flat files in the repo.
 - No bilingual routing or language switcher. The site is Indonesian.
 - No social-feed mirroring. Short-form stays on the platforms where it belongs.
 - No blog comment system.
+- No server-side state, secrets, or external service dependencies.
 
 ## 4. Audience
 
-Indonesian readers and builders — peers, not clients. Most arrive from video. Copy is in
-**Bahasa Indonesia** throughout, casual and unfussy. Route names are Indonesian.
+Indonesian readers and builders — peers, not clients. Copy is in **Bahasa Indonesia**
+throughout, casual and unfussy. Route names are Indonesian.
+
+Amended 2026-08-25: the original said "most arrive from video". With two videos on Instagram —
+a platform that passes almost no traffic off itself — that is not true yet. There is no
+established arrival path, which is a reason to make the writing findable (§9) rather than to
+optimise the site for a referrer that does not exist.
 
 ## 5. Information architecture
 
 | Route | Purpose | Presentation |
 |---|---|---|
-| `/` | Bio, latest review, featured writing, links, store teaser | Reading-width, restrained |
-| `/ulasan` | Index of weekly book reviews | **Thumbnail grid** — visual, clickable |
-| `/ulasan/[slug]` | One book: video on top, written review below | Video facade + prose |
+| `/` | Bio + one combined stream of the latest writing across all three sections | Reading-width, restrained |
+| `/ulasan` | Index of book reviews | List with book cover, title, author |
+| `/ulasan/[slug]` | One book: written review, with video above it **when one exists** | Prose, optional video card |
 | `/puisi` | Poem index | Quiet list, titles only |
 | `/puisi/[slug]` | A single poem | Narrow measure, undated, generous space |
 | `/cerita` | Short story index | List with excerpt + reading time |
 | `/cerita/[slug]` | A single story | Immersive single column |
 | `/sekarang` | Novel progress, currently reading, what's being made | Short, dated, hand-maintained |
-| `/toko` | Waitlist for named products | Visual cards + email capture |
 
-**Primary nav:** `ulasan · puisi · cerita · toko`
+**Primary nav:** `ulasan · puisi · cerita`
 **Secondary (footer):** `sekarang`, social links, RSS.
 
 `/` is the only page that mixes registers; every other page commits to one.
+
+**On the homepage being a combined stream.** Amended 2026-08-25. The three sections
+were separated because volume would otherwise let reviews bury the poetry. That
+reasoning holds at scale and does not hold yet: the site launches with roughly two
+items per section. Three sparse pages read as abandoned. The homepage therefore
+carries a single merged, dated stream of everything latest, so the site reads as
+active while each section is still thin. The sections stay separate — they are
+correct within a year — but the homepage compensates until then.
 
 ## 6. Design direction
 
@@ -99,8 +123,10 @@ Accent colour is used sparingly and only for interactive affordance — never de
 
 ### Where it gets visual
 
-- `/ulasan` index: responsive thumbnail grid, 16:9 covers, title and book author beneath.
-- `/toko`: product cards with real imagery.
+- `/ulasan` index: a list anchored by **book covers** — portrait, not 16:9 — with title and
+  author beside each. Amended 2026-08-25: originally specified as a video-thumbnail grid,
+  which assumed every review had video. Most do not. Covers are also the better anchor for a
+  reader: a shelf is legible in a way a wall of video stills is not.
 - Everything else: text, space, and restraint.
 
 ## 7. Content model
@@ -114,12 +140,19 @@ validated during the build so a malformed post fails the build rather than the p
 title: string            # the review's title
 book: { title, author }  # the book being reviewed
 date: ISO date
-video: { platform: 'youtube' | 'tiktok' | 'instagram', id: string }
-cover: string            # path to thumbnail image
+cover: string            # path to the book cover image
 excerpt: string          # 1-2 sentences, used on the index and in metadata
-canonicalUrl?: string    # original platform URL, when migrated
+videoUrl?: string        # OPTIONAL. Full URL to the video, when one exists.
+canonicalUrl?: string    # original platform URL, when cross-posted
 tags?: string[]
 ```
+
+**`videoUrl` is optional, and most reviews will not have it.** Amended 2026-08-25:
+originally specified as required, on the mistaken assumption that every review was
+recorded. The review page must read as complete and deliberate with no video at all —
+a layout built around a video slot will look broken on the majority of pages. It is
+a full URL rather than a platform/id pair because the video is linked, not embedded
+(§8).
 
 ### `content/puisi/*.mdx`
 
@@ -136,106 +169,128 @@ date: ISO date
 excerpt: string
 ```
 
-### `content/produk/*.mdx`
+### No product content type
 
-```
-name: string
-status: 'waitlist' | 'available'
-blurb: string
-images: string[]
-price?: string           # only when status is 'available'
-externalUrl?: string     # Gumroad / Karyakarsa / Lynk / Mayar, when available
-```
-
-The `status` field is the seam that turns the waitlist into a store. When real products
-exist, they are added with `status: 'available'` and an `externalUrl`; the same page renders
-buy links instead of the capture form. No rewrite, no new routes.
+Amended 2026-08-25: `content/produk/*.mdx` and the `/toko` route are removed from the
+spec entirely. See §10.
 
 ## 8. Video handling
 
-Raw third-party iframes are not used. A YouTube embed can outweigh every other byte on the
-page, and the audience is on Indonesian mobile connections.
+Videos are **linked, not embedded**. Amended 2026-08-25.
 
-Each review page renders a **facade**: the cover image, a play affordance, correct aspect
-ratio, and the real embed injected only on click or keyboard activation. The facade is a
-`<button>` with an accessible label naming the book, so it is reachable without a mouse.
+The original design specified a click-to-load facade wrapping a real embed, written when
+the videos were assumed to be on YouTube. They are on Instagram, where embedding is heavy,
+requires the platform's own script, and frequently fails outright for Reels. A player that
+sometimes refuses to appear is worse than an honest link.
 
-Non-YouTube platforms fall back to a labelled link out rather than a broken embed.
+A review with a `videoUrl` therefore renders a **video card**: the book cover, a play
+affordance, and a label naming the platform and the book. It is an `<a>` opening the video
+on its platform in a new tab — not a `<button>`, because it navigates. It must be obvious
+that it leaves the site; a control that looks like an inline player and instead navigates
+away is a dark pattern.
 
-## 9. Migration and SEO
+A review with no `videoUrl` renders no card and no empty slot.
 
-Existing posts are copied in **in full**, with `canonicalUrl` in frontmatter rendering a
-`<link rel="canonical">` pointing back to the original platform. The site looks substantial
-from day one; the platform keeps its ranking authority; no duplicate-content penalty. Once
-the domain has authority of its own, canonicals can be flipped by editing frontmatter.
+If the video platform later becomes YouTube, this section is worth revisiting — a facade
+embed is genuinely better there, and the `videoUrl` field already carries enough information.
+
+## 9. SEO
+
+Per-page `metadata`, Open Graph and Twitter cards, generated OG images for reviews,
+`sitemap.xml`, `robots.txt`, an RSS feed per section, and JSON-LD (`Person` on `/`,
+`Review` + `Book` on review pages).
+
+`metadataBase` is `https://dsapoetra.com`. Without it, relative OG image URLs resolve
+against `localhost` and share cards break in production while looking correct locally.
+
+**Migration is not a launch concern.** Amended 2026-08-25: the original plan assumed an
+existing archive to bring across. There are roughly two written reviews. The optional
+`canonicalUrl` field remains in the schema — it costs nothing and is correct if anything is
+ever cross-posted — but no migration work is scheduled.
 
 Also included: per-page `metadata`, Open Graph and Twitter cards, generated OG images for
 reviews, `sitemap.xml`, `robots.txt`, an RSS feed per section, and JSON-LD (`Person` on `/`,
 `Review` + `Book` on review pages).
 
-## 10. Waitlist
+## 10. No store
 
-`/toko` names specific products in progress — it does not say "coming soon" in a grey box.
-Each card states what the thing is and roughly when it lands. A single email field captures
-interest.
+Amended 2026-08-25, at the owner's direction. `/toko`, the waitlist, the email capture, and
+the product content type are all removed from the spec.
 
-Requirements: the submission must actually persist somewhere the owner can retrieve it; the
-form must show pending, success, duplicate, and failure states; it must work without
-JavaScript where reasonable (Server Action); and it must not leak the address list publicly.
+The reasoning: the site launches with roughly two reviews, some poems, and some stories. A
+waitlist asks a stranger to hand over an email address for future products from someone
+whose work they have just encountered for the first time. That converts badly, and the
+addresses it does collect go cold long before there is anything to sell them.
 
-**The email/storage provider is deliberately unspecified here.** It will be selected against
-what is actually available and provisioned for this project, rather than assumed. That
-selection is the first task of implementation, and it is the only external service the site
-depends on.
+Consequence: **the site now has no external service dependency at all.** No email provider,
+no database, no server-side state, no secrets. Every route is static. This is a materially
+simpler and cheaper thing to run, and it removes the only part of the original design that
+could break in production without anyone noticing.
+
+Adding a store later requires a new content type and two routes. It does not require
+rewriting anything specified here.
 
 ## 11. Performance and accessibility
 
 Budgets, enforced by judgement at review rather than tooling in v1:
 
 - Static generation for every route. No client-side data fetching on first paint.
-- No raw video iframes on load (see §8).
-- Images through `next/image`, explicit dimensions, modern formats.
-- Client JavaScript limited to: the video facade, the waitlist form, and the mobile nav.
-  Everything else is a Server Component.
+- No third-party video embeds at all — videos are links (see §8).
+- Images through `next/image`, explicit dimensions, modern formats. Book covers carry
+  meaningful `alt` naming the book, not "cover image".
+- Client JavaScript limited to the mobile nav, if that even needs it. Everything else is a
+  Server Component. Amended 2026-08-25: the video facade and waitlist form, previously the
+  two main sources of client JS, no longer exist.
 
 Accessibility: semantic landmarks, one `h1` per page, visible focus states, keyboard-operable
-video facade and nav, `lang="id"` on `<html>`, and contrast that holds in both themes. Poems
-preserve their line structure for screen readers as well as sighted readers.
+nav, `lang="id"` on `<html>`, and contrast that holds in both themes. Poems preserve their
+line structure for screen readers as well as sighted readers. A video card must announce that
+it leaves the site.
 
 ## 12. Analytics
 
-Minimal and privacy-respecting, no cookie banner. The site is about to test demand with a
-waitlist; shipping it blind wastes the experiment. Provider chosen alongside the email
-service in §10.
+Deferred. Amended 2026-08-25: analytics was specified to measure a waitlist experiment that
+no longer exists, and at two reviews there is not yet enough traffic for numbers to mean
+anything. Revisit when there is something to learn. Keeping it out also preserves §10's
+result that the site has no external dependencies.
 
 ## 13. Content inputs required from the owner
 
 These are values, not open design questions. The build proceeds with clearly-marked
 placeholders where they are missing, and none of them block structural work.
 
-1. **Bio facts** — city, how long they have been writing, and one small concrete detail of
-   the writing life. The last one is what stops the bio reading like a résumé; it cannot be
-   invented.
-2. **Video platform** and approximate number of existing reviews.
-3. **Name to front** — the handle `dsapoetra` or a personal name.
-4. **Domain**, if one is owned.
-5. **Profile photograph**, if the bio is to carry one.
-6. **The existing posts** to migrate, with their original URLs for canonicals.
+**Supplied:** city is **Jakarta**; writing for **four years**; domain is **dsapoetra.com**;
+video is on **Instagram**, two videos; two written reviews.
+
+**Still outstanding:**
+
+1. **One small concrete detail of the writing life** — unglamorous, specific, true. This is
+   what stops the bio reading like a résumé and it cannot be invented. It is the only content
+   input that materially changes the homepage.
+2. **Name to front** — the handle `dsapoetra` or a personal name. Default if unanswered:
+   `dsapoetra` as the site identity, matching the domain, with a personal name left as an
+   editable constant.
+3. **Profile photograph**, if the bio is to carry one.
+
+Jakarta is worth using deliberately rather than as a location line. The reader's default
+picture of the city is speed and commerce; it sits against a life of poetry, a novel, and a
+book finished every week. That friction is what makes the bio specific. Do not smooth it into
+"a writer based in Jakarta".
 
 ## 14. Out of scope for v1, by design
 
-Cart and payments; product file delivery; comments; newsletter sending (capture only);
-a `/uses` page; dark-mode toggle; search; pagination (until volume demands it); tag archives.
+Cart, payments, and any store; comments; newsletters; a `/uses` page; dark-mode toggle;
+search; pagination (until volume demands it); tag archives; analytics; video embedding.
 
 Each of these is additive and none require restructuring what is specified above.
 
 ## 15. Milestones
 
-1. **Foundation** — design tokens, typography, layout shell, nav, footer, theming.
-2. **Reading** — MDX pipeline, frontmatter validation, `/puisi` and `/cerita`.
-3. **Reviews** — `/ulasan` grid, review page, video facade, canonical handling.
-4. **Home and Sekarang** — bio, composition of latest content, links.
-5. **Store** — provider selection, `/toko`, waitlist Server Action, states.
-6. **Polish** — metadata, OG images, sitemap, RSS, JSON-LD, analytics, accessibility pass.
+1. **Foundation** — design tokens, typography, layout shell, nav, footer, theming. *(done)*
+2. **Reading** — MDX pipeline, frontmatter validation, `/puisi` and `/cerita`. *(done)*
+3. **Reviews** — `/ulasan` list, review page, optional video card.
+4. **Home and Sekarang** — bio, combined latest stream, links; replaces the scaffold page.
+5. **Polish** — metadata, OG images, sitemap, RSS, JSON-LD, accessibility pass.
 
-Milestones 1–4 have no external dependencies and can be built before any provider decision.
+Amended 2026-08-25: the former milestone 5 (Store) is removed. No milestone has an external
+dependency; the whole site is static.
