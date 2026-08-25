@@ -5,6 +5,18 @@ one cost a review round or a fix round to find.
 
 ## Known project values
 
+**City: Jakarta. Writing: four years.**
+
+Both are bio facts for the Plan 2 homepage. Jakarta is worth using deliberately
+rather than dropping in as a location line: the reader's default picture of
+Jakarta is speed, density and commerce, which sits against a life of poetry, a
+novel in progress, and a book finished every week. That friction is the hook —
+it makes the person specific instead of generic. Do not smooth it away into
+"a writer based in Jakarta."
+
+Four years is long enough to state plainly and be believed, and short enough that
+claiming more would ring false. Say the number.
+
 **Domain: `dsapoetra.com`.**
 
 Set `metadataBase: new URL('https://dsapoetra.com')` in the root layout's
