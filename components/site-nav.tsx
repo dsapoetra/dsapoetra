@@ -21,7 +21,7 @@ export default function SiteNav() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="text-muted transition-colors hover:text-ink focus-visible:text-ink"
+                className="text-muted transition-colors hover:text-accent focus-visible:text-accent"
               >
                 {link.label}
               </Link>
