@@ -41,10 +41,7 @@ async function readCollection<T extends { date: string }>(
 
   const entries = await Promise.all(
     filenames
-      // `__`-prefixed files are test fixtures (see lib/content/*.test.ts).
-      // An interrupted test run can leave one behind on disk; skip it so
-      // it never gets prerendered as a real page.
-      .filter((name) => name.endsWith('.mdx') && !name.startsWith('__'))
+      .filter((name) => name.endsWith('.mdx'))
       .map(async (name) => {
         const raw = await readFile(path.join(absolute, name), 'utf8')
         const { data, content } = matter(raw)

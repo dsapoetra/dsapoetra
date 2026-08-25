@@ -142,20 +142,15 @@ describe('validation', () => {
   })
 })
 
-describe('test-fixture filtering', () => {
-  it('ignores a leftover __-prefixed fixture instead of publishing it', async () => {
-    const strayName = '__uji-tersisa.mdx'
-    await writeFile(
-      path.join(poemDir, strayName),
-      '---\ntitle: Harusnya Disaring\ndate: 2026-06-01\n---\n\nisi\n'
-    )
-
-    const poems = await loadPoems()
-    expect(poems.some((p) => p.slug === '__uji-tersisa')).toBe(false)
-
-    await rm(path.join(poemDir, strayName), { force: true })
-  })
-})
+// A test-fixture filter was tried here and removed. It excluded `__`-prefixed
+// filenames, but the positive-assertion tests above need their fixtures to
+// load, so those fixtures could not carry the filtered prefix — leaving the
+// filter guarding a name the suite never produces. A leftover `uji-*.mdx` from
+// an interrupted run is still published by the next build; that was verified
+// empirically. The fix is a guard that FAILS the build when fixture-named files
+// are found in content/, and ultimately an injectable content root so tests
+// never touch the live tree at all. Both are recorded in
+// docs/superpowers/plans/CARRY-FORWARD.md.
 
 describe('readdir failure handling', () => {
   it('returns an empty array when the collection directory is missing (ENOENT)', async () => {

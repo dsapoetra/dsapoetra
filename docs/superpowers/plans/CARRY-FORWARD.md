@@ -106,6 +106,31 @@ the cost of the stopgap rises with every test added, and a suite that has been m
 reliable by serialising it is one careless `describe.concurrent` away from being
 flaky again.
 
+### A filter was tried here. Do not try it again.
+
+An attempt was made to have `readCollection` skip `__`-prefixed filenames, so a
+leftover fixture could never be prerendered. **It does not work, and the reason is
+structural rather than an implementation slip.**
+
+The positive-assertion tests — the ones proving the loader *does* load valid files —
+need their fixtures to load. So those fixtures cannot carry the filtered prefix. Strip
+the prefix to keep them loadable and you also strip them out of the filter's protection.
+Whatever prefix means "test-only, never publish" is exactly the prefix those tests need
+in order to be test-only. The two requirements are in direct conflict, and no renaming
+scheme resolves it at the loader level.
+
+What actually shipped was a filter guarding `__uji-*`, a name nothing in the suite
+produces, plus a green test proving the filter worked on that name. Verified
+empirically: dropping a `uji-interrupted-leftover.mdx` into `content/puisi/` and
+building published it as a real route. The filter has been reverted — an inert guard
+with a passing test is worse than no guard, because it reads as protection.
+
+**Do this instead:** leave the loader unfiltered and add a check that **fails loudly**
+when fixture-named files are found in `content/` — a prebuild script, or a CI step
+before the build. That converts silent publication into a visible, blocking error and
+tells the truth about what is protected. Pair it with the injectable content root above,
+which removes the failure mode entirely.
+
 ## React `cache()` does nothing in tests
 
 `loadPoems`, `loadStories` and `loadReviews` are wrapped in React's `cache()`. That
