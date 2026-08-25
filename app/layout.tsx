@@ -23,6 +23,7 @@ const mono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://dsapoetra.com'),
   title: 'dsapoetra',
   description: 'Puisi, cerita, dan ulasan buku.',
 }
