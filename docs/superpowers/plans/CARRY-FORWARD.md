@@ -106,6 +106,28 @@ the cost of the stopgap rises with every test added, and a suite that has been m
 reliable by serialising it is one careless `describe.concurrent` away from being
 flaky again.
 
+### Resolved: the content root is injectable
+
+`contentRoot()` in `lib/content/load.ts` resolves `process.env.CONTENT_ROOT` at call time,
+and every test file works in its own `mkdtemp` directory. Tests no longer touch the live
+`content/` tree, so the publish hazard is gone and `fileParallelism: false` has been removed.
+Verified at ten shuffled runs, all passing, against an original flake rate of four in eight.
+
+**One tradeoff came with it, and it is currently harmless.** Because `contentRoot()` is a
+function, Turbopack can no longer constant-fold the paths passed to `readdir`/`readFile`, so
+the build warns *"Dynamic filesystem access causes tracing of the whole project"*. That is not
+hyperbole — the emitted `.nft.json` traces really do pull in roughly 160 project files.
+
+It does not matter today because **nothing consumes those traces**: there is no
+`output: 'standalone'`, and every route is Static or SSG, including the `force-static` RSS
+route handlers. Vercel serves prerendered assets with no Lambda, so the trace files are dead
+weight of any size.
+
+**If a genuinely dynamic route is ever added** — one that is not `force-static` — revisit it
+then, and apply Turbopack's own `/* turbopackIgnore: true */` annotation at the two call sites
+in `lib/content/load.ts`. That keeps injectability with no test-only code in the production
+path. Do not pre-emptively add it now.
+
 ### A filter was tried here. Do not try it again.
 
 An attempt was made to have `readCollection` skip `__`-prefixed filenames, so a
