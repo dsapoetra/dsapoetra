@@ -56,5 +56,6 @@ export const site = {
   links: [
     { label: 'Instagram', href: 'https://www.instagram.com/dsapoetra/', icon: 'instagram' },
     { label: 'GitHub', href: 'https://github.com/dsapoetra', icon: 'github' },
+    { label: 'Email', href: 'mailto:angga.dimassaputra@gmail.com', icon: 'email' },
   ] as SiteLink[],
 } as const
