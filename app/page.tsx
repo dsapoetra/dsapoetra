@@ -30,7 +30,7 @@ export default async function Home() {
         </p>
       </div>
 
-      <h2 className="mt-16 inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-ink">
+      <h2 className="mt-16 inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-on-highlight">
         Terbaru
       </h2>
 
@@ -41,7 +41,7 @@ export default async function Home() {
           {items.map((item) => (
             <li key={item.href}>
               <Link href={item.href} className="group block">
-                <p className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-ink">
+                <p className="inline-block bg-highlight px-2 py-1 font-mono text-xs uppercase tracking-widest text-on-highlight">
                   {labelFor(item.kind)}
                   {' · '}
                   <time dateTime={item.date}>{item.date}</time>

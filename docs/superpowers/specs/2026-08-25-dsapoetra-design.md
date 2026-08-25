@@ -115,29 +115,36 @@ place the programmer half shows in the aesthetic — everywhere else it shows in
 
 ### Colour
 
-Amended 2026-08-25, at the owner's direction: the palette was originally near-monochrome
-warm greys. It is now **warm yellow paper with deep blue ink** — brighter and more cheerful,
-while still built for long-form reading.
+Amended 2026-08-25, at the owner's direction: originally near-monochrome warm greys, briefly
+yellow-and-blue, now **Midnight & Tomato** — midnight ink on warm off-white, tomato red for
+links, coral highlight blocks. The brief was "playful and manly". Red is the editor's pen,
+which gives a book reviewer's site an accent that means something rather than merely looking
+good; the midnight ink grounds it; the coral blocks carry the playfulness.
 
 Light and dark themes are both defined explicitly as CSS custom properties in `globals.css`
 under Tailwind v4's `@theme`. Dark mode follows `prefers-color-scheme` with no toggle in v1.
 
-**The rule that makes yellow work: yellow is only ever a background, never a foreground.**
-Measured on this paper, saturated yellow as text gives 1.35:1 — effectively invisible. The
-same yellow *behind* ink gives 9.47:1. So there are two distinct roles:
+**Two rules keep this readable. Both were established by measurement, not taste.**
 
-- `--accent` is **blue**, and carries every link, hover and interactive affordance, because
-  it has to be readable as text.
-- `--highlight` is **yellow**, and is only ever a background — currently the marker-pen
-  block behind each section label.
+1. **`--highlight` is only ever a background, never a foreground.** Coral as text on this
+   paper is far too pale to read.
 
-Do not use `--highlight` as a text colour, and do not set body text on a saturated yellow
-background: it passes contrast but is fatiguing across a ten-minute short story, which is
-the length this site is built for.
+2. **Text sitting on the highlight uses `--on-highlight`, never `--ink`.** `--ink` inverts
+   between themes; the highlight does not. In dark mode, light ink on coral measures
+   2.20:1 — unreadable. `--on-highlight` stays dark in both themes and measures 6.72:1.
+   **Never write `bg-highlight text-ink`.**
 
-Measured contrast, light: ink/paper 12.83:1, muted/paper 5.61:1, accent/paper 6.64:1,
-ink/highlight 9.47:1. Dark: ink/paper 15.11:1, muted/paper 7.31:1, accent/paper 8.56:1.
-All exceed WCAG AA; body text exceeds AAA in both themes.
+`--accent` (tomato/coral) carries every link, hover and interactive affordance, because it
+has to work as text.
+
+Do not set body text on a saturated background: it can pass contrast and still be fatiguing
+across a ten-minute short story, which is the length this site is built for. The paper stays
+calm; the accent does the work.
+
+Measured contrast, light: ink/paper 15.86:1, muted/paper 5.50:1, accent/paper 5.75:1,
+on-highlight/highlight 6.72:1. Dark: ink/paper 15.53:1, muted/paper 7.01:1,
+accent/paper 7.90:1, on-highlight/highlight 6.72:1. All exceed WCAG AA; body text exceeds
+AAA in both themes.
 
 ### Where it gets visual
 

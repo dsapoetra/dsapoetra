@@ -1,36 +1,48 @@
 @import "tailwindcss";
 
 /*
- * Palette: warm yellow paper, deep blue ink.
+ * Palette: Midnight & Tomato.
  *
- * The one rule that keeps this readable: YELLOW IS ONLY EVER A BACKGROUND,
- * never a foreground. Saturated yellow text on this paper measures 1.35:1 —
- * effectively invisible. The same yellow as a background behind ink measures
- * 9.47:1. So `--highlight` is for backgrounds and `--accent` (blue) carries
- * every link and interactive affordance.
+ * Midnight ink on warm off-white, tomato red for links, coral highlight
+ * blocks. Red is the editor's pen — a book reviewer's accent.
  *
- * Measured contrast, light: ink/paper 12.83:1, muted/paper 5.61:1,
- * accent/paper 6.64:1, ink/highlight 9.47:1.
- * Dark: ink/paper 15.11:1, muted/paper 7.31:1, accent/paper 8.56:1.
+ * TWO RULES KEEP THIS READABLE:
+ *
+ * 1. The highlight is only ever a BACKGROUND, never a foreground. Coral as
+ *    text on this paper is far too pale to read.
+ *
+ * 2. Text sitting ON the highlight uses `--on-highlight`, NOT `--ink`.
+ *    `--ink` inverts between themes; the highlight does not. In dark mode,
+ *    light ink on coral measures 2.20:1 — unreadable. `--on-highlight`
+ *    stays dark in both themes and measures 6.72:1 against the coral.
+ *    Never write `bg-highlight text-ink`.
+ *
+ * Measured contrast, light: ink/paper 15.86:1, muted/paper 5.50:1,
+ * accent/paper 5.75:1, on-highlight/highlight 6.72:1.
+ * Dark: ink/paper 15.53:1, muted/paper 7.01:1, accent/paper 7.90:1,
+ * on-highlight/highlight 6.72:1.
+ * All exceed WCAG AA; body text exceeds AAA in both themes.
  */
 
 :root {
-  --paper: #fffbea;
-  --ink: #12314f;
-  --muted: #55677a;
-  --rule: #efe0b8;
-  --accent: #1256b8;
-  --highlight: #ffd641;
+  --paper: #f8f5ef;
+  --ink: #151b26;
+  --muted: #5c6470;
+  --rule: #e4ded2;
+  --accent: #b23122;
+  --highlight: #ff7a59;
+  --on-highlight: #151b26;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #0d1b2b;
-    --ink: #f4efe0;
-    --muted: #9aaabb;
-    --rule: #22374d;
-    --accent: #83b9ff;
-    --highlight: #ffd641;
+    --paper: #12161e;
+    --ink: #f2ede3;
+    --muted: #98a2af;
+    --rule: #272e3b;
+    --accent: #ff8b6b;
+    --highlight: #ff7a59;
+    --on-highlight: #151b26;
   }
 }
 
@@ -41,6 +53,7 @@
   --color-rule: var(--rule);
   --color-accent: var(--accent);
   --color-highlight: var(--highlight);
+  --color-on-highlight: var(--on-highlight);
 
   --font-serif: var(--font-newsreader);
   --font-sans: var(--font-inter);
