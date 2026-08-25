@@ -1,10 +1,15 @@
 import { ImageResponse } from 'next/og'
-import { loadReview } from '@/lib/content/load'
+import { loadReview, loadReviews } from '@/lib/content/load'
 import { site } from '@/lib/site'
 
 export const alt = 'Sampul ulasan buku di dsapoetra, menampilkan judul ulasan serta judul dan penulis buku.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
+
+export async function generateStaticParams() {
+  const reviews = await loadReviews()
+  return reviews.map((review) => ({ slug: review.slug }))
+}
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
