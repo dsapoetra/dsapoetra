@@ -8,11 +8,11 @@ const storyDir = path.join(process.cwd(), 'content/cerita')
 const reviewDir = path.join(process.cwd(), 'content/ulasan')
 
 const fixtures: Array<{ dir: string; name: string }> = [
-  { dir: poemDir, name: '__uji-latest-puisi-lama.mdx' },
-  { dir: poemDir, name: '__uji-latest-puisi-sama.mdx' },
-  { dir: storyDir, name: '__uji-latest-cerita.mdx' },
-  { dir: storyDir, name: '__uji-latest-cerita-sama.mdx' },
-  { dir: reviewDir, name: '__uji-latest-ulasan.mdx' },
+  { dir: poemDir, name: 'uji-latest-puisi-lama.mdx' },
+  { dir: poemDir, name: 'uji-latest-puisi-sama.mdx' },
+  { dir: storyDir, name: 'uji-latest-cerita.mdx' },
+  { dir: storyDir, name: 'uji-latest-cerita-sama.mdx' },
+  { dir: reviewDir, name: 'uji-latest-ulasan.mdx' },
 ]
 
 async function cleanup() {
@@ -31,7 +31,7 @@ beforeAll(async () => {
 
   // A poem well in the past, so it lands last in the merged stream.
   await writeFile(
-    path.join(poemDir, '__uji-latest-puisi-lama.mdx'),
+    path.join(poemDir, 'uji-latest-puisi-lama.mdx'),
     '---\ntitle: Puisi Lama Uji\ndate: 2020-01-01\n---\n\nbaris uji\n'
   )
 
@@ -42,23 +42,23 @@ beforeAll(async () => {
   // fixed order (ulasan, puisi, cerita) before sorting by date.
   const tiedDate = '2025-06-15'
   await writeFile(
-    path.join(storyDir, '__uji-latest-cerita-sama.mdx'),
+    path.join(storyDir, 'uji-latest-cerita-sama.mdx'),
     `---\ntitle: Cerita Sama Uji\ndate: ${tiedDate}\nexcerpt: Ringkasan cerita uji.\n---\n\nIsi cerita uji.\n`
   )
   await writeFile(
-    path.join(poemDir, '__uji-latest-puisi-sama.mdx'),
+    path.join(poemDir, 'uji-latest-puisi-sama.mdx'),
     `---\ntitle: Puisi Sama Uji\ndate: ${tiedDate}\n---\n\nbaris sama\n`
   )
 
   // A recent story, most recent of all fixtures.
   await writeFile(
-    path.join(storyDir, '__uji-latest-cerita.mdx'),
+    path.join(storyDir, 'uji-latest-cerita.mdx'),
     '---\ntitle: Cerita Terbaru Uji\ndate: 2025-12-01\nexcerpt: Ringkasan cerita terbaru.\n---\n\nIsi cerita terbaru.\n'
   )
 
   // A review, dated between the two extremes.
   await writeFile(
-    path.join(reviewDir, '__uji-latest-ulasan.mdx'),
+    path.join(reviewDir, 'uji-latest-ulasan.mdx'),
     '---\ntitle: Ulasan Terbaru Uji\nbook:\n  title: Buku Uji\n  author: Penulis Uji\ndate: 2025-08-01\ncover: /sampul/uji-latest.jpg\nexcerpt: Ringkasan ulasan uji.\n---\n\nIsi ulasan uji.\n'
   )
 })
@@ -105,8 +105,8 @@ describe('loadLatest', () => {
     // concatenated first keeps its relative position. Poems are
     // concatenated before stories, so the poem stays ahead of the story.
     expect(tied.map((item) => item.slug)).toEqual([
-      '__uji-latest-puisi-sama',
-      '__uji-latest-cerita-sama',
+      'uji-latest-puisi-sama',
+      'uji-latest-cerita-sama',
     ])
 
     // Run again to confirm this ordering is stable, not incidental.

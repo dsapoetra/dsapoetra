@@ -7,7 +7,7 @@ export default defineConfig({
     include: ['**/*.test.ts'],
     exclude: ['node_modules', '.next'],
     // Content-loader tests (lib/content/*.test.ts) write and remove
-    // transient __uji- fixtures inside the real content/ directories.
+    // transient uji- fixtures inside the real content/ directories.
     // Running test files in parallel workers lets one file's fixture
     // (e.g. load.test.ts's briefly-invalid frontmatter case) be caught
     // mid-flight by another file's collection read (latest.test.ts calls
