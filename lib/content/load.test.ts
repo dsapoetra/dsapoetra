@@ -147,6 +147,46 @@ describe('validation', () => {
 // never touch the live tree at all. Both are recorded in
 // docs/superpowers/plans/CARRY-FORWARD.md.
 
+describe('isoDate calendar validation', () => {
+  it('rejects a quoted date that rolls over a month boundary (2026-02-30)', async () => {
+    await writeFile(
+      path.join(poemDir, 'uji-tanggal-rusak.mdx'),
+      '---\ntitle: Tanggal Rusak\ndate: "2026-02-30"\n---\n\nisi\n'
+    )
+    await expect(loadPoems()).rejects.toThrow('uji-tanggal-rusak.mdx')
+    await rm(path.join(poemDir, 'uji-tanggal-rusak.mdx'), { force: true })
+  })
+
+  it('rejects a quoted date with an invalid month (2026-13-01)', async () => {
+    await writeFile(
+      path.join(poemDir, 'uji-bulan-rusak.mdx'),
+      '---\ntitle: Bulan Rusak\ndate: "2026-13-01"\n---\n\nisi\n'
+    )
+    await expect(loadPoems()).rejects.toThrow('uji-bulan-rusak.mdx')
+    await rm(path.join(poemDir, 'uji-bulan-rusak.mdx'), { force: true })
+  })
+
+  it('accepts a valid quoted date (2026-02-28)', async () => {
+    await writeFile(
+      path.join(poemDir, 'uji-tanggal-valid.mdx'),
+      '---\ntitle: Tanggal Valid\ndate: "2026-02-28"\n---\n\nisi\n'
+    )
+    const poems = await loadPoems()
+    expect(poems.some((p) => p.slug === 'uji-tanggal-valid')).toBe(true)
+    await rm(path.join(poemDir, 'uji-tanggal-valid.mdx'), { force: true })
+  })
+
+  it('accepts a valid quoted leap day (2028-02-29)', async () => {
+    await writeFile(
+      path.join(poemDir, 'uji-kabisat.mdx'),
+      '---\ntitle: Tahun Kabisat\ndate: "2028-02-29"\n---\n\nisi\n'
+    )
+    const poems = await loadPoems()
+    expect(poems.some((p) => p.slug === 'uji-kabisat')).toBe(true)
+    await rm(path.join(poemDir, 'uji-kabisat.mdx'), { force: true })
+  })
+})
+
 describe('readdir failure handling', () => {
   it('returns an empty array when the collection directory is missing (ENOENT)', async () => {
     const missing = Object.assign(new Error('ENOENT: no such file or directory'), {

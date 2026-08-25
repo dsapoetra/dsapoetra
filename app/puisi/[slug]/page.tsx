@@ -18,6 +18,8 @@ export async function generateStaticParams() {
   return poems.map((poem) => ({ slug: poem.slug }))
 }
 
+export const dynamicParams = false
+
 export async function generateMetadata({
   params,
 }: {

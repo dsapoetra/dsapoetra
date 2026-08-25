@@ -12,7 +12,7 @@ export default function NotFound() {
 
       <Link
         href="/"
-        className="mt-8 inline-block text-accent transition-colors hover:text-ink focus-visible:text-ink"
+        className="mt-8 inline-block text-accent transition-colors hover:text-accent focus-visible:text-accent"
       >
         Kembali ke beranda
       </Link>

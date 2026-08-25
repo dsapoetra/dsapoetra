@@ -9,6 +9,8 @@ export async function generateStaticParams() {
   return stories.map((story) => ({ slug: story.slug }))
 }
 
+export const dynamicParams = false
+
 export async function generateMetadata({
   params,
 }: {

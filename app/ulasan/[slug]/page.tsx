@@ -12,6 +12,8 @@ export async function generateStaticParams() {
   return reviews.map((review) => ({ slug: review.slug }))
 }
 
+export const dynamicParams = false
+
 export async function generateMetadata({
   params,
 }: {

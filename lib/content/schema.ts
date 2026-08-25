@@ -7,7 +7,21 @@ import { z } from 'zod'
 // frontmatter was authored.
 export const isoDate = z.preprocess(
   (value) => (value instanceof Date ? value.toISOString().slice(0, 10) : value),
-  z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date harus dalam format YYYY-MM-DD')
+  z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'date harus dalam format YYYY-MM-DD')
+    .refine(
+      (value) => {
+        const [year, month, day] = value.split('-').map(Number)
+        const parsed = new Date(Date.UTC(year, month - 1, day))
+        return (
+          parsed.getUTCFullYear() === year &&
+          parsed.getUTCMonth() === month - 1 &&
+          parsed.getUTCDate() === day
+        )
+      },
+      { message: 'date bukan tanggal kalender yang valid' }
+    )
 )
 
 export const poemSchema = z.object({
