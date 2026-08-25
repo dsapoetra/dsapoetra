@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
 import { mkdir, writeFile, rm, readdir } from 'node:fs/promises'
 import path from 'node:path'
-import { loadPoems, loadPoem, loadStories, loadStory } from '@/lib/content/load'
+import { loadPoems, loadPoem, loadStories, loadStory, loadReviews, loadReview } from '@/lib/content/load'
 
 // `readdir` is wrapped in a spy-able vi.fn (delegating to the real
 // implementation by default) so individual tests can force a rejection
@@ -17,6 +17,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
 
 const poemDir = path.join(process.cwd(), 'content/puisi')
 const storyDir = path.join(process.cwd(), 'content/cerita')
+const reviewDir = path.join(process.cwd(), 'content/ulasan')
 const fixtures = [
   '__uji-satu.mdx',
   '__uji-dua.mdx',
@@ -24,11 +25,14 @@ const fixtures = [
   '__uji-sama-a.mdx',
   '__uji-sama-b.mdx',
   '__uji-sama-c.mdx',
+  '__uji-ulasan.mdx',
+  '__uji-ulasan-video.mdx',
 ]
 
 beforeAll(async () => {
   await mkdir(poemDir, { recursive: true })
   await mkdir(storyDir, { recursive: true })
+  await mkdir(reviewDir, { recursive: true })
 
   await writeFile(
     path.join(poemDir, '__uji-satu.mdx'),
@@ -42,12 +46,21 @@ beforeAll(async () => {
     path.join(storyDir, '__uji-satu.mdx'),
     '---\ntitle: Cerita Uji\ndate: 2026-02-01\nexcerpt: Ringkasan singkat.\n---\n\nIsi cerita.\n'
   )
+  await writeFile(
+    path.join(reviewDir, '__uji-ulasan.mdx'),
+    '---\ntitle: Ulasan Uji\nbook:\n  title: Judul Buku Uji\n  author: Penulis Uji\ndate: 2026-05-02\ncover: /sampul/uji.jpg\nexcerpt: Ringkasan ulasan.\n---\n\nIsi ulasan.\n'
+  )
+  await writeFile(
+    path.join(reviewDir, '__uji-ulasan-video.mdx'),
+    '---\ntitle: Ulasan Bervideo\nbook:\n  title: Buku Kedua\n  author: Penulis Kedua\ndate: 2026-05-03\ncover: /sampul/uji2.jpg\nexcerpt: Ada videonya.\nvideoUrl: https://www.instagram.com/reel/ABC123/\n---\n\nIsi ulasan kedua.\n'
+  )
 })
 
 afterAll(async () => {
   for (const name of fixtures) {
     await rm(path.join(poemDir, name), { force: true })
     await rm(path.join(storyDir, name), { force: true })
+    await rm(path.join(reviewDir, name), { force: true })
   }
 })
 
@@ -144,5 +157,37 @@ describe('readdir failure handling', () => {
     })
     vi.mocked(readdir).mockRejectedValueOnce(permissionDenied)
     await expect(loadStories()).rejects.toThrow('EACCES')
+  })
+})
+
+describe('loadReviews', () => {
+  it('parses the nested book object', async () => {
+    const reviews = await loadReviews()
+    const review = reviews.find((r) => r.slug === '__uji-ulasan')
+    expect(review?.book.title).toBe('Judul Buku Uji')
+    expect(review?.book.author).toBe('Penulis Uji')
+  })
+
+  it('leaves videoUrl undefined when absent', async () => {
+    const review = await loadReview('__uji-ulasan')
+    expect(review?.videoUrl).toBeUndefined()
+  })
+
+  it('carries videoUrl through when present', async () => {
+    const review = await loadReview('__uji-ulasan-video')
+    expect(review?.videoUrl).toBe('https://www.instagram.com/reel/ABC123/')
+  })
+
+  it('rejects a videoUrl that is not a full URL', async () => {
+    await writeFile(
+      path.join(reviewDir, '__uji-ulasan-rusak.mdx'),
+      '---\ntitle: Rusak\nbook:\n  title: B\n  author: A\ndate: 2026-05-01\ncover: /sampul/x.jpg\nexcerpt: E\nvideoUrl: bukan-url\n---\n\nisi\n'
+    )
+    await expect(loadReviews()).rejects.toThrow('__uji-ulasan-rusak.mdx')
+    await rm(path.join(reviewDir, '__uji-ulasan-rusak.mdx'), { force: true })
+  })
+
+  it('returns null for an unknown slug', async () => {
+    expect(await loadReview('tidak-ada')).toBeNull()
   })
 })

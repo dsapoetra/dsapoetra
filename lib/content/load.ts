@@ -4,7 +4,7 @@ import { cache } from 'react'
 import matter from 'gray-matter'
 import { z } from 'zod'
 import { slugFromFilename } from './slug'
-import { poemSchema, storySchema } from './schema'
+import { poemSchema, storySchema, reviewSchema } from './schema'
 
 const CONTENT_ROOT = path.join(process.cwd(), 'content')
 
@@ -81,4 +81,26 @@ export const loadStories = cache(async function loadStories(): Promise<Story[]> 
 export async function loadStory(slug: string): Promise<Story | null> {
   const stories = await loadStories()
   return stories.find((story) => story.slug === slug) ?? null
+}
+
+export type Review = {
+  slug: string
+  title: string
+  book: { title: string; author: string }
+  date: string
+  cover: string
+  excerpt: string
+  videoUrl?: string
+  canonicalUrl?: string
+  tags?: string[]
+  body: string
+}
+
+export const loadReviews = cache(async function loadReviews(): Promise<Review[]> {
+  return readCollection('ulasan', reviewSchema)
+})
+
+export async function loadReview(slug: string): Promise<Review | null> {
+  const reviews = await loadReviews()
+  return reviews.find((review) => review.slug === slug) ?? null
 }
