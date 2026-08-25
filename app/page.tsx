@@ -3,10 +3,22 @@ import type { Metadata } from 'next'
 import { loadLatest, labelFor } from '@/lib/content/latest'
 import { site } from '@/lib/site'
 import SectionLabel from '@/components/section-label'
+import JsonLd from '@/components/json-ld'
 
 export const metadata: Metadata = {
   title: 'dsapoetra',
   description: 'Puisi, cerita pendek, dan ulasan buku dari Jakarta.',
+}
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.personalName || site.name,
+  url: site.url,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: site.city,
+  },
 }
 
 export default async function Home() {
@@ -14,6 +26,7 @@ export default async function Home() {
 
   return (
     <div className="mx-auto max-w-prose-measure px-6 py-20">
+      <JsonLd data={personJsonLd} />
       <h1 className="text-3xl leading-tight">
         {site.personalName || site.name}
       </h1>
