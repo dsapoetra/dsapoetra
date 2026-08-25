@@ -26,8 +26,14 @@ export default async function Home() {
   const items = await loadLatest(10)
 
   return (
-    <div className="mx-auto max-w-prose-measure px-6 py-20">
+    // The container is wider than the rest of the site so the sidebar has
+    // somewhere to sit, but the reading column below keeps the same
+    // prose measure every other page uses — only the page widens, not the text.
+    <div className="mx-auto max-w-5xl px-6 py-20">
       <JsonLd data={personJsonLd} />
+
+      <div className="lg:flex lg:items-start lg:gap-14">
+        <div className="min-w-0 max-w-prose-measure lg:flex-1">
       <h1 className="text-3xl leading-tight">
         {site.personalName || site.name}
       </h1>
@@ -72,8 +78,10 @@ export default async function Home() {
           ))}
         </ul>
       )}
+        </div>
 
-      <AskMe />
+        <AskMe className="mt-16 lg:sticky lg:top-20 lg:mt-0 lg:w-60 lg:shrink-0" />
+      </div>
     </div>
   )
 }

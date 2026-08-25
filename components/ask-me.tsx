@@ -69,14 +69,17 @@ function Icon({ name }: { name: string }) {
   )
 }
 
-export default function AskMe() {
+export default function AskMe({ className }: { className?: string }) {
   const links = site.links.filter((link) => link.href !== '')
 
   // Nothing configured yet — render nothing rather than an empty shell.
   if (links.length === 0) return null
 
   return (
-    <section className="mt-16">
+    // <aside>, not <section>: this is complementary to the page, not part of
+    // its argument. Spacing comes from the call site so the component does not
+    // assume where it sits.
+    <aside className={className}>
       <SectionLabel as="h2">Tanya apa saja</SectionLabel>
 
       <ul className="mt-6 space-y-3">
@@ -103,6 +106,6 @@ export default function AskMe() {
           )
         })}
       </ul>
-    </section>
+    </aside>
   )
 }
