@@ -3,6 +3,24 @@
 Things learned while building Plan 1 that later plans must not rediscover. Each
 one cost a review round or a fix round to find.
 
+## Known project values
+
+**Domain: `dsapoetra.com`.**
+
+Set `metadataBase: new URL('https://dsapoetra.com')` in the root layout's
+`metadata` export. Without it, Next.js resolves relative Open Graph and Twitter
+image URLs against `localhost`, so share cards break in production while
+everything looks fine locally. Nothing in Plan 1 needs it — there are no OG
+images yet — but it must land before the first one does.
+
+It is also the base for `sitemap.xml`, `robots.txt`, and the RSS feeds in Plan 3,
+and for the `Person` JSON-LD `url` on the homepage.
+
+Note this does not by itself settle whether the site fronts the handle
+`dsapoetra` or a personal name — the domain can carry the handle while the bio
+and JSON-LD carry the real name, which is usually the better arrangement, since
+people search for the person.
+
 ## Content schemas
 
 **YAML silently converts unquoted dates to `Date` objects.** `gray-matter` parses
