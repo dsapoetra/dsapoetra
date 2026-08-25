@@ -11,9 +11,15 @@ import { poemSchema, storySchema, reviewSchema } from './schema'
  * temporary directory via CONTENT_ROOT. Reading it at module scope would bake
  * in whatever was set when the module was first imported, which under ESM is
  * effectively once per process.
+ *
+ * Keep the fallback as a ternary rather than `??`: Turbopack folds this branch
+ * away at build time and then sees that every read stays under `content/`.
+ * With `??` it cannot, and it traces the whole project — sources and public/ —
+ * into the server output.
  */
 export function contentRoot(): string {
-  return process.env.CONTENT_ROOT ?? path.join(process.cwd(), 'content')
+  const root = process.env.CONTENT_ROOT
+  return root ? root : path.join(process.cwd(), 'content')
 }
 
 export type Poem = {
