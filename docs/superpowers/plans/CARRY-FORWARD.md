@@ -78,12 +78,33 @@ twice.
 behind and the next build would publish them as real pages. Giving the loader an
 injectable root would close this.
 
-**This has already bitten once.** A leftover `__uji-*-rusak.mdx` from an interrupted
-run caused a confusing burst of unrelated test failures: `readCollection` re-reads
-the directory on every call and throws for the whole collection if *any* file in it
-is malformed, so one stray fixture fails every test that loads that collection. If
-tests start failing inexplicably, check for stray `__uji-*` files under `content/`
-before debugging anything else.
+**This has already bitten twice, and the second time was worse.**
+
+*First:* a leftover `__uji-*-rusak.mdx` from an interrupted run caused a confusing
+burst of unrelated test failures. `readCollection` re-reads the directory on every
+call and throws for the whole collection if *any* file in it is malformed, so one
+stray fixture fails every test that loads that collection. If tests start failing
+inexplicably, check for stray `__uji-*` files under `content/` before debugging
+anything else.
+
+*Second:* once a second test file (`latest.test.ts`) also began reading those
+directories, the suite became genuinely flaky — measured at 4 failures in 8 full
+runs. `load.test.ts` deliberately writes a malformed file for one assertion, and
+with Vitest's default parallel workers that transient file lands mid-read for the
+other file's `loadPoems()`/`loadStories()`/`loadReviews()` calls, failing assertions
+that have nothing to do with it.
+
+The stopgap in place is `fileParallelism: false` in `vitest.config.ts`, with a
+comment explaining the mechanism. It is honest and costs nothing at five test files
+and sub-second runs — but it is brute force, and it silently taxes every future test
+file.
+
+**The real fix is an injectable content root**, so each test file works in its own
+temporary directory instead of the live `content/` tree. That removes the coupling
+structurally and restores parallelism. Do this in Plan 3, before the suite grows —
+the cost of the stopgap rises with every test added, and a suite that has been made
+reliable by serialising it is one careless `describe.concurrent` away from being
+flaky again.
 
 ## React `cache()` does nothing in tests
 
