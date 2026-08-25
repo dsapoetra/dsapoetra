@@ -21,4 +21,29 @@ export const site = {
    * renders without it rather than showing a placeholder.
    */
   detail: '',
+
+  /**
+   * "Ask me anything" links on the homepage.
+   *
+   * An entry with an empty `href` is skipped entirely, and if every entry is
+   * empty the whole block disappears — same rule as `detail` above: nothing
+   * fake is ever rendered. Fill in only the ones you actually use, and delete
+   * the rest rather than leaving dead rows.
+   *
+   * `href` must be the full destination:
+   *   instagram  https://www.instagram.com/<handle>/
+   *   threads    https://www.threads.net/@<handle>
+   *   github     https://github.com/<handle>
+   *   whatsapp   https://wa.me/62<number without leading 0>
+   *   email      mailto:you@example.com
+   *
+   * `icon` picks the glyph — see components/ask-me.tsx for the available names.
+   */
+  links: [
+    { label: 'Instagram', href: '', icon: 'instagram' },
+    { label: 'Threads', href: '', icon: 'threads' },
+    { label: 'GitHub', href: '', icon: 'github' },
+    { label: 'WhatsApp', href: '', icon: 'whatsapp' },
+    { label: 'Email', href: '', icon: 'email' },
+  ],
 } as const

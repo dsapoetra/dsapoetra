@@ -4,6 +4,7 @@ import { loadLatest, labelFor } from '@/lib/content/latest'
 import { site } from '@/lib/site'
 import SectionLabel from '@/components/section-label'
 import JsonLd from '@/components/json-ld'
+import AskMe from '@/components/ask-me'
 
 export const metadata: Metadata = {
   title: 'dsapoetra',
@@ -71,6 +72,8 @@ export default async function Home() {
           ))}
         </ul>
       )}
+
+      <AskMe />
     </div>
   )
 }
