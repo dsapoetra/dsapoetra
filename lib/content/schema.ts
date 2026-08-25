@@ -30,8 +30,8 @@ export const reviewSchema = z.object({
   date: isoDate,
   cover: z.string().min(1, 'cover wajib diisi'),
   excerpt: z.string().min(1, 'excerpt wajib diisi'),
-  videoUrl: z.string().url('videoUrl harus berupa URL lengkap').optional(),
-  canonicalUrl: z.string().url('canonicalUrl harus berupa URL lengkap').optional(),
+  videoUrl: z.url('videoUrl harus berupa URL lengkap').optional(),
+  canonicalUrl: z.url('canonicalUrl harus berupa URL lengkap').optional(),
   tags: z.array(z.string()).optional(),
 })
 
