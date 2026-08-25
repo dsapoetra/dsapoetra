@@ -26,6 +26,9 @@ export const site = {
   yearsWriting: 4,
   url: 'https://dsapoetra.com',
 
+  /** Profile image in `public/`. Square; rendered as a circle. */
+  avatar: '/dsapoetra.png',
+
   /**
    * ONE concrete, unglamorous, true detail about the writing life.
    * This is what stops the bio reading like a résumé.

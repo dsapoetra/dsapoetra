@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { loadLatest, labelFor } from '@/lib/content/latest'
 import { site } from '@/lib/site'
@@ -16,6 +17,10 @@ const personJsonLd = {
   '@type': 'Person',
   name: site.personalName || site.name,
   url: site.url,
+  // Now genuinely sourced — a real image exists, so this is no longer a claim
+  // without a basis. Absolute, because consumers of JSON-LD do not resolve
+  // relative paths.
+  image: `${site.url}${site.avatar}`,
   address: {
     '@type': 'PostalAddress',
     addressLocality: site.city,
@@ -34,9 +39,19 @@ export default async function Home() {
 
       <div className="lg:flex lg:items-start lg:gap-14">
         <div className="min-w-0 max-w-prose-measure lg:flex-1">
-      <h1 className="text-3xl leading-tight">
-        {site.personalName || site.name}
-      </h1>
+      <div className="flex items-center gap-5">
+        <Image
+          src={site.avatar}
+          alt={`Foto ${site.personalName || site.name}`}
+          width={88}
+          height={88}
+          priority
+          className="h-[88px] w-[88px] shrink-0 rounded-full border border-rule object-cover"
+        />
+        <h1 className="text-3xl leading-tight">
+          {site.personalName || site.name}
+        </h1>
+      </div>
 
       <div className="mt-6 space-y-4 text-lg leading-8">
         <p>
