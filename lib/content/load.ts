@@ -6,7 +6,15 @@ import { z } from 'zod'
 import { slugFromFilename } from './slug'
 import { poemSchema, storySchema, reviewSchema } from './schema'
 
-const CONTENT_ROOT = path.join(process.cwd(), 'content')
+/**
+ * Resolved per call, not at module load, so tests can point the loaders at a
+ * temporary directory via CONTENT_ROOT. Reading it at module scope would bake
+ * in whatever was set when the module was first imported, which under ESM is
+ * effectively once per process.
+ */
+export function contentRoot(): string {
+  return process.env.CONTENT_ROOT ?? path.join(process.cwd(), 'content')
+}
 
 export type Poem = {
   slug: string
@@ -27,7 +35,7 @@ async function readCollection<T extends { date: string }>(
   dir: string,
   schema: z.ZodType<T>
 ): Promise<Array<T & { slug: string; body: string }>> {
-  const absolute = path.join(CONTENT_ROOT, dir)
+  const absolute = path.join(contentRoot(), dir)
 
   let filenames: string[]
   try {

@@ -4,13 +4,14 @@ import { cache } from 'react'
 import matter from 'gray-matter'
 import { z } from 'zod'
 import { isoDate } from './schema'
+import { contentRoot } from './load'
 
 const sekarangSchema = z.object({ updated: isoDate })
 
 export type Sekarang = { updated: string; body: string }
 
 export const loadSekarang = cache(async (): Promise<Sekarang | null> => {
-  const file = path.join(process.cwd(), 'content/sekarang.mdx')
+  const file = path.join(contentRoot(), 'sekarang.mdx')
 
   let raw: string
   try {

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
-import { mkdir, writeFile, rm, readdir } from 'node:fs/promises'
+import { mkdtemp, mkdir, writeFile, rm, readdir } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { loadPoems, loadPoem, loadStories, loadStory, loadReviews, loadReview } from '@/lib/content/load'
 
@@ -15,21 +16,18 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   }
 })
 
-const poemDir = path.join(process.cwd(), 'content/puisi')
-const storyDir = path.join(process.cwd(), 'content/cerita')
-const reviewDir = path.join(process.cwd(), 'content/ulasan')
-const fixtures = [
-  'uji-satu.mdx',
-  'uji-dua.mdx',
-  'uji-rusak.mdx',
-  'uji-sama-a.mdx',
-  'uji-sama-b.mdx',
-  'uji-sama-c.mdx',
-  'uji-ulasan.mdx',
-  'uji-ulasan-video.mdx',
-]
+let root: string
+let poemDir: string
+let storyDir: string
+let reviewDir: string
 
 beforeAll(async () => {
+  root = await mkdtemp(path.join(tmpdir(), 'dsapoetra-'))
+  process.env.CONTENT_ROOT = root
+  poemDir = path.join(root, 'puisi')
+  storyDir = path.join(root, 'cerita')
+  reviewDir = path.join(root, 'ulasan')
+
   await mkdir(poemDir, { recursive: true })
   await mkdir(storyDir, { recursive: true })
   await mkdir(reviewDir, { recursive: true })
@@ -57,11 +55,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  for (const name of fixtures) {
-    await rm(path.join(poemDir, name), { force: true })
-    await rm(path.join(storyDir, name), { force: true })
-    await rm(path.join(reviewDir, name), { force: true })
-  }
+  delete process.env.CONTENT_ROOT
+  await rm(root, { recursive: true, force: true })
 })
 
 describe('loadPoems', () => {

@@ -1,33 +1,24 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { mkdir, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { loadLatest } from '@/lib/content/latest'
 
-const poemDir = path.join(process.cwd(), 'content/puisi')
-const storyDir = path.join(process.cwd(), 'content/cerita')
-const reviewDir = path.join(process.cwd(), 'content/ulasan')
-
-const fixtures: Array<{ dir: string; name: string }> = [
-  { dir: poemDir, name: 'uji-latest-puisi-lama.mdx' },
-  { dir: poemDir, name: 'uji-latest-puisi-sama.mdx' },
-  { dir: storyDir, name: 'uji-latest-cerita.mdx' },
-  { dir: storyDir, name: 'uji-latest-cerita-sama.mdx' },
-  { dir: reviewDir, name: 'uji-latest-ulasan.mdx' },
-]
-
-async function cleanup() {
-  for (const { dir, name } of fixtures) {
-    await rm(path.join(dir, name), { force: true })
-  }
-}
+let root: string
+let poemDir: string
+let storyDir: string
+let reviewDir: string
 
 beforeAll(async () => {
+  root = await mkdtemp(path.join(tmpdir(), 'dsapoetra-'))
+  process.env.CONTENT_ROOT = root
+  poemDir = path.join(root, 'puisi')
+  storyDir = path.join(root, 'cerita')
+  reviewDir = path.join(root, 'ulasan')
+
   await mkdir(poemDir, { recursive: true })
   await mkdir(storyDir, { recursive: true })
   await mkdir(reviewDir, { recursive: true })
-
-  // Ensure a clean slate in case a previous run crashed before cleanup.
-  await cleanup()
 
   // A poem well in the past, so it lands last in the merged stream.
   await writeFile(
@@ -64,7 +55,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await cleanup()
+  delete process.env.CONTENT_ROOT
+  await rm(root, { recursive: true, force: true })
 })
 
 describe('loadLatest', () => {
