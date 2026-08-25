@@ -25,6 +25,7 @@
  */
 
 :root {
+  color-scheme: light dark;
   --paper: #f8f5ef;
   --ink: #151b26;
   --muted: #5c6470;
