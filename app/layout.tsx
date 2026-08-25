@@ -26,6 +26,11 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://dsapoetra.com'),
   title: 'dsapoetra',
   description: 'Puisi, cerita, dan ulasan buku.',
+  alternates: {
+    types: {
+      'application/rss+xml': [{ url: '/rss.xml', title: 'dsapoetra' }],
+    },
+  },
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
