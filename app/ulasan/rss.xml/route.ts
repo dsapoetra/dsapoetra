@@ -11,7 +11,7 @@ export async function GET() {
     title: `${site.name} — Ulasan`,
     description: 'Ulasan buku.',
     feedUrl: `${site.url}/ulasan/rss.xml`,
-    siteUrl: site.url,
+    siteUrl: `${site.url}/ulasan`,
     items: reviews.map((review) => ({
       title: review.title,
       url: `${site.url}/ulasan/${review.slug}`,

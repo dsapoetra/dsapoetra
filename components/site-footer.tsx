@@ -8,6 +8,9 @@ export default function SiteFooter() {
         <Link href="/sekarang" className="hover:text-accent focus-visible:text-accent">
           Sekarang
         </Link>
+        <Link href="/rss.xml" className="hover:text-accent focus-visible:text-accent">
+          RSS
+        </Link>
       </div>
     </footer>
   )

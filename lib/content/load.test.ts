@@ -149,41 +149,57 @@ describe('validation', () => {
 
 describe('isoDate calendar validation', () => {
   it('rejects a quoted date that rolls over a month boundary (2026-02-30)', async () => {
+    const file = path.join(poemDir, 'uji-tanggal-rusak.mdx')
     await writeFile(
-      path.join(poemDir, 'uji-tanggal-rusak.mdx'),
+      file,
       '---\ntitle: Tanggal Rusak\ndate: "2026-02-30"\n---\n\nisi\n'
     )
-    await expect(loadPoems()).rejects.toThrow('uji-tanggal-rusak.mdx')
-    await rm(path.join(poemDir, 'uji-tanggal-rusak.mdx'), { force: true })
+    try {
+      await expect(loadPoems()).rejects.toThrow('uji-tanggal-rusak.mdx')
+    } finally {
+      await rm(file, { force: true })
+    }
   })
 
   it('rejects a quoted date with an invalid month (2026-13-01)', async () => {
+    const file = path.join(poemDir, 'uji-bulan-rusak.mdx')
     await writeFile(
-      path.join(poemDir, 'uji-bulan-rusak.mdx'),
+      file,
       '---\ntitle: Bulan Rusak\ndate: "2026-13-01"\n---\n\nisi\n'
     )
-    await expect(loadPoems()).rejects.toThrow('uji-bulan-rusak.mdx')
-    await rm(path.join(poemDir, 'uji-bulan-rusak.mdx'), { force: true })
+    try {
+      await expect(loadPoems()).rejects.toThrow('uji-bulan-rusak.mdx')
+    } finally {
+      await rm(file, { force: true })
+    }
   })
 
   it('accepts a valid quoted date (2026-02-28)', async () => {
+    const file = path.join(poemDir, 'uji-tanggal-valid.mdx')
     await writeFile(
-      path.join(poemDir, 'uji-tanggal-valid.mdx'),
+      file,
       '---\ntitle: Tanggal Valid\ndate: "2026-02-28"\n---\n\nisi\n'
     )
-    const poems = await loadPoems()
-    expect(poems.some((p) => p.slug === 'uji-tanggal-valid')).toBe(true)
-    await rm(path.join(poemDir, 'uji-tanggal-valid.mdx'), { force: true })
+    try {
+      const poems = await loadPoems()
+      expect(poems.some((p) => p.slug === 'uji-tanggal-valid')).toBe(true)
+    } finally {
+      await rm(file, { force: true })
+    }
   })
 
   it('accepts a valid quoted leap day (2028-02-29)', async () => {
+    const file = path.join(poemDir, 'uji-kabisat.mdx')
     await writeFile(
-      path.join(poemDir, 'uji-kabisat.mdx'),
+      file,
       '---\ntitle: Tahun Kabisat\ndate: "2028-02-29"\n---\n\nisi\n'
     )
-    const poems = await loadPoems()
-    expect(poems.some((p) => p.slug === 'uji-kabisat')).toBe(true)
-    await rm(path.join(poemDir, 'uji-kabisat.mdx'), { force: true })
+    try {
+      const poems = await loadPoems()
+      expect(poems.some((p) => p.slug === 'uji-kabisat')).toBe(true)
+    } finally {
+      await rm(file, { force: true })
+    }
   })
 })
 

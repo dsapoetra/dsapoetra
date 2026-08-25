@@ -17,36 +17,55 @@ export default function GlobalError({
           alignItems: 'center',
           justifyContent: 'center',
           padding: '1.5rem',
-          backgroundColor: '#f8f5ef',
-          color: '#151b26',
+          backgroundColor: 'var(--ge-paper)',
+          color: 'var(--ge-ink)',
           fontFamily:
             'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
         }}
       >
+        <style>
+          {`
+            :root {
+              --ge-paper: #f8f5ef;
+              --ge-ink: #151b26;
+              --ge-accent: #b23122;
+              --ge-muted: #5c6470;
+            }
+            @media (prefers-color-scheme: dark) {
+              :root {
+                --ge-paper: #12161e;
+                --ge-ink: #f2ede3;
+                --ge-accent: #ff8b6b;
+                --ge-muted: #98a2af;
+              }
+            }
+          `}
+        </style>
+
         <main
           style={{
             maxWidth: '32rem',
             textAlign: 'center',
           }}
         >
-          <p
+          <h1
             style={{
               margin: 0,
               fontSize: '0.875rem',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
-              color: '#5c6470',
+              color: 'var(--ge-muted)',
             }}
           >
             Terjadi kesalahan
-          </p>
+          </h1>
 
           <p
             style={{
               marginTop: '1.5rem',
               fontSize: '1.125rem',
               lineHeight: 1.7,
-              color: '#5c6470',
+              color: 'var(--ge-muted)',
             }}
           >
             Maaf, ada yang tidak beres di sisi kami. Silakan coba lagi.
@@ -69,7 +88,7 @@ export default function GlobalError({
                 padding: 0,
                 font: 'inherit',
                 fontSize: '1rem',
-                color: '#b23122',
+                color: 'var(--ge-accent)',
                 cursor: 'pointer',
                 textDecoration: 'underline',
                 textUnderlineOffset: '3px',
@@ -83,7 +102,7 @@ export default function GlobalError({
               href="/"
               style={{
                 fontSize: '1rem',
-                color: '#b23122',
+                color: 'var(--ge-accent)',
                 textDecoration: 'underline',
                 textUnderlineOffset: '3px',
               }}
