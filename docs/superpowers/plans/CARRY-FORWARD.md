@@ -78,6 +78,35 @@ twice.
 behind and the next build would publish them as real pages. Giving the loader an
 injectable root would close this.
 
+**This has already bitten once.** A leftover `__uji-*-rusak.mdx` from an interrupted
+run caused a confusing burst of unrelated test failures: `readCollection` re-reads
+the directory on every call and throws for the whole collection if *any* file in it
+is malformed, so one stray fixture fails every test that loads that collection. If
+tests start failing inexplicably, check for stray `__uji-*` files under `content/`
+before debugging anything else.
+
+## React `cache()` does nothing in tests
+
+`loadPoems`, `loadStories` and `loadReviews` are wrapped in React's `cache()`. That
+wrapping is real and works in production, but it is **completely inert under Vitest**,
+and it is worth knowing why so nobody re-derives it.
+
+React ships two builds. The standard one — the build Node and Vitest resolve for a
+plain `"react"` import — exports `cache` as a pure passthrough that simply calls the
+function. The memoizing implementation exists only in the `react-server` build, behind
+an export condition that only Next.js's RSC bundler activates.
+
+Two consequences:
+
+- **The tests do not exercise memoization at all.** Every call re-reads the directory.
+  Do not write a test asserting that a loader is cached; it will fail, and the failure
+  will not mean what it looks like it means.
+- **The suite is not order-dependent because of `cache`.** An earlier concern held that
+  the deliberate malformed-frontmatter test might poison later calls by memoizing a
+  rejected promise. It cannot — there is no memoization to poison. In real RSC `cache`
+  *does* memoize rejections, but that is scoped to a single request and content files
+  are not mutated mid-request, so it is not a problem there either.
+
 ## Poems are not like everything else
 
 The poetry pages are deliberately the inverse of the story pages in three ways.
