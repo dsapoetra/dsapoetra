@@ -22,7 +22,7 @@ export default async function CeritaIndex() {
           {stories.map((story) => (
             <li key={story.slug}>
               <Link href={`/cerita/${story.slug}`} className="group block">
-                <h2 className="text-xl transition-colors group-hover:text-accent">
+                <h2 className="text-xl transition-colors group-hover:text-accent group-focus-visible:text-accent">
                   {story.title}
                 </h2>
                 <p className="mt-1 leading-7 text-muted">{story.excerpt}</p>
