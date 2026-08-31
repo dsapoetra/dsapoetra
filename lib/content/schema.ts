@@ -25,25 +25,30 @@ export const isoDate = z.preprocess(
 )
 
 export const poemSchema = z.object({
-  title: z.string().min(1, 'title wajib diisi'),
+  title: z.string('title wajib diisi').min(1, 'title wajib diisi'),
   date: isoDate,
 })
 
 export const storySchema = z.object({
-  title: z.string().min(1, 'title wajib diisi'),
+  title: z.string('title wajib diisi').min(1, 'title wajib diisi'),
   date: isoDate,
-  excerpt: z.string().min(1, 'excerpt wajib diisi'),
+  excerpt: z.string('excerpt wajib diisi').min(1, 'excerpt wajib diisi'),
 })
 
 export const reviewSchema = z.object({
-  title: z.string().min(1, 'title wajib diisi'),
-  book: z.object({
-    title: z.string().min(1, 'book.title wajib diisi'),
-    author: z.string().min(1, 'book.author wajib diisi'),
-  }),
+  title: z.string('title wajib diisi').min(1, 'title wajib diisi'),
+  book: z.object(
+    {
+      title: z.string('book.title wajib diisi').min(1, 'book.title wajib diisi'),
+      author: z
+        .string('book.author wajib diisi')
+        .min(1, 'book.author wajib diisi'),
+    },
+    'book wajib diisi'
+  ),
   date: isoDate,
-  cover: z.string().min(1, 'cover wajib diisi'),
-  excerpt: z.string().min(1, 'excerpt wajib diisi'),
+  cover: z.string('cover wajib diisi').min(1, 'cover wajib diisi'),
+  excerpt: z.string('excerpt wajib diisi').min(1, 'excerpt wajib diisi'),
   videoUrl: z.url('videoUrl harus berupa URL lengkap').optional(),
   canonicalUrl: z.url('canonicalUrl harus berupa URL lengkap').optional(),
   tags: z.array(z.string()).optional(),

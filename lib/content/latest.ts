@@ -10,6 +10,12 @@ export type StreamItem = {
   date: string
   href: string
   blurb?: string
+  /**
+   * Cover image path. Only reviews carry one — a poem or a story has no
+   * artwork — so every consumer must treat it as optional and lay out without
+   * it rather than reserving a gap.
+   */
+  cover?: string
 }
 
 const LABELS: Record<StreamKind, string> = {
@@ -39,6 +45,7 @@ export const loadLatest = cache(async function loadLatest(
       date: review.date,
       href: `/ulasan/${review.slug}`,
       blurb: review.excerpt,
+      cover: review.cover,
     })),
     ...poems.map((poem) => ({
       kind: 'puisi' as const,
@@ -61,3 +68,29 @@ export const loadLatest = cache(async function loadLatest(
 
   return typeof limit === 'number' ? items.slice(0, limit) : items
 })
+
+export type YearGroup = { year: string; items: StreamItem[] }
+
+/**
+ * Buckets a stream by year, newest year first, preserving the stream's order
+ * inside each bucket.
+ *
+ * Takes an already-sorted stream and does not re-sort it: `loadLatest` owns the
+ * ordering, including its tie-break, and duplicating that rule here would give
+ * the archive a subtly different order from the homepage.
+ */
+export function groupByYear(items: StreamItem[]): YearGroup[] {
+  const groups: YearGroup[] = []
+
+  for (const item of items) {
+    const year = item.date.slice(0, 4)
+    const last = groups[groups.length - 1]
+    if (last && last.year === year) {
+      last.items.push(item)
+    } else {
+      groups.push({ year, items: [item] })
+    }
+  }
+
+  return groups
+}

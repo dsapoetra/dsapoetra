@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Writing and publishing
+
+Everything on the site — poems, stories, reviews, the shop, the novel progress
+strip — is a Markdown file in `content/`. To add or change any of it, see
+**[docs/ADDING-CONTENT.md](docs/ADDING-CONTENT.md)**. You should not need to open
+a `.tsx` file to publish.
+
 ## Getting Started
 
 First, run the development server:

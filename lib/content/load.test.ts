@@ -135,6 +135,39 @@ describe('validation', () => {
     await expect(loadPoems()).rejects.toThrow('uji-rusak.mdx')
     await rm(path.join(poemDir, 'uji-rusak.mdx'), { force: true })
   })
+
+  it('gives the same Indonesian message whether a field is MISSING or empty', async () => {
+    // Without the type-error argument on `z.string(...)`, a missing field falls
+    // back to Zod's English "expected string, received undefined" — and the
+    // message docs/ADDING-CONTENT.md promises never appears. Both spellings of
+    // the mistake must land on the documented wording.
+    const missing = path.join(poemDir, 'uji-tanpa-judul.mdx')
+    await writeFile(missing, '---\ndate: "2026-01-01"\n---\n\nisi\n')
+    await expect(loadPoems()).rejects.toThrow('title wajib diisi')
+    await rm(missing, { force: true })
+
+    const empty = path.join(poemDir, 'uji-judul-kosong.mdx')
+    await writeFile(empty, '---\ntitle: ""\ndate: "2026-01-01"\n---\n\nisi\n')
+    await expect(loadPoems()).rejects.toThrow('title wajib diisi')
+    await rm(empty, { force: true })
+  })
+
+  it('names the missing excerpt on a story in Indonesian', async () => {
+    const file = path.join(storyDir, 'uji-tanpa-excerpt.mdx')
+    await writeFile(file, '---\ntitle: T\ndate: "2026-01-01"\n---\n\nisi\n')
+    await expect(loadStories()).rejects.toThrow('excerpt wajib diisi')
+    await rm(file, { force: true })
+  })
+
+  it('names the missing cover on a review in Indonesian', async () => {
+    const file = path.join(reviewDir, 'uji-tanpa-cover.mdx')
+    await writeFile(
+      file,
+      '---\ntitle: T\nbook:\n  title: B\n  author: A\ndate: "2026-01-01"\nexcerpt: E\n---\n\nisi\n'
+    )
+    await expect(loadReviews()).rejects.toThrow('cover wajib diisi')
+    await rm(file, { force: true })
+  })
 })
 
 // A test-fixture filter was tried here and removed. It excluded `__`-prefixed

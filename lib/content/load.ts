@@ -37,10 +37,31 @@ export type Story = {
   body: string
 }
 
-async function readCollection<T extends { date: string }>(
+/** A parsed file: its validated frontmatter, plus the slug and body. */
+export type Entry<T> = T & { slug: string; body: string }
+
+/**
+ * Newest first, which is what every dated collection wants. Passed explicitly
+ * rather than baked into `readCollection` so collections without a date — the
+ * shop, whose order is a shelf decision — can order themselves.
+ */
+export function byNewestFirst<T extends { date: string }>(a: T, b: T): number {
+  return a.date < b.date ? 1 : a.date > b.date ? -1 : 0
+}
+
+/**
+ * Reads every `.mdx` file in one directory under `content/`, validates its
+ * frontmatter, and returns the entries in the order `compare` puts them.
+ *
+ * Exported so collections outside `lib/content/` (the shop) get the same
+ * frontmatter validation and the same error message pointing at the offending
+ * file, instead of a second, subtly different loader.
+ */
+export async function readCollection<T>(
   dir: string,
-  schema: z.ZodType<T>
-): Promise<Array<T & { slug: string; body: string }>> {
+  schema: z.ZodType<T>,
+  compare: (a: Entry<T>, b: Entry<T>) => number
+): Promise<Array<Entry<T>>> {
   const absolute = path.join(contentRoot(), dir)
 
   let filenames: string[]
@@ -76,11 +97,11 @@ async function readCollection<T extends { date: string }>(
       })
   )
 
-  return entries.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  return entries.sort(compare)
 }
 
 export const loadPoems = cache(async function loadPoems(): Promise<Poem[]> {
-  return readCollection('puisi', poemSchema)
+  return readCollection('puisi', poemSchema, byNewestFirst)
 })
 
 export async function loadPoem(slug: string): Promise<Poem | null> {
@@ -89,7 +110,7 @@ export async function loadPoem(slug: string): Promise<Poem | null> {
 }
 
 export const loadStories = cache(async function loadStories(): Promise<Story[]> {
-  return readCollection('cerita', storySchema)
+  return readCollection('cerita', storySchema, byNewestFirst)
 })
 
 export async function loadStory(slug: string): Promise<Story | null> {
@@ -111,7 +132,7 @@ export type Review = {
 }
 
 export const loadReviews = cache(async function loadReviews(): Promise<Review[]> {
-  return readCollection('ulasan', reviewSchema)
+  return readCollection('ulasan', reviewSchema, byNewestFirst)
 })
 
 export async function loadReview(slug: string): Promise<Review | null> {

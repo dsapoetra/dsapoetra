@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { loadLatest } from '@/lib/content/latest'
+import { loadLatest, groupByYear, type StreamItem } from '@/lib/content/latest'
 
 let root: string
 let poemDir: string
@@ -107,5 +107,40 @@ describe('loadLatest', () => {
     expect(tiedAgain.map((item) => item.slug)).toEqual(
       tied.map((item) => item.slug)
     )
+  })
+})
+
+describe('groupByYear', () => {
+  function item(date: string, title = date): StreamItem {
+    return {
+      kind: 'puisi',
+      slug: title,
+      title,
+      date,
+      href: `/puisi/${title}`,
+    }
+  }
+
+  it('buckets newest year first and keeps the stream order inside a year', () => {
+    const groups = groupByYear([
+      item('2026-08-30', 'b'),
+      item('2026-01-02', 'a'),
+      item('2024-12-31', 'z'),
+    ])
+
+    expect(groups.map((group) => group.year)).toEqual(['2026', '2024'])
+    expect(groups[0].items.map((entry) => entry.title)).toEqual(['b', 'a'])
+    expect(groups[1].items.map((entry) => entry.title)).toEqual(['z'])
+  })
+
+  it('returns nothing for an empty stream', () => {
+    expect(groupByYear([])).toEqual([])
+  })
+
+  it('does not re-sort — an unsorted stream produces a bucket per run', () => {
+    // Documents the contract deliberately: ordering belongs to loadLatest, and
+    // this function must not quietly invent a second, different one.
+    const groups = groupByYear([item('2026-01-01'), item('2025-01-01'), item('2026-06-01')])
+    expect(groups.map((group) => group.year)).toEqual(['2026', '2025', '2026'])
   })
 })

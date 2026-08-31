@@ -40,6 +40,17 @@ export const site = {
   detail: '',
 
   /**
+   * Where the basket hands off to a real payment page.
+   *
+   * Site-wide, so it stays here rather than in `content/` — it is wiring, not
+   * writing. Empty until a payment provider is connected; while it is empty the
+   * shop still lists and the basket still works, but the basket says plainly
+   * that payment is not connected rather than showing a button that goes
+   * nowhere. A single product can override it with its own `buyUrl`.
+   */
+  checkoutUrl: '' as string,
+
+  /**
    * "Ask me anything" links on the homepage.
    *
    * An entry with an empty `href` is skipped entirely, and if every entry is

@@ -21,6 +21,11 @@
  * accent/paper 5.75:1, on-highlight/highlight 6.72:1.
  * Dark: ink/paper 15.53:1, muted/paper 7.01:1, accent/paper 7.90:1,
  * on-highlight/highlight 6.72:1.
+ * On the card surface, light: ink 16.99:1, muted 5.89:1, accent 6.16:1.
+ * Dark: ink 14.50:1, muted 6.54:1, accent 7.38:1.
+ * Shop covers, light: 15.86:1 (dark), 5.75:1 (red), 6.72:1 (coral).
+ * Dark: 14.79:1, 5.75:1, 6.72:1 — and each cover stays separable from the
+ * card behind it (14.50:1, 2.70:1, 6.59:1).
  * All exceed WCAG AA; body text exceeds AAA in both themes.
  */
 
@@ -30,10 +35,34 @@
   --ink: #151b26;
   --muted: #5c6470;
   --rule: #e4ded2;
+  /*
+   * Card surface — a shade off the page, never a second background.
+   * Cards are separated by their rule; --card only stops a stack of them
+   * reading as one flat sheet. It is 1.07:1 against --paper on purpose: any
+   * more and the page turns into a grid of boxes.
+   */
+  --card: #fffdf9;
   --accent: #b23122;
   --highlight: #ff7a59;
   --on-highlight: #151b26;
   --focus: #b23122;
+
+  /*
+   * Shop cover panels. Each is a background/foreground PAIR, because a cover
+   * is a reversed block: its text can never come from --ink, for the same
+   * reason rule 2 above gives for the highlight.
+   *
+   * Only the dark cover flips between themes. The red and the coral stay put —
+   * if they were tied to --accent and --highlight they would both land on
+   * salmon-over-coral in dark mode (1.12:1 against each other) and the three
+   * covers would stop being three colours.
+   */
+  --cover-ink: #151b26;
+  --on-cover-ink: #f8f5ef;
+  --cover-accent: #b23122;
+  --on-cover-accent: #f8f5ef;
+  --cover-highlight: #ff7a59;
+  --on-cover-highlight: #151b26;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,6 +75,10 @@
     --highlight: #ff7a59;
     --on-highlight: #151b26;
     --focus: #ff8b6b;
+
+    /* Only the dark cover inverts; see the note in :root. */
+    --cover-ink: #f2ede3;
+    --on-cover-ink: #151b26;
   }
 }
 
@@ -54,10 +87,17 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-rule: var(--rule);
+  --color-card: var(--card);
   --color-accent: var(--accent);
   --color-highlight: var(--highlight);
   --color-on-highlight: var(--on-highlight);
   --color-focus: var(--focus);
+  --color-cover-ink: var(--cover-ink);
+  --color-on-cover-ink: var(--on-cover-ink);
+  --color-cover-accent: var(--cover-accent);
+  --color-on-cover-accent: var(--on-cover-accent);
+  --color-cover-highlight: var(--cover-highlight);
+  --color-on-cover-highlight: var(--on-cover-highlight);
 
   --font-serif: var(--font-newsreader);
   --font-sans: var(--font-inter);

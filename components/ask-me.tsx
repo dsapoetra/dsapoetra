@@ -69,7 +69,18 @@ function Icon({ name }: { name: string }) {
   )
 }
 
-export default function AskMe({ className }: { className?: string }) {
+export default function AskMe({
+  className,
+  layout = 'column',
+}: {
+  className?: string
+  /**
+   * `column` stacks the rows — the shape for a narrow sidebar.
+   * `row` wraps them side by side, which is what the homepage wants now that
+   * the block sits full-width under the bio instead of beside it.
+   */
+  layout?: 'column' | 'row'
+}) {
   const links = site.links.filter((link) => link.href !== '')
 
   // Nothing configured yet — render nothing rather than an empty shell.
@@ -82,7 +93,13 @@ export default function AskMe({ className }: { className?: string }) {
     <aside className={className}>
       <SectionLabel as="h2">Tanya apa saja</SectionLabel>
 
-      <ul className="mt-6 space-y-3">
+      <ul
+        className={
+          layout === 'row'
+            ? 'mt-4 flex flex-wrap gap-3'
+            : 'mt-6 space-y-3'
+        }
+      >
         {links.map((link) => {
           // mailto:/tel: must stay in-page; only real web destinations open a tab.
           const external = link.href.startsWith('http')
