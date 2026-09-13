@@ -1,15 +1,41 @@
+# `content/` — everything the site publishes
+
+No CMS, no database, no admin login. Every poem, story, review, product and page
+headline is a Markdown file in this folder. Edit a file, commit, push — it is
+live. You should never need to open a `.tsx` to publish.
+
+## What is in here
+
+| Path | Holds | Guide |
+|---|---|---|
+| `puisi/` | Poems → `/puisi/<filename>` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-poem--contentpuisihujan-di-bulan-junimdx) |
+| `cerita/` | Short stories → `/cerita/<filename>` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-short-story--contentceritajudul-ceritamdx) |
+| `ulasan/` | Book reviews → `/ulasan/<filename>` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-book-review--contentulasanjudul-bukumdx) |
+| `produk/` | What is for sale. **Empty = no shop at all** | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-product--contentproduksunyi-hanya-anganmdx) |
+| `produk-draf/` | Parked products, invisible to the site | [produk-draf/README](produk-draf/README.md) |
+| `sekarang.mdx` | What you are up to → `/sekarang` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md) |
+| `novel.mdx` | The novel progress strip on `/` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#novel-progress--contentnovelmdx) |
+| `tulisan.mdx` | The words **on** `/tulisan` | ↓ the rest of this file |
+
+Two kinds of file, and the difference is worth holding onto:
+
+- **Collections** are folders — one file per thing, as many as you like, and the
+  **filename becomes the URL**. Adding a poem means adding a file.
+- **Page copy** is one file named after a route. It is not a piece of writing;
+  it is the words a *page* is made of — its headline, its intro, the fields
+  along its bottom edge.
+
+For collections, go to **[docs/ADDING-CONTENT.md](../docs/ADDING-CONTENT.md)** —
+it covers every frontmatter field, every build error, and the traps. The rest of
+this file is about page copy.
+
+---
+
 # Supplying a page's words with a Markdown file
 
 Every top-level page of this site is a **sheet** in one drawing set — a
 blueprint, with a numbered header, a headline, and a ruled title block along the
-bottom. The layout is code. Everything *written* on the sheet is a Markdown file
-in this folder, and you can change all of it without opening a `.tsx`.
-
-This file is about that second kind of file. For poems, stories, reviews and
-products — the things you add more of — see
-**[docs/ADDING-CONTENT.md](../docs/ADDING-CONTENT.md)** instead.
-
----
+bottom. The layout is code; every word on it comes from a file you can edit.
 
 ## The short version
 
