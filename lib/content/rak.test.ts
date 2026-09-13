@@ -140,6 +140,22 @@ describe('parseRak', () => {
     expect(books).toHaveLength(125)
     expect(new Set(books.map((book) => book.slug)).size).toBe(125)
   })
+
+  it('has a book for every cover image the site ships', async () => {
+    // The coupling runs the other way from everything else here: a cover is
+    // matched to a book BY FILENAME, so a typo or a renamed title leaves an
+    // orphan in public/sampul/ that nothing will ever render and no build will
+    // ever complain about. This is the thing that notices.
+    const { readdir, readFile } = await import('node:fs/promises')
+    const raw = await readFile(path.join(process.cwd(), 'content', 'rak.md'), 'utf8')
+    const slugs = new Set(parseRak(raw).books.map((book) => book.slug))
+
+    const covers = (await readdir(path.join(process.cwd(), 'public', 'sampul')))
+      .filter((name) => /\.(jpe?g|png|webp|avif)$/i.test(name))
+      .map((name) => name.replace(/\.[^.]+$/, ''))
+
+    expect(covers.filter((slug) => !slugs.has(slug))).toEqual([])
+  })
 })
 
 describe('shortAuthor', () => {
@@ -212,6 +228,35 @@ describe('loadRak', () => {
     expect(shelf?.books[0].review?.title).toBe('Catatan soal Buku Satu')
     expect(shelf?.books[0].review?.cover).toBe('/sampul/buku-satu.jpg')
     expect(shelf?.books[1].review).toBeNull()
+  })
+
+  it("prefers the review's own cover field over a file in public/sampul", async () => {
+    await writeFile(
+      path.join(root, 'rak.md'),
+      rak('## Fase 1', '- Buku Satu — Penulis Satu · finished')
+    )
+    await mkdir(path.join(root, 'ulasan'), { recursive: true })
+    await writeFile(
+      path.join(root, 'ulasan', 'buku-satu.mdx'),
+      '---\ntitle: Catatan\nbook:\n  title: Buku Satu\n  author: Penulis Satu\ndate: 2026-05-02\ncover: /sampul/pilihan-sendiri.jpg\nexcerpt: Ringkasan.\n---\n\nIsi.\n'
+    )
+
+    const { loadRak } = await import('@/lib/content/rak')
+    const shelf = await loadRak()
+
+    expect(shelf?.books[0].cover).toBe('/sampul/pilihan-sendiri.jpg')
+  })
+
+  it('leaves cover null for a book with no review and no image on disk', async () => {
+    await writeFile(
+      path.join(root, 'rak.md'),
+      rak('## Fase 1', '- Buku Tanpa Sampul Sama Sekali — Penulis')
+    )
+
+    const { loadRak } = await import('@/lib/content/rak')
+    const shelf = await loadRak()
+
+    expect(shelf?.books[0].cover).toBeNull()
   })
 
   it('fails with the offending line when a book line is malformed', async () => {

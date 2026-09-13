@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { cache } from 'react'
 import matter from 'gray-matter'
@@ -78,6 +78,18 @@ export type ShelfBook = {
   /** How far in, for `reading` / `paused`. Absent otherwise. */
   pct?: number
   spine: Spine
+  /**
+   * Public path to the book's cover, or `null` when there is no image for it.
+   *
+   * Two ways a book gets one, in this order: the `cover:` field of its review,
+   * or — for the great majority, which have no review — a file dropped at
+   * `public/sampul/<slug>.jpg` by the same slug rule that gives the book its
+   * URL. `scripts/ambil-sampul.mjs` fills that folder from Open Library.
+   *
+   * `null` is a normal outcome, not a missing asset: the book page draws its
+   * own cover block from the spine colour instead.
+   */
+  cover: string | null
   /** `content/ulasan/<slug>.mdx`, when the owner has written one. */
   review: Review | null
 }
@@ -163,7 +175,7 @@ function spineFor(index: number, title: string, authorShort: string): Spine {
  * crosses into the client component. Handing it whole `ShelfBook`s would ship
  * every review body in the page's serialized props to render a coloured bar.
  */
-export type SpineBook = Omit<ShelfBook, 'review'>
+export type SpineBook = Omit<ShelfBook, 'review' | 'cover'>
 
 /**
  * Drops the review, leaving what the shelf needs to draw the book.
@@ -306,13 +318,48 @@ export function parseRak(raw: string): { phases: Phase[]; books: ShelfBook[] } {
       spine: spineFor(index, title, authorShort),
     }
 
-    const withReview = { ...book, review: null } as ShelfBook
-    current.books.push(withReview)
-    books.push(withReview)
+    const full: ShelfBook = { ...book, cover: null, review: null }
+    current.books.push(full)
+    books.push(full)
   }
 
   return { phases, books }
 }
+
+/**
+ * Where a cover image lives if a book has one: `public/sampul/<slug>.<ext>`.
+ *
+ * Read as a directory listing once per build rather than as a `stat` per book,
+ * because at 125 books the second shape is 125 syscalls to answer a question
+ * one listing answers. The path is statically scoped to this one folder so the
+ * build's file tracing stays narrow — see the note in `load.ts`.
+ */
+const COVER_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif']
+
+const loadCovers = cache(async function loadCovers(): Promise<Map<string, string>> {
+  const dir = path.join(process.cwd(), 'public', 'sampul')
+
+  let filenames: string[]
+  try {
+    filenames = await readdir(dir)
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      return new Map()
+    }
+    throw error
+  }
+
+  const covers = new Map<string, string>()
+  for (const name of filenames) {
+    const ext = path.extname(name).toLowerCase()
+    if (!COVER_EXTENSIONS.includes(ext)) continue
+    // First extension wins, so `na-willa.jpg` and a stray `na-willa.png` cannot
+    // make the build depend on readdir order.
+    covers.set(name.slice(0, -ext.length), `/sampul/${name}`)
+  }
+
+  return covers
+})
 
 /**
  * The whole shelf, with any written review already attached to its book.
@@ -345,10 +392,15 @@ export const loadRak = cache(async function loadRak(): Promise<Rak | null> {
   }
 
   const { phases, books } = parseRak(raw)
-  const reviews = new Map((await loadReviews()).map((review) => [review.slug, review]))
+  const [reviewList, covers] = await Promise.all([loadReviews(), loadCovers()])
+  const reviews = new Map(reviewList.map((review) => [review.slug, review]))
 
   for (const book of books) {
     book.review = reviews.get(book.slug) ?? null
+    // The review wins: if the owner named a cover in the file, that is the one
+    // they chose, and a file that merely happens to sit in public/sampul/ under
+    // the same name should not quietly override it.
+    book.cover = book.review?.cover ?? covers.get(book.slug) ?? null
   }
 
   return {

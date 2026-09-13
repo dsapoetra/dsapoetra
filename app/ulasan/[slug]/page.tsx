@@ -109,6 +109,9 @@ export default async function ReviewPage({
   const status = book?.status ?? 'finished'
   const phase = book?.phase ?? 'Ulasan'
   const lang = book?.lang ?? 'id'
+  // `book.cover` already prefers the review's own `cover:` field; the second
+  // half is for the case where rak.md is gone and only the review is left.
+  const cover = book?.cover ?? review?.cover ?? null
   const progress = status === 'reading' || status === 'paused' ? (book?.pct ?? 0) : null
 
   const books = rak?.books ?? []
@@ -168,13 +171,20 @@ export default async function ReviewPage({
 
       <article className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-start gap-x-14 gap-y-10">
         <div className="w-[min(100%,380px)]">
-          {review?.cover ? (
+          {cover ? (
             <Image
-              src={review.cover}
+              src={cover}
               alt={`Sampul ${title}`}
               width={380}
               height={570}
-              className="aspect-[2/3] w-full rounded-sm border border-rule object-cover shadow-[-10px_0_0_-4px_var(--card),0_24px_40px_rgba(0,0,0,0.5)]"
+              /*
+               * `object-contain` on the card colour, not `object-cover`: these
+               * covers come from a catalogue and their proportions vary, and
+               * cropping a book cover to fit a 2:3 box eats the title off the
+               * top of the tall ones. Letterboxed on the card reads as a book
+               * photographed against the sheet; cropped reads as a mistake.
+               */
+              className="aspect-[2/3] w-full rounded-sm border border-rule bg-card object-contain shadow-[-10px_0_0_-4px_var(--card),0_24px_40px_rgba(0,0,0,0.5)]"
             />
           ) : (
             /*

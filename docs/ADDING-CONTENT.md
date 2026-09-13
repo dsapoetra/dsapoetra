@@ -305,6 +305,35 @@ is meant to be.
 Two titles that produce the same slug stop the build, because they would want
 the same URL.
 
+#### Sampul buku
+
+A book shows a real cover when there is an image at
+**`public/sampul/<slug>.jpg`** — the same slug that gives the book its URL. No
+line in `rak.md` points at it; the filename is the whole link, exactly like a
+review.
+
+Most of them are already there. To fetch the rest:
+
+```bash
+node scripts/ambil-sampul.mjs           # only books that have no cover yet
+node scripts/ambil-sampul.mjs --force   # fetch everything again
+node scripts/ambil-sampul.mjs --only na-willa,akar
+```
+
+It searches Open Library by title and author, saves what it finds, and prints a
+list of what it could not. **It never guesses** — a search that only matches on
+title is rejected unless the author's surname matches too, because a wrong cover
+is much worse than no cover. Indonesian titles mostly miss; Open Library barely
+carries them.
+
+`.png`, `.webp` and `.avif` work too. Portrait shape is best, but covers are
+letterboxed rather than cropped, so an odd shape will not lose its title.
+
+**A book with no cover is not broken.** It gets a block in its own spine colour
+with the title set large and the author along the bottom — which is what the
+shelf already looked like, and reads as deliberate. Add the file yourself
+whenever you want the real thing.
+
 #### Turning the shelf off
 
 Delete `content/rak.md` and `/ulasan` goes back to being the plain list of
@@ -392,6 +421,10 @@ own.
 
 A missing file does not break the build — you get a broken-image box on the
 index. Portrait shape works best; the index reserves an 80×120 slot.
+
+For a book on the shelf that has **no** review file, there is no frontmatter to
+put `cover:` in — the image is found by filename instead. See
+[Sampul buku](#sampul-buku) above.
 
 ## Publishing
 
