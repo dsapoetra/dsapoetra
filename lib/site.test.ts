@@ -6,14 +6,20 @@ describe('sheetNumber', () => {
     expect(sheetNumber('/', true)).toEqual({
       title: 'Beranda',
       number: 1,
-      total: 4,
+      total: 5,
       dwg: 'DWG-001',
     })
     expect(sheetNumber('/tulisan', true)).toEqual({
       title: 'Tulisan',
       number: 3,
-      total: 4,
+      total: 5,
       dwg: 'DWG-003',
+    })
+    expect(sheetNumber('/ulasan', true)).toEqual({
+      title: 'Ulasan',
+      number: 4,
+      total: 5,
+      dwg: 'DWG-004',
     })
   })
 
@@ -23,7 +29,7 @@ describe('sheetNumber', () => {
     expect(sheetNumber('/tulisan', false)).toEqual({
       title: 'Tulisan',
       number: 2,
-      total: 3,
+      total: 4,
       dwg: 'DWG-002',
     })
     expect(sheetNumber('/toko', false)).toBeNull()
@@ -31,6 +37,8 @@ describe('sheetNumber', () => {
 
   it('gives no number to a page that is not a sheet', () => {
     expect(sheetNumber('/puisi/hujan', true)).toBeNull()
+    // A book is a detail of the Ulasan sheet, not a sheet of its own.
+    expect(sheetNumber('/ulasan/the-coaching-habit', true)).toBeNull()
   })
 
   it('keeps every href unique so a number cannot be claimed twice', () => {

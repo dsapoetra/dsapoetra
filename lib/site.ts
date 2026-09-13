@@ -99,8 +99,20 @@ export const sheets: Sheet[] = [
     href: '/tulisan',
     label: 'Tulisan',
     title: 'Tulisan',
-    owns: ['/puisi', '/cerita', '/ulasan'],
+    owns: ['/puisi', '/cerita'],
   },
+  /*
+   * The shelf is its own sheet, not a detail of Tulisan.
+   *
+   * It was a detail while `/ulasan` was a list of a handful of reviews. It is
+   * 125 books now — a drawing in its own right, and the one page of this site
+   * that gets looked at rather than read. `/ulasan/<slug>` needs no `owns`
+   * entry: a path under a sheet's own href already belongs to it.
+   *
+   * Note this must NOT also appear in Tulisan's `owns` above, or a book page
+   * would match Tulisan first and the nav would mark the wrong sheet.
+   */
+  { href: '/ulasan', label: 'Ulasan', title: 'Ulasan' },
   { href: '/sekarang', label: 'Sekarang', title: 'Sekarang' },
 ]
 

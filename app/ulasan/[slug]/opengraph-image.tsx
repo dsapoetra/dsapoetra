@@ -1,22 +1,35 @@
 import { ImageResponse } from 'next/og'
 import { loadReview, loadReviews } from '@/lib/content/load'
+import { loadRak } from '@/lib/content/rak'
 import { site } from '@/lib/site'
 
 export const alt = 'Sampul ulasan buku di dsapoetra, menampilkan judul ulasan serta judul dan penulis buku.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
+// Must cover exactly the slugs the page itself generates — every book on the
+// shelf, not only the ones that have been written about — or a shared link to a
+// book with no review yet would point at a card that was never built.
 export async function generateStaticParams() {
-  const reviews = await loadReviews()
-  return reviews.map((review) => ({ slug: review.slug }))
+  const [rak, reviews] = await Promise.all([loadRak(), loadReviews()])
+  const slugs = new Set([
+    ...(rak?.books ?? []).map((book) => book.slug),
+    ...reviews.map((review) => review.slug),
+  ])
+  return [...slugs].map((slug) => ({ slug }))
 }
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const review = await loadReview(slug)
+  const [review, rak] = await Promise.all([loadReview(slug), loadRak()])
+  const book = rak?.books.find((entry) => entry.slug === slug) ?? null
 
-  const heading = review ? review.title : 'Ulasan buku'
-  const subheading = review ? `${review.book.title} · ${review.book.author}` : site.name
+  const heading = review?.title ?? book?.title ?? 'Ulasan buku'
+  const subheading = review
+    ? `${review.book.title} · ${review.book.author}`
+    : book
+      ? `${book.title} · ${book.author}`
+      : site.name
 
   return new ImageResponse(
     (

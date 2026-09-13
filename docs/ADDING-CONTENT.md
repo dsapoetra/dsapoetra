@@ -22,6 +22,7 @@ Two kinds of file live in `content/`.
 |---|---|---|
 | What you are up to | `content/sekarang.mdx` | `/sekarang`, and the summary card on `/` |
 | Novel progress | `content/novel.mdx` | The progress strip on `/` |
+| The book shelf | `content/rak.md` | The whole of `/ulasan`, and a page per book |
 | A page's own words | `content/tulisan.mdx` | The headline and title block on `/tulisan` |
 
 That last row is a different kind of thing from the two above it: it holds the
@@ -233,6 +234,82 @@ optional one-line note under them; leave it out and nothing renders there.
 `chaptersDone` is clamped to `chaptersTotal`, so a typo shows up as a full bar
 rather than as broken layout.
 
+### Rak buku — `content/rak.md`
+
+This is the one file that holds every book you have read, are reading, or mean
+to read. It draws the whole of `/ulasan`: the pile of what is next, the pile of
+what is done, and — behind the "Lihat daftar lengkap" toggle — all of it,
+grouped into phases.
+
+It is a `.md` file, not `.mdx`, because there is nothing to render: it is a
+list.
+
+```md
+---
+title: 125 buku, sepuluh sekaligus.
+intro: Sepuluh berikutnya ada di tumpukan. Selesai satu, daftarnya maju.
+---
+
+## Fase 1 · Sembilan puluh hari pertama
+
+- The Coaching Habit — Michael Bungay Stanier · finished
+- Humble Inquiry — Schein & Schein · reading 45%
+- Na Willa — Reda Gaudiamo · finished · id
+- Radical Candor — Kim Scott
+```
+
+`title` and `intro` are the headline and the paragraph under it. Only `title`
+is required.
+
+**A `## ` heading starts a phase.** Phases are drawn in file order, one pile
+each. Name them whatever you like — they are your shelves, not a fixed set.
+
+**A `- ` line is a book**, written `Judul — Penulis`. The separator is an em
+dash with a space on each side: **`—`, not `-` and not `–`**. Copy it from a
+line that already works. Getting it wrong stops the build and names the line.
+
+After the author you can add any number of tags, each after a ` · ` (middle
+dot, the same one `kind` uses on a product):
+
+| Tag | Means |
+|---|---|
+| *nothing* | Antre — not started. Drawn as an outlined book. |
+| `finished` | Read. Moves it out of the queue and into the Finished pile. |
+| `reading 45%` | Open right now, 45% in. Draws a bar along the bottom edge. |
+| `paused 60%` | Put down at 60%. Same bar, honest label. |
+| `id` | The book is in Bahasa Indonesia. Draws a blue band on the edge. |
+
+So `- Filosofi Teras — Henry Manampiring · finished · id` is a finished
+Indonesian book, and the order of the tags does not matter.
+
+**The queue is not a list you maintain.** It is the first ten unfinished books
+in the file. Tag one `finished` and it leaves the pile; the next one moves up on
+its own. That is the only bookkeeping there is.
+
+#### How a review attaches to a book
+
+Each book gets a URL from its title: lowercase, and every run of anything that
+is not a letter or a number becomes one hyphen. `The Coaching Habit` becomes
+`the-coaching-habit`, so the book lives at `/ulasan/the-coaching-habit`.
+
+Write `content/ulasan/the-coaching-habit.mdx` — an ordinary review, exactly as
+documented above — and that book's page picks up its cover, its date, its video
+and its writing. Nothing in `rak.md` changes. The two files find each other by
+name.
+
+A book with no review file still has a page: the generated cover, the status,
+and a line saying the notes are not written yet. **That is the normal case.** A
+shelf of 125 books with a handful of reviews is a reading log, which is what it
+is meant to be.
+
+Two titles that produce the same slug stop the build, because they would want
+the same URL.
+
+#### Turning the shelf off
+
+Delete `content/rak.md` and `/ulasan` goes back to being the plain list of
+written reviews. Put it back and the shelf returns. Nothing else changes.
+
 ## Turning a section off
 
 Nothing here has an on/off switch, because the file **is** the switch.
@@ -242,6 +319,9 @@ Nothing here has an on/off switch, because the file **is** the switch.
 - **Delete `content/tulisan.mdx`** and `/tulisan` falls back to its own built-in
   headline and drops its title block. The listings are untouched — they come from
   the collections, not from this file.
+- **Delete `content/rak.md`** and `/ulasan` goes back to the plain list of
+  written reviews. The reviews themselves are untouched — they live in
+  `content/ulasan/`, not in the shelf file.
 - **Empty `content/produk/`** and the entire shop goes with it: the homepage
   section, the `Toko` link in the nav and footer, the sitemap entry, and the
   basket. `/toko` and `/keranjang` start returning 404 instead of showing an
@@ -347,6 +427,10 @@ Errors name the offending file and say what is wrong, in Indonesian:
 | `buyUrl harus berupa URL lengkap` | Needs `https://...`, not `/beli` |
 | `status wajib diisi` | `status` missing in `novel.mdx` |
 | `chaptersTotal harus bilangan bulat` | A fractional chapter count |
+| `tidak ada " — " antara judul dan penulis` | A book line in `rak.md` using `-` or `–` instead of `—` |
+| `buku ini belum punya fase` | A book line in `rak.md` sitting above the first `## ` heading |
+| `tanda "..." tidak dikenal` | A tag `rak.md` does not know — see the tag table above |
+| `menghasilkan slug "..." yang sudah dipakai` | Two books in `rak.md` want the same URL |
 
 This is deliberate: a malformed file stops the build rather than publishing
 something broken. Fix the file named in the message.

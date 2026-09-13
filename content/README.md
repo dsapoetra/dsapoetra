@@ -15,6 +15,7 @@ live. You should never need to open a `.tsx` to publish.
 | `produk-draf/` | Parked products, invisible to the site | [produk-draf/README](produk-draf/README.md) |
 | `sekarang.mdx` | What you are up to → `/sekarang` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md) |
 | `novel.mdx` | The novel progress strip on `/` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#novel-progress--contentnovelmdx) |
+| `rak.md` | Every book you have read → the shelf on `/ulasan` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#rak-buku--contentrakmd) |
 | `tulisan.mdx` | The words **on** `/tulisan` | ↓ the rest of this file |
 
 Two kinds of file, and the difference is worth holding onto:
