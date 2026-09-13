@@ -33,10 +33,17 @@ export type Product = {
    * This product's own checkout page, if it has one.
    *
    * When set, "Beli" links straight there and the product never enters the
-   * basket. When absent, the product goes in the basket and checkout is
-   * `site.checkoutUrl`.
+   * basket — for something already sold on Lynk, Karyakarsa or similar. When
+   * absent, the product goes in the basket and is paid for through DOKU.
    */
   buyUrl?: string
+  /**
+   * Filename inside `private/produk/` delivered after payment.
+   *
+   * Optional: a product without one still sells, the confirmation email just
+   * says that item follows separately instead of carrying a link for it.
+   */
+  download?: string
 }
 
 /** A basket, as stored: `{ slug: quantity }`. */

@@ -1,17 +1,17 @@
 import type { Metadata } from 'next'
-import { Newsreader, Inter, JetBrains_Mono } from 'next/font/google'
+import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import SiteNav from '@/components/site-nav'
 import SiteFooter from '@/components/site-footer'
 
-const serif = Newsreader({
-  variable: '--font-newsreader',
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-const sans = Inter({
-  variable: '--font-inter',
+/*
+ * The blueprint runs on two faces and no more: Space Grotesk for everything
+ * that is read, JetBrains Mono for everything that is *labelled* — sheet
+ * numbers, section marks, title-block fields. See the note in globals.css
+ * about why `--font-serif` still resolves to the grotesk.
+ */
+const space = Space_Grotesk({
+  variable: '--font-space',
   subsets: ['latin'],
   display: 'swap',
 })
@@ -37,9 +37,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html
       lang="id"
-      className={`${serif.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
+      className={`${space.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink font-serif">
+      <body className="blueprint-grid min-h-full flex flex-col text-ink font-serif">
         <SiteNav />
         <main className="flex-1">{children}</main>
         <SiteFooter />

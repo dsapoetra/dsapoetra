@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { loadProducts } from '@/lib/products/load'
+import { isDokuConfigured } from '@/lib/doku/config'
 import SectionLabel from '@/components/section-label'
 import BasketView from './basket-view'
 
@@ -22,7 +23,7 @@ export default async function KeranjangPage() {
         The catalogue is read here, on the server, and handed to the client
         component — the basket itself only ever holds slugs and quantities.
       */}
-      <BasketView products={products} />
+      <BasketView products={products} paymentReady={isDokuConfigured()} />
     </div>
   )
 }

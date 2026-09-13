@@ -1,90 +1,79 @@
 @import "tailwindcss";
 
 /*
- * Palette: Midnight & Tomato.
+ * Palette: Blueprint.
  *
- * Midnight ink on warm off-white, tomato red for links, coral highlight
- * blocks. Red is the editor's pen — a book reviewer's accent.
+ * The site is a set of drawing sheets. Light-blue ink on a navy ground, a
+ * 24px grid printed under everything, and a title block at the foot of each
+ * sheet. There is ONE theme — a blueprint is not a thing that has a light
+ * mode — so `color-scheme` is pinned to dark and there is no
+ * `prefers-color-scheme` block to keep in sync.
  *
- * TWO RULES KEEP THIS READABLE:
+ * THREE RULES KEEP THIS READABLE:
  *
- * 1. The highlight is only ever a BACKGROUND, never a foreground. Coral as
- *    text on this paper is far too pale to read.
+ * 1. `--muted` is the drafting blue. It is the colour of every label, rule
+ *    and annotation, and it doubles as `--accent` for links. Do not reach for
+ *    a second blue: the sheet reads as one drawing because everything quiet
+ *    is the same quiet.
  *
- * 2. Text sitting ON the highlight uses `--on-highlight`, NOT `--ink`.
- *    `--ink` inverts between themes; the highlight does not. In dark mode,
- *    light ink on coral measures 2.20:1 — unreadable. `--on-highlight`
- *    stays dark in both themes and measures 6.72:1 against the coral.
- *    Never write `bg-highlight text-ink`.
+ * 2. Prose uses `--ink-soft`, not `--ink`. Full-strength ink is for headings,
+ *    card titles and the one active nav item; running it under paragraphs
+ *    makes the sheet glare.
  *
- * Measured contrast, light: ink/paper 15.86:1, muted/paper 5.50:1,
- * accent/paper 5.75:1, on-highlight/highlight 6.72:1.
- * Dark: ink/paper 15.53:1, muted/paper 7.01:1, accent/paper 7.90:1,
- * on-highlight/highlight 6.72:1.
- * On the card surface, light: ink 16.99:1, muted 5.89:1, accent 6.16:1.
- * Dark: ink 14.50:1, muted 6.54:1, accent 7.38:1.
- * Shop covers, light: 15.86:1 (dark), 5.75:1 (red), 6.72:1 (coral).
- * Dark: 14.79:1, 5.75:1, 6.72:1 — and each cover stays separable from the
- * card behind it (14.50:1, 2.70:1, 6.59:1).
- * All exceed WCAG AA; body text exceeds AAA in both themes.
+ * 3. Text sitting ON the highlight uses `--on-highlight`, NOT `--ink`. The
+ *    highlight is the drafting blue as a background, and light ink on it
+ *    measures 1.85:1. Never write `bg-highlight text-ink`.
+ *
+ * Measured contrast on the paper: ink 13.14:1, ink-soft 10.31:1,
+ * muted/accent 7.09:1, on-highlight/highlight 7.09:1.
+ * On the card surface: ink 11.39:1, ink-soft 8.94:1, muted 6.15:1.
+ * Shop covers: 13.14:1 (light), 5.86:1 (blue), 7.09:1 (drafting blue) — and
+ * each cover stays separable from the sheet behind it (13.14:1, 2.24:1,
+ * 7.09:1). All exceed WCAG AA; body text exceeds AAA.
  */
 
 :root {
-  color-scheme: light dark;
-  --paper: #f8f5ef;
-  --ink: #151b26;
-  --muted: #5c6470;
-  --rule: #e4ded2;
+  color-scheme: dark;
+  --paper: #0b2545;
+  --ink: #e6eef8;
+  --ink-soft: #c5d5ea;
+  --muted: #8fb3e0;
+  --rule: #1e3f6e;
   /*
-   * Card surface — a shade off the page, never a second background.
-   * Cards are separated by their rule; --card only stops a stack of them
-   * reading as one flat sheet. It is 1.07:1 against --paper on purpose: any
-   * more and the page turns into a grid of boxes.
+   * Card surface — the drafting blue at 8% over the paper, resolved to an
+   * opaque value so a card can sit on the printed grid without the grid
+   * showing through and turning the card into a window.
    */
-  --card: #fffdf9;
-  --accent: #b23122;
-  --highlight: #ff7a59;
-  --on-highlight: #151b26;
-  --focus: #b23122;
+  --card: #163051;
+  --accent: #8fb3e0;
+  --highlight: #8fb3e0;
+  --on-highlight: #0b2545;
+  --focus: #e6eef8;
+
+  /* The printed grid. One value, used by the `blueprint-grid` utility. */
+  --grid: rgba(255, 255, 255, 0.07);
 
   /*
    * Shop cover panels. Each is a background/foreground PAIR, because a cover
    * is a reversed block: its text can never come from --ink, for the same
-   * reason rule 2 above gives for the highlight.
+   * reason rule 3 above gives for the highlight.
    *
-   * Only the dark cover flips between themes. The red and the coral stay put —
-   * if they were tied to --accent and --highlight they would both land on
-   * salmon-over-coral in dark mode (1.12:1 against each other) and the three
-   * covers would stop being three colours.
+   * The middle cover is its own blue rather than --accent. Tied to the accent
+   * it would land on drafting-blue-over-drafting-blue with the third cover
+   * and the three covers would stop being three colours.
    */
-  --cover-ink: #151b26;
-  --on-cover-ink: #f8f5ef;
-  --cover-accent: #b23122;
-  --on-cover-accent: #f8f5ef;
-  --cover-highlight: #ff7a59;
-  --on-cover-highlight: #151b26;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #12161e;
-    --ink: #f2ede3;
-    --muted: #98a2af;
-    --rule: #272e3b;
-    --accent: #ff8b6b;
-    --highlight: #ff7a59;
-    --on-highlight: #151b26;
-    --focus: #ff8b6b;
-
-    /* Only the dark cover inverts; see the note in :root. */
-    --cover-ink: #f2ede3;
-    --on-cover-ink: #151b26;
-  }
+  --cover-ink: #e6eef8;
+  --on-cover-ink: #0b2545;
+  --cover-accent: #2c5a9e;
+  --on-cover-accent: #e6eef8;
+  --cover-highlight: #8fb3e0;
+  --on-cover-highlight: #0b2545;
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
   --color-muted: var(--muted);
   --color-rule: var(--rule);
   --color-card: var(--card);
@@ -99,8 +88,15 @@
   --color-cover-highlight: var(--cover-highlight);
   --color-on-cover-highlight: var(--on-cover-highlight);
 
-  --font-serif: var(--font-newsreader);
-  --font-sans: var(--font-inter);
+  /*
+   * A blueprint has no serif. Display text and running text are both Space
+   * Grotesk; the only second voice is the mono, which carries every label,
+   * code and title-block field. `--font-serif` is kept as the key because it
+   * is what every page already asks for — it just no longer resolves to a
+   * serif.
+   */
+  --font-serif: var(--font-space);
+  --font-sans: var(--font-space);
   --font-mono: var(--font-jetbrains);
 }
 
@@ -110,6 +106,24 @@
 
 @utility max-w-verse-measure {
   max-width: 38ch;
+}
+
+/* The printed grid, drawn under the whole sheet. */
+@utility blueprint-grid {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* The mono label that names a figure, a section or a field. */
+@utility drafting-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 :focus-visible {

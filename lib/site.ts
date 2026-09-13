@@ -40,17 +40,6 @@ export const site = {
   detail: '',
 
   /**
-   * Where the basket hands off to a real payment page.
-   *
-   * Site-wide, so it stays here rather than in `content/` — it is wiring, not
-   * writing. Empty until a payment provider is connected; while it is empty the
-   * shop still lists and the basket still works, but the basket says plainly
-   * that payment is not connected rather than showing a button that goes
-   * nowhere. A single product can override it with its own `buyUrl`.
-   */
-  checkoutUrl: '' as string,
-
-  /**
    * "Ask me anything" links on the homepage.
    *
    * An entry with an empty `href` is skipped entirely, and if every entry is
@@ -73,3 +62,75 @@ export const site = {
     { label: 'Email', href: 'mailto:angga.dimassaputra@gmail.com', icon: 'email' },
   ] as SiteLink[],
 } as const
+
+/**
+ * The sheet register.
+ *
+ * Every top-level page of this site is a sheet in one drawing set, and this is
+ * the order they are bound in. It is the single source of truth for three
+ * things that must never drift apart: the nav, the drawing number in the
+ * wordmark (`DWG-003 · DSAPOETRA` on sheet three), and the `LEMBAR 3 / 4` field
+ * in each sheet's title block.
+ *
+ * Adding a page means adding a row here — the numbering follows from the order,
+ * so nothing has to be renumbered by hand.
+ */
+export type Sheet = {
+  href: string
+  /** Nav label, sentence case. Rendered uppercase. */
+  label: string
+  /** Shown in the sheet's own header band, e.g. `Tulisan`. */
+  title: string
+  /** Only bound into the set when there is something to sell. */
+  shopOnly?: boolean
+  /**
+   * Route prefixes drawn on this sheet but living at their own URLs. A poem at
+   * `/puisi/hujan` is a detail of the Tulisan sheet, so the nav marks TULISAN
+   * while you read it; without this the poem would belong to no sheet and the
+   * wordmark would drop its drawing number mid-visit.
+   */
+  owns?: string[]
+}
+
+export const sheets: Sheet[] = [
+  { href: '/', label: 'Beranda', title: 'Beranda' },
+  { href: '/toko', label: 'Toko', title: 'Toko', shopOnly: true, owns: ['/keranjang'] },
+  {
+    href: '/tulisan',
+    label: 'Tulisan',
+    title: 'Tulisan',
+    owns: ['/puisi', '/cerita', '/ulasan'],
+  },
+  { href: '/sekarang', label: 'Sekarang', title: 'Sekarang' },
+]
+
+export type SheetNumber = {
+  /** The sheet's own name, as printed in its header band and title block. */
+  title: string
+  /** 1-based position in the bound set. */
+  number: number
+  /** How many sheets are bound. */
+  total: number
+  /** Zero-padded drawing number, e.g. `DWG-003`. */
+  dwg: string
+}
+
+/**
+ * Where `href` sits in the set, given whether the shop is switched on.
+ *
+ * Returns `null` for a page that is not a sheet — a poem, a review, the basket.
+ * Those are details drawn on a sheet, not sheets of their own, and they carry
+ * no number.
+ */
+export function sheetNumber(href: string, shop: boolean): SheetNumber | null {
+  const bound = sheets.filter((sheet) => (sheet.shopOnly ? shop : true))
+  const index = bound.findIndex((sheet) => sheet.href === href)
+  if (index === -1) return null
+
+  return {
+    title: bound[index].title,
+    number: index + 1,
+    total: bound.length,
+    dwg: `DWG-${String(index + 1).padStart(3, '0')}`,
+  }
+}

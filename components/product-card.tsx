@@ -43,7 +43,7 @@ export default function ProductCard({ product }: { product: Product }) {
             A product with its own `buyUrl` sells itself — "Beli" goes straight
             there and it never enters the basket, which is what you want when a
             product already lives on Lynk, Karyakarsa or the like. Everything
-            else goes through the basket and `site.checkoutUrl`.
+            else goes through the basket and DOKU checkout.
           */}
           {product.buyUrl ? (
             <a

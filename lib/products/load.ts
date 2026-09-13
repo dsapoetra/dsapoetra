@@ -48,6 +48,24 @@ const productSchema = z.object({
    */
   order: z.number().int().optional(),
   buyUrl: z.url('buyUrl harus berupa URL lengkap').optional(),
+  /*
+   * File delivered after payment, as a bare filename inside `private/produk/`.
+   *
+   * The pattern is a security control, not tidiness. This value ends up in a
+   * filesystem path, so anything with a slash or a dot-dot in it — say
+   * `../../.env` — would read a file that is nobody's product. Restricting it
+   * to a flat filename makes traversal unrepresentable rather than something
+   * the download route has to remember to strip.
+   */
+  download: z
+    .string()
+    .trim()
+    .regex(
+      /^[A-Za-z0-9][A-Za-z0-9._-]*\.[A-Za-z0-9]+$/,
+      'download harus berupa nama berkas saja, mis. sunyi-hanya-angan.pdf'
+    )
+    .refine((value) => !value.includes('..'), 'download tidak boleh memuat ".."')
+    .optional(),
 })
 
 type ProductFrontmatter = z.infer<typeof productSchema>
@@ -79,6 +97,7 @@ export const loadProducts = cache(async function loadProducts(): Promise<
     cover: entry.cover,
     order: entry.order ?? Number.MAX_SAFE_INTEGER,
     ...(entry.buyUrl ? { buyUrl: entry.buyUrl } : {}),
+    ...(entry.download ? { download: entry.download } : {}),
     // Collapsed to a single line: the card and the basket both render it as
     // plain text, so a wrapped paragraph in the file must not become a wrapped
     // paragraph in the markup.

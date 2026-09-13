@@ -6,8 +6,9 @@ import { formatDateId } from '@/lib/format'
 /**
  * The mixed stream of poems, stories and reviews as a ruled list.
  *
- * Poems carry the accent on their kind line — they are the site's main output,
- * and the colour is what makes a page of otherwise identical rows scannable.
+ * Poems carry full ink on their kind line — they are the site's main output,
+ * and on a blueprint weight, not hue, is what makes a page of otherwise
+ * identical rows scannable.
  * Reviews show their book cover; nothing else has artwork, so the thumbnail is
  * rendered per row rather than as a reserved column that sits empty most of the
  * time.
@@ -40,14 +41,14 @@ export default function StreamList({
             <span className="min-w-0">
               <span
                 className={`font-mono text-[11px] uppercase tracking-widest ${
-                  item.kind === 'puisi' ? 'text-accent' : 'text-muted'
+                  item.kind === 'puisi' ? 'text-ink' : 'text-muted'
                 }`}
               >
                 {labelFor(item.kind)}
                 {' · '}
                 <time dateTime={item.date}>{formatDateId(item.date)}</time>
               </span>
-              <span className="mt-1 block text-xl leading-snug transition-colors group-hover:text-accent group-focus-visible:text-accent">
+              <span className="mt-1 block text-xl leading-snug transition-colors group-hover:text-muted group-focus-visible:text-muted">
                 {item.title}
               </span>
             </span>

@@ -7,6 +7,9 @@ strip — is a Markdown file in `content/`. To add or change any of it, see
 **[docs/ADDING-CONTENT.md](docs/ADDING-CONTENT.md)**. You should not need to open
 a `.tsx` file to publish.
 
+Payments for the shop go through DOKU — setup, credentials and how orders are
+fulfilled are in **[docs/PAYMENTS.md](docs/PAYMENTS.md)**.
+
 ## Getting Started
 
 First, run the development server:

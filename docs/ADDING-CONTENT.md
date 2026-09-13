@@ -22,6 +22,12 @@ Two kinds of file live in `content/`.
 |---|---|---|
 | What you are up to | `content/sekarang.mdx` | `/sekarang`, and the summary card on `/` |
 | Novel progress | `content/novel.mdx` | The progress strip on `/` |
+| A page's own words | `content/tulisan.mdx` | The headline and title block on `/tulisan` |
+
+That last row is a different kind of thing from the two above it: it holds the
+*page's* words — headline, intro, the ruled fields along the bottom of the sheet
+— rather than a piece of writing. One file per page, named after the route.
+**[content/README.md](../content/README.md)** covers it on its own.
 
 For collections, **the filename becomes the URL or the slug**, so name files the
 way you want the link to read: lowercase, words separated by hyphens, no spaces,
@@ -121,7 +127,7 @@ Empat puluh delapan puisi, termasuk yang tidak pernah saya terbitkan di situs in
 ```
 
 Required: `title`, `kind`, `price`, `cover.tone`, `cover.caption`.
-Optional: `order`, `buyUrl`.
+Optional: `order`, `buyUrl`, `download`.
 
 **The body is the description.** Unlike a story's `excerpt`, a product's blurb is
 not a frontmatter field — it is the prose below the `---`. Wrap it across as many
@@ -167,6 +173,28 @@ cover:
 The caption is decoration — the real title sits directly underneath it — so a
 screen reader skips it rather than reading a slightly different title twice.
 
+### The file people get after paying
+
+Put the file in `private/produk/` and name it:
+
+```yaml
+download: sunyi-hanya-angan.pdf
+```
+
+That folder is outside `public/`, so the file is not reachable by URL. After
+payment the buyer is emailed a private, signed link that expires in 30 days.
+
+A **bare filename only** — no slashes, no `../`. Anything else fails the build,
+because that value ends up in a filesystem path.
+
+A product with no `download:` still sells: the receipt lists it under "menyusul"
+and you send it yourself. Same if `download:` names a file that is not actually
+deployed — the check happens when the link is signed, so a buyer is never handed
+a link that fails when they click it.
+
+Keep files to a few MB. If you ever sell video, move to Vercel Blob rather than
+committing it to git.
+
 ### Selling a product that lives somewhere else
 
 Add `buyUrl` with the full URL:
@@ -179,10 +207,9 @@ buyUrl: https://lynk.id/dsapoetra/sunyi-hanya-angan
 the right shape when the product already has its own checkout page on Lynk,
 Karyakarsa, Gumroad or similar.
 
-Without `buyUrl`, the product goes into the basket instead, and the basket hands
-off to `checkoutUrl` in `lib/site.ts`. **That is empty right now**, so the basket
-adds up correctly and then says payment is not connected, rather than showing a
-button that goes nowhere. Fill it in, or give every product its own `buyUrl`.
+Without `buyUrl`, the product goes into the basket and is paid for through DOKU.
+See **[docs/PAYMENTS.md](PAYMENTS.md)** for how that is set up and what still
+needs your credentials.
 
 ### Novel progress — `content/novel.mdx`
 
@@ -212,6 +239,9 @@ Nothing here has an on/off switch, because the file **is** the switch.
 
 - **Delete `content/novel.mdx`** and the progress strip disappears from the
   homepage.
+- **Delete `content/tulisan.mdx`** and `/tulisan` falls back to its own built-in
+  headline and drops its title block. The listings are untouched — they come from
+  the collections, not from this file.
 - **Empty `content/produk/`** and the entire shop goes with it: the homepage
   section, the `Toko` link in the nav and footer, the sitemap entry, and the
   basket. `/toko` and `/keranjang` start returning 404 instead of showing an
@@ -224,7 +254,8 @@ not ready is absent, not empty.**
 ## Quote your dates
 
 Write `date: "2026-08-25"`, with the quotation marks. Same for `updated:` in
-`novel.mdx` and `sekarang.mdx`.
+`novel.mdx` and `sekarang.mdx`, and for anything number-shaped in a page's
+`titleBlock` — `value: "2026"`.
 
 Without them, YAML parses the date before the site can check it, and an
 impossible date like `2026-02-30` is silently rolled forward to March 2nd. You
@@ -345,9 +376,10 @@ the share cards:
   the bio omits it entirely while it is empty rather than inventing something
 - `lib/site.ts` → `personalName` — empty means the site fronts the handle
   `dsapoetra`; fill it in to front your name instead
-- `lib/site.ts` → `checkoutUrl` — empty, so the basket totals up and then admits
-  payment is not connected. Either point it at a payment page, or give every
-  product its own `buyUrl`
+- **DOKU credentials** — the checkout code is finished, but no keys are set, so
+  the basket says payment is not connected. See [PAYMENTS.md](PAYMENTS.md)
+- **Product files** — `private/produk/` is empty, so every receipt currently says
+  "menyusul". Add the files and a `download:` line to deliver automatically
 - `content/produk/*.mdx` — **all three products came from the design mockup, not
   from you.** The titles, blurbs and prices are placeholders that made the layout
   real. Replace them with what is actually for sale, or delete them until there
