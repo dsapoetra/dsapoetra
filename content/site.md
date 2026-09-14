@@ -5,10 +5,10 @@ url: https://dsapoetra.com
 description: Engineering Manager for Payments and Monetization at OLX Indonesia. Short stories and poems on weekends.
 location: Bintaro, South Tangerang
 links:
-  - label: dimas@dsapoetra.com
-    href: mailto:dimas@dsapoetra.com
+  - label: angga.dimassaputra@gmail.com
+    href: mailto:angga.dimassaputra@gmail.com
   - label: LinkedIn
-    href: https://www.linkedin.com/in/dsapoetra/
+    href: https://www.linkedin.com/in/dimasangga/
   - label: GitHub
     href: https://github.com/dsapoetra
   - label: Instagram
