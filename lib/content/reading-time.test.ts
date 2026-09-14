@@ -1,17 +1,19 @@
-import { describe, it, expect } from 'vitest'
-import { readingTimeMinutes } from '@/lib/content/reading-time'
+import { describe, expect, it } from 'vitest'
+import { readingTime } from './reading-time'
 
-describe('readingTimeMinutes', () => {
-  it('rounds up to at least one minute', () => {
-    expect(readingTimeMinutes('satu dua tiga')).toBe(1)
+describe('readingTime', () => {
+  it('rounds up, so a short piece is never zero minutes', () => {
+    expect(readingTime('one two three')).toBe(1)
+    expect(readingTime('')).toBe(1)
   })
 
-  it('estimates at 200 words per minute', () => {
-    const text = Array.from({ length: 400 }, () => 'kata').join(' ')
-    expect(readingTimeMinutes(text)).toBe(2)
+  it('counts at 200 words a minute', () => {
+    expect(readingTime(Array(200).fill('word').join(' '))).toBe(1)
+    expect(readingTime(Array(201).fill('word').join(' '))).toBe(2)
+    expect(readingTime(Array(2800).fill('word').join(' '))).toBe(14)
   })
 
-  it('returns one minute for empty text', () => {
-    expect(readingTimeMinutes('')).toBe(1)
+  it('does not count runs of whitespace as words', () => {
+    expect(readingTime('  one \n\n\n  two   \t three  ')).toBe(1)
   })
 })

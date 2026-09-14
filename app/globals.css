@@ -1,213 +1,1296 @@
-@import "tailwindcss";
-
 /*
- * Palette: Blueprint.
+ * dsapoetra.com
  *
- * The site is a set of drawing sheets. Light-blue ink on a navy ground, a
- * 24px grid printed under everything, and a title block at the foot of each
- * sheet. There is ONE theme — a blueprint is not a thing that has a light
- * mode — so `color-scheme` is pinned to dark and there is no
- * `prefers-color-scheme` block to keep in sync.
+ * Two wings, one grid. Work is sans and sits in boxes and rows; Writing is
+ * serif and sits in a single column with air around it. The graph paper runs
+ * under both and is what makes them one site rather than two.
  *
- * THREE RULES KEEP THIS READABLE:
+ * Values here are the design handoff, not invention. Before changing a number,
+ * check it against `docs/DESIGN.md` — that file is the record of what the
+ * boards specified, and this file is meant to match it.
  *
- * 1. `--muted` is the drafting blue. It is the colour of every label, rule
- *    and annotation, and it doubles as `--accent` for links. Do not reach for
- *    a second blue: the sheet reads as one drawing because everything quiet
- *    is the same quiet.
+ * THREE RULES:
  *
- * 2. Prose uses `--ink-soft`, not `--ink`. Full-strength ink is for headings,
- *    card titles and the one active nav item; running it under paragraphs
- *    makes the sheet glare.
+ * 1. Colour comes from a token, never a literal. Every one has a dark-mode
+ *    counterpart below, and a hex typed inline is a value that will look
+ *    correct in one theme and wrong in the other.
  *
- * 3. Text sitting ON the highlight uses `--on-highlight`, NOT `--ink`. The
- *    highlight is the drafting blue as a background, and light ink on it
- *    measures 1.85:1. Never write `bg-highlight text-ink`.
+ * 2. The header and footer paint solid `--bg` ON PURPOSE. They sit over the
+ *    graph paper and the grid must stop at their hairline, or the bars read as
+ *    part of the page rather than as its frame.
  *
- * Measured contrast on the paper: ink 13.14:1, ink-soft 10.31:1,
- * muted/accent 7.09:1, on-highlight/highlight 7.09:1.
- * On the card surface: ink 11.39:1, ink-soft 8.94:1, muted 6.15:1.
- * Shop covers: 13.14:1 (light), 5.86:1 (blue), 7.09:1 (drafting blue) — and
- * each cover stays separable from the sheet behind it (13.14:1, 2.24:1,
- * 7.09:1). All exceed WCAG AA; body text exceeds AAA.
+ * 3. Reading measures are fixed per template, not global: 720 for a case
+ *    study, 680 for the Writing landing, 640 for a poem, 620 for a story.
+ *    A story is narrower than a case study because prose wants about 65
+ *    characters a line and technical writing tolerates more.
  */
 
 :root {
-  color-scheme: dark;
-  --paper: #0b2545;
-  --ink: #e6eef8;
-  --ink-soft: #c5d5ea;
-  --muted: #8fb3e0;
-  --rule: #1e3f6e;
-  /*
-   * Card surface — the drafting blue at 8% over the paper, resolved to an
-   * opaque value so a card can sit on the printed grid without the grid
-   * showing through and turning the card into a window.
-   */
-  --card: #163051;
-  --accent: #8fb3e0;
-  --highlight: #8fb3e0;
-  --on-highlight: #0b2545;
-  --focus: #e6eef8;
+  color-scheme: light dark;
 
-  /* The printed grid. One value, used by the `blueprint-grid` utility. */
-  --grid: rgba(255, 255, 255, 0.07);
+  --bg: #fcfcfb;
+  --fg: #22272e;
+  --fg2: #5a636e;
+  --fg3: #8a8a84;
+  --line: #e4e4e0;
+  --card: #ffffff;
+  --acc: #3d5a80;
+  --sunk: #f7f7f5;
+  --grid: rgba(61, 90, 128, 0.07);
+  --grid2: rgba(61, 90, 128, 0.16);
+  /* The one hover colour. A card border only, never text. */
+  --line-hover: #b5b5af;
 
-  /*
-   * Shop cover panels. Each is a background/foreground PAIR, because a cover
-   * is a reversed block: its text can never come from --ink, for the same
-   * reason rule 3 above gives for the highlight.
-   *
-   * The middle cover is its own blue rather than --accent. Tied to the accent
-   * it would land on drafting-blue-over-drafting-blue with the third cover
-   * and the three covers would stop being three colours.
-   */
-  --cover-ink: #e6eef8;
-  --on-cover-ink: #0b2545;
-  --cover-accent: #2c5a9e;
-  --on-cover-accent: #e6eef8;
-  --cover-highlight: #8fb3e0;
-  --on-cover-highlight: #0b2545;
-}
-
-@theme inline {
-  --color-paper: var(--paper);
-  --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
-  --color-muted: var(--muted);
-  --color-rule: var(--rule);
-  --color-card: var(--card);
-  --color-accent: var(--accent);
-  --color-highlight: var(--highlight);
-  --color-on-highlight: var(--on-highlight);
-  --color-focus: var(--focus);
-  --color-cover-ink: var(--cover-ink);
-  --color-on-cover-ink: var(--on-cover-ink);
-  --color-cover-accent: var(--cover-accent);
-  --color-on-cover-accent: var(--on-cover-accent);
-  --color-cover-highlight: var(--cover-highlight);
-  --color-on-cover-highlight: var(--on-cover-highlight);
-
-  /*
-   * A blueprint has no serif. Display text and running text are both Space
-   * Grotesk; the only second voice is the mono, which carries every label,
-   * code and title-block field. `--font-serif` is kept as the key because it
-   * is what every page already asks for — it just no longer resolves to a
-   * serif.
-   */
-  --font-serif: var(--font-space);
-  --font-sans: var(--font-space);
-  --font-mono: var(--font-jetbrains);
-}
-
-@utility max-w-prose-measure {
-  max-width: 66ch;
-}
-
-@utility max-w-verse-measure {
-  max-width: 38ch;
-}
-
-/* The printed grid, drawn under the whole sheet. */
-@utility blueprint-grid {
-  background-color: var(--paper);
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* The mono label that names a figure, a section or a field. */
-@utility drafting-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
+  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --serif: "Newsreader", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 
 /*
- * A book lying flat on a pile — one row of the shelf on /ulasan.
+ * Dark mode is declared twice on purpose.
  *
- * Tilt and offset come in as per-book custom properties, set from the geometry
- * `lib/content/rak.ts` computes on the server. They are properties rather than
- * a `transform` written straight into the style attribute because hover has to
- * CANCEL the tilt and add a nudge, and a hover rule cannot read a value the
- * element only carries inline.
- *
- * Every colour here is the palette or a plain shadow. The page block on the
- * right edge is the ink and the soft ink striped together, not cream: a
- * blueprint has three inks and this is not the place to introduce a fourth.
+ * The media query serves the reader who has never touched the toggle, which is
+ * most of them. The attribute selector serves the one who has, and it must win
+ * in BOTH directions: `:not([data-theme="light"])` is what lets someone on a
+ * dark OS choose light and actually get it.
  */
-@utility rak-spine {
-  position: relative;
-  border-radius: 4px 2px 2px 4px;
-  transform: translateX(var(--spine-shift)) rotate(var(--spine-rot));
-  transform-origin: center;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -3px 0 color-mix(in srgb, var(--paper) 22%, transparent),
-    0 3px 3px rgba(0, 0, 0, 0.45);
-  transition:
-    transform 320ms cubic-bezier(0.16, 0.84, 0.32, 1),
-    opacity 180ms,
-    box-shadow 180ms;
-
-  /* The cut pages, showing past the right-hand edge of the cover. */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    bottom: 3px;
-    right: -13px;
-    width: 13px;
-    background: repeating-linear-gradient(
-      180deg,
-      var(--ink) 0 2px,
-      var(--ink-soft) 2px 3px
-    );
-    border: 1px solid color-mix(in srgb, var(--paper) 40%, transparent);
-    border-left: 0;
-    border-radius: 0 2px 2px 0;
-  }
-
-  &:hover,
-  &:focus-visible {
-    transform: translateX(calc(var(--spine-shift) + 26px)) rotate(0deg);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.45),
-      inset 0 -3px 0 color-mix(in srgb, var(--paper) 22%, transparent),
-      0 16px 30px rgba(0, 0, 0, 0.5);
-    z-index: 2;
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1b3a;
+    --fg: #e8ecf4;
+    --fg2: #a9b8d6;
+    --fg3: #7f92b8;
+    --line: #24365f;
+    --card: #142449;
+    --acc: #9bb8e8;
+    --sunk: #142449;
+    --grid: rgba(255, 255, 255, 0.05);
+    --grid2: rgba(255, 255, 255, 0.13);
+    --line-hover: #3c5288;
   }
 }
 
-/* The 320ms rise the review view enters on. */
-@utility rak-enter {
-  animation: rak-in 320ms cubic-bezier(0.16, 0.84, 0.32, 1);
+:root[data-theme="dark"] {
+  --bg: #0e1b3a;
+  --fg: #e8ecf4;
+  --fg2: #a9b8d6;
+  --fg3: #7f92b8;
+  --line: #24365f;
+  --card: #142449;
+  --acc: #9bb8e8;
+  --sunk: #142449;
+  --grid: rgba(255, 255, 255, 0.05);
+  --grid2: rgba(255, 255, 255, 0.13);
+  --line-hover: #3c5288;
 }
 
-@keyframes rak-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+
+  /*
+   * Graph paper: an 8px minor grid with a 40px major grid over it, drawn as
+   * four gradients rather than an image so it recolours with the theme and
+   * costs no request. The -1px offset puts the first line ON the edge instead
+   * of one pixel inside it, which is what stops a pale seam down the left.
+   */
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(to right, var(--grid2) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid2) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
+  background-position: -1px -1px;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+ul,
+ol,
+figure {
+  margin: 0;
+}
+
+a {
+  color: var(--acc);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--fg);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Reaches the keyboard on tab, invisible to everyone else. */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -100px;
+  z-index: 10;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  font-size: 14px;
+  transition: top 120ms ease;
+}
+
+.skip-link:focus-visible {
+  top: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Frame: header and footer
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  height: 64px;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.site-header__name {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+/* The full name on desktop, the abbreviation on mobile. */
+.site-header__name--short {
+  display: none;
+}
+
+.site-header__end {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.site-nav {
+  display: flex;
+  gap: 28px;
+  font-size: 14px;
+}
+
+/*
+ * The theme chip borrows the tech-tag treatment from the Work page rather than
+ * introducing a new idiom: mono, lowercase, hairline box, radius 4. Mono is
+ * this site's face for things read as a value, and a mode name is one.
+ *
+ * `min-width` holds the widest label ("light"), so cycling through the three
+ * states never nudges the header around.
+ */
+.theme-toggle {
+  flex: none;
+  min-width: 52px;
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--fg2);
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--line-hover);
+  color: var(--fg);
+}
+
+.site-nav a {
+  color: var(--fg2);
+}
+
+.site-nav a:hover {
+  color: var(--fg);
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--acc);
+  font-weight: 500;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 40px;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  font-size: 13px;
+  color: var(--fg2);
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.site-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   Measures
+   -------------------------------------------------------------------------- */
+
+.wrap {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.wrap--home { max-width: 880px; }
+.wrap--work { max-width: 960px; }
+.wrap--read { max-width: 720px; }   /* case study, note, about, now */
+.wrap--writing { max-width: 680px; } /* Writing landing */
+.wrap--poem { max-width: 640px; }
+.wrap--story { max-width: 620px; }
+
+/* --------------------------------------------------------------------------
+   Shared type
+   -------------------------------------------------------------------------- */
+
+.page-title {
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: pretty;
+}
+
+/* The small uppercase label that opens a section in the Work wing. */
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg2);
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg3);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.back-link {
+  font-size: 13px;
+}
+
+/* --------------------------------------------------------------------------
+   Home
+   -------------------------------------------------------------------------- */
+
+.home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  padding-top: 112px;
+  padding-bottom: 96px;
+}
+
+/*
+ * The homepage paragraph runs two faces in one flow: the working life in sans
+ * at 24px, the writing life in serif at 27px. The serif is set larger because
+ * Newsreader's x-height is smaller than Plus Jakarta Sans', and matching the
+ * point size would make it read as an afterthought rather than an equal half.
+ */
+.home__lead {
+  max-width: 720px;
+  font-size: 24px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.home__lead em {
+  font-family: var(--serif);
+  font-size: 27px;
+  font-style: normal;
+}
+
+.home__wings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.wing {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 56px;
+  min-height: 220px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--fg);
+  transition: border-color 120ms ease;
+}
+
+.wing:hover {
+  border-color: var(--line-hover);
+  color: var(--fg);
+}
+
+.wing__blurb {
+  font-size: 13px;
+  color: var(--fg2);
+}
+
+.wing__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.wing__name {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.wing__arrow {
+  font-size: 22px;
+  color: var(--acc);
+}
+
+/* The Writing card is the serif half of the pair, and says so. */
+.wing--writing {
+  font-family: var(--serif);
+}
+
+.wing--writing .wing__blurb {
+  font-size: 16px;
+  font-style: italic;
+}
+
+.wing--writing .wing__name {
+  font-size: 44px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   Work landing
+   -------------------------------------------------------------------------- */
+
+.work {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding-top: 64px;
+  padding-bottom: 80px;
+}
+
+.work__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.work__intro p {
+  max-width: 640px;
+  color: var(--fg2);
+  text-wrap: pretty;
+}
+
+/*
+ * Every Work section is a label in a fixed 200px column with its content
+ * beside it. The fixed column is what lines the four sections up with each
+ * other: a grid that sized itself to the longest label would put "Technical
+ * notes" and "Projects" at different left edges.
+ */
+.section {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+}
+
+.section > .label {
+  padding-top: 6px;
+}
+
+/* Experience --------------------------------------------------------------- */
+
+.role {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 24px;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+}
+
+.role:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.role__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.role__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.role__company {
+  font-weight: 600;
+}
+
+.role__title,
+.role__summary,
+.role__scope {
+  color: var(--fg2);
+}
+
+.role__period {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg3);
+  white-space: nowrap;
+}
+
+/* Case study cards --------------------------------------------------------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--fg);
+  transition: border-color 120ms ease;
+}
+
+.card:hover {
+  border-color: var(--line-hover);
+  color: var(--fg);
+}
+
+.card__title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+
+.card__summary {
+  font-size: 14px;
+  color: var(--fg2);
+  text-wrap: pretty;
+}
+
+/* Projects ----------------------------------------------------------------- */
+
+.project {
+  display: grid;
+  grid-template-columns: 220px 1fr auto;
+  gap: 24px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.project:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.project__name {
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.project__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg2);
+}
+
+.tags span {
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  text-transform: lowercase;
+}
+
+.project__link {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Technical notes ---------------------------------------------------------- */
+
+.note-row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 24px;
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+  color: var(--fg);
+}
+
+.note-row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.note-row:hover {
+  color: var(--acc);
+}
+
+.note-row__date {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg3);
+}
+
+.note-row__category {
+  font-size: 12px;
+  color: var(--fg3);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Article: case study and technical note
+   -------------------------------------------------------------------------- */
+
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-top: 64px;
+  padding-bottom: 96px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.article__head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg3);
+}
+
+/*
+ * The context block: three cells that share hairlines rather than each owning
+ * one. The 1px gap over a `--line` background IS the divider, which is how the
+ * cells meet exactly once instead of stacking two borders into a 2px seam.
+ */
+.context {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.context > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  background: var(--card);
+}
+
+.context dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg3);
+}
+
+.context dd {
+  margin: 0;
+}
+
+/* Markdown body in the Work wing. */
+.prose > * + * {
+  margin-top: 20px;
+}
+
+/*
+ * The body's own first element never adds space above itself. The gap between
+ * it and the block before it belongs to the article's flex `gap`, and letting
+ * the heading rule below stack a second margin on top of that is what pushes
+ * the first heading of a case study out of line with every later one.
+ */
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h2 {
+  margin-top: 32px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  margin-top: 28px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.prose p {
+  text-wrap: pretty;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 22px;
+}
+
+.prose li + li {
+  margin-top: 6px;
+}
+
+.prose blockquote {
+  margin: 0;
+  padding-left: 18px;
+  border-left: 2px solid var(--line);
+  color: var(--fg2);
+}
+
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--sunk);
+}
+
+.prose pre {
+  overflow-x: auto;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--sunk);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: inherit;
+}
+
+/* A diagram that has not been drawn yet, and says so rather than pretending. */
+.diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 24px;
+  border: 1px dashed var(--fg3);
+  border-radius: 8px;
+  background: var(--sunk);
+  color: var(--fg3);
+  font-family: var(--mono);
+  font-size: 13px;
+  text-align: center;
+}
+
+.diagram--image {
+  border-style: solid;
+  border-color: var(--line);
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.reflection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.reflection h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   Writing wing
+   -------------------------------------------------------------------------- */
+
+.writing {
+  display: flex;
+  flex-direction: column;
+  gap: 96px;
+  padding-top: 96px;
+  padding-bottom: 120px;
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.7;
+}
+
+.featured {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.featured__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Meta inside the Writing wing steps back into sans: it is apparatus, not text. */
+.writing .label,
+.writing__note,
+.piece-list__meta {
+  font-family: var(--sans);
+}
+
+.writing__note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg2);
+}
+
+.writing__title {
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.piece-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.piece-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.piece {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: baseline;
+  color: var(--fg);
+}
+
+.piece:hover {
+  color: var(--acc);
+}
+
+.piece__meta {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--fg3);
+  white-space: nowrap;
+}
+
+/* Poem --------------------------------------------------------------------- */
+
+/*
+ * A poem's line breaks are the poem. `pre-line` preserves them from the
+ * markdown source with no markup at all, and collapses the trailing spaces an
+ * editor leaves behind. Stanza gaps come through as blank lines, which is what
+ * an author typing a poem into a file would expect.
+ */
+.poem {
+  white-space: pre-line;
+  font-size: 22px;
+  line-height: 1.8;
+}
+
+.poem--center {
+  text-align: center;
+}
+
+.poem-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding-top: 144px;
+  padding-bottom: 160px;
+  font-family: var(--serif);
+}
+
+.poem-page__head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.piece-title {
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.piece-date {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--fg3);
+}
+
+/* Story -------------------------------------------------------------------- */
+
+.story {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding-top: 112px;
+  padding-bottom: 120px;
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.7;
+}
+
+.story__head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.story__title {
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+/*
+ * The story body carries `.prose` too, for the links and lists a story
+ * occasionally needs. Its spacing has to come from ONE of the two: a flex
+ * `gap` here plus `.prose`'s sibling margin would add together and open every
+ * paragraph break to 48px. So this is a plain block, and it restates the
+ * 28px the Writing wing wants in place of the Work wing's 20px.
+ */
+.story__body.prose > * + * {
+  margin-top: 28px;
+}
+
+.story__body p {
+  text-wrap: pretty;
+}
+
+.story--dropcap .story__body > p:first-child::first-letter {
+  float: left;
+  font-size: 3.6em;
+  line-height: 0.82;
+  padding: 0.08em 0.1em 0 0;
+  font-weight: 500;
+}
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 14px;
+}
+
+.pager a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pager a:last-child {
+  text-align: right;
+}
+
+.pager__label {
+  font-size: 12px;
+  color: var(--fg3);
+}
+
+/* --------------------------------------------------------------------------
+   About and Now
+   -------------------------------------------------------------------------- */
+
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-top: 80px;
+  padding-bottom: 112px;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.about__head {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.about__photo {
+  width: 96px;
+  height: 120px;
+  flex: none;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--sunk);
+}
+
+.about__photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--fg3);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg3);
+}
+
+.about__head .page-title {
+  padding-top: 8px;
+}
+
+.now {
+  gap: 32px;
+}
+
+.now__head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.now__lead {
+  font-size: 22px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.now__footnote {
+  font-size: 14px;
+  color: var(--fg2);
+}
+
+/* --------------------------------------------------------------------------
+   Empty state
+   -------------------------------------------------------------------------- */
+
+/*
+ * A section with no files does not render at all; this is for the case where
+ * a whole page would otherwise be blank. It states the fact rather than
+ * apologising for it.
+ */
+.empty {
+  color: var(--fg2);
+  font-size: 15px;
+}
+
+/* --------------------------------------------------------------------------
+   Narrow screens
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  .site-header {
+    height: 56px;
+    padding: 0 20px;
   }
-  to {
-    opacity: 1;
-    transform: none;
+
+  .site-header__name {
+    font-size: 14px;
+  }
+
+  .site-header__name--full {
+    display: none;
+  }
+
+  .site-header__name--short {
+    display: inline;
+  }
+
+  .site-header__end {
+    gap: 14px;
+  }
+
+  .site-nav {
+    gap: 14px;
+    font-size: 13px;
+  }
+
+  /* At this width the chip's label is what goes; the box is still tappable. */
+  .theme-toggle {
+    min-width: 0;
+    padding: 2px 6px;
+  }
+
+  .site-footer {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .site-footer nav {
+    gap: 12px 20px;
+  }
+
+  .wrap {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* Every two-column arrangement becomes one column. */
+  .home__wings,
+  .cards,
+  .context {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .section > .label {
+    padding-top: 0;
+  }
+
+  .role,
+  .project,
+  .note-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* The date moves above the entry once the row stops being a row. */
+  .role__period,
+  .note-row__date {
+    order: -1;
+  }
+
+  .home {
+    gap: 40px;
+    padding-top: 48px;
+    padding-bottom: 40px;
+  }
+
+  .home__lead {
+    font-size: 19px;
+    line-height: 1.5;
+  }
+
+  .home__lead em {
+    font-size: 21px;
+  }
+
+  .wing {
+    gap: 32px;
+    min-height: 0;
+    padding: 20px;
+  }
+
+  .wing__name {
+    font-size: 30px;
+  }
+
+  .wing--writing .wing__name {
+    font-size: 34px;
+  }
+
+  .page-title {
+    font-size: 30px;
+  }
+
+  .work {
+    gap: 48px;
+    padding-top: 40px;
+    padding-bottom: 56px;
+  }
+
+  .article {
+    gap: 28px;
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+
+  .writing {
+    gap: 64px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+    font-size: 18px;
+  }
+
+  .writing__title {
+    font-size: 32px;
+  }
+
+  /* Title and meta stack; the row form would wrap awkwardly at this width. */
+  .piece {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .piece__meta {
+    font-size: 12px;
+    white-space: normal;
+  }
+
+  .poem-page {
+    gap: 32px;
+    padding-top: 64px;
+    padding-bottom: 80px;
+  }
+
+  .poem {
+    font-size: 19px;
+    line-height: 1.7;
+  }
+
+  .piece-title {
+    font-size: 32px;
+  }
+
+  .story {
+    gap: 40px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+    font-size: 18px;
+  }
+
+  .story__title {
+    font-size: 32px;
+  }
+
+  .page {
+    gap: 28px;
+    padding-top: 48px;
+    padding-bottom: 64px;
+    font-size: 16px;
+  }
+
+  .now__lead {
+    font-size: 19px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rak-spine {
-    transition: none;
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
-  .rak-enter {
-    animation: none;
-  }
-}
-
-:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 3px;
 }

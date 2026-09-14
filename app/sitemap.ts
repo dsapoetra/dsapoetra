@@ -1,74 +1,45 @@
 import type { MetadataRoute } from 'next'
-import { loadReviews, loadPoems, loadStories } from '@/lib/content/load'
-import { loadRak } from '@/lib/content/rak'
-import { site } from '@/lib/site'
-import { hasShop } from '@/lib/products/load'
+import {
+  loadCaseStudies,
+  loadNotes,
+  loadPoems,
+  loadReadingNotes,
+  loadSite,
+  loadStories,
+} from '@/lib/content'
 
+/**
+ * Built from the content directories, so a new markdown file is in the sitemap
+ * the moment it is committed and there is no second list to keep in step.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [reviews, poems, stories, shop, rak] = await Promise.all([
-    loadReviews(),
+  const [site, caseStudies, notes, poems, stories, reading] = await Promise.all([
+    loadSite(),
+    loadCaseStudies(),
+    loadNotes(),
     loadPoems(),
     loadStories(),
-    hasShop(),
-    loadRak(),
+    loadReadingNotes(),
   ])
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: site.url, changeFrequency: 'weekly', priority: 1 },
-    // Listed only while there is something to sell — /toko 404s otherwise, and
-    // the basket is deliberately noindex, so it never belongs here.
-    ...(shop
-      ? [
-          {
-            url: `${site.url}/toko`,
-            changeFrequency: 'monthly' as const,
-            priority: 0.8,
-          },
-        ]
-      : []),
-    { url: `${site.url}/tulisan`, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${site.url}/ulasan`, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${site.url}/puisi`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${site.url}/cerita`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${site.url}/sekarang`, changeFrequency: 'monthly', priority: 0.4 },
-  ]
+  const base = site.url.replace(/\/$/, '')
 
-  /*
-   * Every book on the shelf is a real page, so every book is listed — a book
-   * with no notes yet is still the place that book lives on this site. The ones
-   * that *have* been written about keep their date and rank above the rest;
-   * the RSS feed, which is a feed of writing, still carries only those.
-   */
-  const reviewed = new Map(reviews.map((r) => [r.slug, r]))
-  const shelf: MetadataRoute.Sitemap = (rak?.books ?? [])
-    .filter((book) => !reviewed.has(book.slug))
-    .map((book) => ({
-      url: `${site.url}/ulasan/${book.slug}`,
-      changeFrequency: 'yearly' as const,
-      priority: 0.3,
-    }))
+  const pages = ['', '/work', '/writing', '/about', '/now'].map((path) => ({
+    url: `${base}${path}`,
+    changeFrequency: 'monthly' as const,
+  }))
 
-  const entries: MetadataRoute.Sitemap = [
-    ...reviews.map((r) => ({
-      url: `${site.url}/ulasan/${r.slug}`,
-      lastModified: r.date,
-      changeFrequency: 'yearly' as const,
-      priority: 0.7,
-    })),
-    ...shelf,
-    ...poems.map((p) => ({
-      url: `${site.url}/puisi/${p.slug}`,
-      lastModified: p.date,
-      changeFrequency: 'yearly' as const,
-      priority: 0.5,
-    })),
-    ...stories.map((s) => ({
-      url: `${site.url}/cerita/${s.slug}`,
-      lastModified: s.date,
-      changeFrequency: 'yearly' as const,
-      priority: 0.5,
-    })),
-  ]
+  const dated = [
+    ...caseStudies.map((entry) => ({ path: `/work/${entry.slug}`, date: entry.date })),
+    ...notes.map((entry) => ({ path: `/notes/${entry.slug}`, date: entry.date })),
+    ...poems.map((entry) => ({ path: `/poems/${entry.slug}`, date: entry.date })),
+    ...stories.map((entry) => ({ path: `/stories/${entry.slug}`, date: entry.date })),
+    ...reading.map((entry) => ({ path: `/reading/${entry.slug}`, date: entry.date })),
+  ].map((entry) => ({
+    url: `${base}${entry.path}`,
+    lastModified: entry.date,
+    changeFrequency: 'yearly' as const,
+  }))
 
-  return [...staticRoutes, ...entries]
+  return [...pages, ...dated]
 }

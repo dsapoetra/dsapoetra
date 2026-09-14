@@ -1,196 +1,178 @@
-# `content/` — everything the site publishes
+# Editing the site
 
-No CMS, no database, no admin login. Every poem, story, review, product and page
-headline is a Markdown file in this folder. Edit a file, commit, push — it is
-live. You should never need to open a `.tsx` to publish.
+Everything published here is a markdown file in this folder. Find the file,
+edit it, commit. That is the whole process. You should never need to open a
+`.tsx` file to publish.
 
-## What is in here
+## Where things live
 
-| Path | Holds | Guide |
-|---|---|---|
-| `puisi/` | Poems → `/puisi/<filename>` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-poem--contentpuisihujan-di-bulan-junimdx) |
-| `cerita/` | Short stories → `/cerita/<filename>` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-short-story--contentceritajudul-ceritamdx) |
-| `ulasan/` | Book reviews → `/ulasan/<filename>` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-book-review--contentulasanjudul-bukumdx) |
-| `produk/` | What is for sale. **Empty = no shop at all** | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#a-product--contentproduksunyi-hanya-anganmdx) |
-| `produk-draf/` | Parked products, invisible to the site | [produk-draf/README](produk-draf/README.md) |
-| `sekarang.mdx` | What you are up to → `/sekarang` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md) |
-| `novel.mdx` | The novel progress strip on `/` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#novel-progress--contentnovelmdx) |
-| `rak.md` | Every book you have read → the shelf on `/ulasan` | [ADDING-CONTENT](../docs/ADDING-CONTENT.md#rak-buku--contentrakmd) |
-| `tulisan.mdx` | The words **on** `/tulisan` | ↓ the rest of this file |
-
-Two kinds of file, and the difference is worth holding onto:
-
-- **Collections** are folders — one file per thing, as many as you like, and the
-  **filename becomes the URL**. Adding a poem means adding a file.
-- **Page copy** is one file named after a route. It is not a piece of writing;
-  it is the words a *page* is made of — its headline, its intro, the fields
-  along its bottom edge.
-
-For collections, go to **[docs/ADDING-CONTENT.md](../docs/ADDING-CONTENT.md)** —
-it covers every frontmatter field, every build error, and the traps. The rest of
-this file is about page copy.
-
----
-
-# Supplying a page's words with a Markdown file
-
-Every top-level page of this site is a **sheet** in one drawing set — a
-blueprint, with a numbered header, a headline, and a ruled title block along the
-bottom. The layout is code; every word on it comes from a file you can edit.
-
-## The short version
-
-One sheet, one file, named after the route:
-
-| Route | File | Supplies |
-|---|---|---|
-| `/tulisan` | `content/tulisan.mdx` | The headline, the line under it, the title block |
-
-That is the whole rule. `/tulisan` reads `tulisan.mdx`; a sheet added at
-`/tentang` would read `tentang.mdx`.
-
-The file looks like this:
-
-```mdx
----
-title: Puisi, cerita,
-titleAccent: catatan bacaan.
-metaTitle: Tulisan — dsapoetra
-description: Semua puisi, cerita pendek, dan ulasan buku, per tahun.
-titleBlock:
-  - label: Digambar oleh
-    value: Dimas Angga Saputra
-  - label: Lokasi
-    value: Indonesia · WIB
-  - label: Irama
-    value: 1 buku / 2 minggu
-  - label: Rev.
-    value: "2026"
----
-
-Yang saya tulis, dan apa yang saya pikirkan tentang buku yang saya baca. Bukan
-ringkasan: catatan tentang apa yang tersisa setelah halaman terakhir.
-```
-
-And it lands on the page like this:
-
-```
- LEMBAR 3 — TULISAN                     ← from the register, not this file
- Puisi, cerita, catatan bacaan.         ← title + titleAccent
- Yang saya tulis, dan apa yang ...      ← the body
- ┌─────────────┬──────────┬─────────────┬──────┬──────────┐
- │ DIGAMBAR    │ LOKASI   │ IRAMA       │ REV. │ LEMBAR   │
- │ Dimas ...   │ Indo ... │ 1 buku ...  │ 2026 │ 3 / 4    │
- └─────────────┴──────────┴─────────────┴──────┴──────────┘
-       ↑ titleBlock, in the order you write it        ↑ added for you
-```
-
-## The fields
-
-| Field | Required | What it is |
-|---|---|---|
-| `title` | yes | The headline, or its first half |
-| `titleAccent` | no | The rest of the headline, set in the drafting blue |
-| `metaTitle` | no | The browser tab and the search result. Falls back to `title` |
-| `description` | no | The search-result and share-card blurb |
-| `titleBlock` | no | The ruled fields at the foot of the sheet |
-| *the body* | no | The paragraph under the headline |
-
-### `title` and `titleAccent`
-
-The headline is split across two colours: full ink, then the drafting blue. You
-decide where the split falls by where you break the sentence.
-
-```yaml
-title: Puisi, cerita,
-titleAccent: catatan bacaan.
-```
-
-They are joined with a single space, so keep the comma or the space you want at
-the end of `title`. Leave `titleAccent` out and the headline is one colour — a
-headline in one colour is a headline, not a broken one.
-
-### The body
-
-Everything below the closing `---` is the paragraph under the headline. Wrap it
-over as many lines as you like; it is collapsed onto one paragraph on the way to
-the page, so a stray blank line cannot change the shape of the header band.
-
-It is prose, not Markdown — no headings, no lists, no links. If the sheet needs
-those, it needs a section, and a section needs code.
-
-### `titleBlock`
-
-A list of `label` / `value` pairs, ruled across the bottom in the order you write
-them. The labels are free text: the Writing sheet measures a reading cadence,
-another sheet might measure something else entirely.
-
-```yaml
-titleBlock:
-  - label: Digambar oleh
-    value: Dimas Angga Saputra
-  - label: Rev.
-    value: "2026"
-```
-
-Two rules:
-
-- **A field with an empty value is dropped, not rendered blank.** A title block
-  with a missing value reads as a drawing nobody checked — worse than a title
-  block with one fewer field. Same rule as the rest of the site: a thing that is
-  not ready is absent, not empty.
-- **Do not write the sheet number yourself.** `LEMBAR 3 / 4` is appended for you
-  from the register in `lib/site.ts`. Written by hand it would go stale the first
-  time a page is added or the shop is switched off — and the shop being off
-  really does renumber the set.
-
-## Deleting the file
-
-Nothing breaks. The sheet falls back to its own built-in headline and renders
-with no title block, exactly as it would on a fresh checkout with an empty
-`content/`. Put the file back and the words return.
-
-This is the same switch the rest of the site uses — see *Turning a section off*
-in [docs/ADDING-CONTENT.md](../docs/ADDING-CONTENT.md).
-
-## Quote anything that looks like a number or a date
-
-`value: "2026"` with the quotation marks, not `value: 2026`.
-
-Unquoted, YAML reads `2026` as a number and `2026-08-25` as a date, and you get
-whichever text those happen to turn back into. The same trap as dates and prices
-in the content guide, and worth the two keystrokes every time.
-
-A value containing a colon needs quoting too: `value: "Catatan: draf kedua"`.
-
-## When the build refuses
-
-The message names the file and the field, in Indonesian:
-
-| Message | Meaning |
+| To do this | Add or edit |
 |---|---|
-| `title wajib diisi` | `title` is missing or empty |
-| `label wajib diisi` | A `titleBlock` entry has no `label` |
-| `value wajib diisi` | A `titleBlock` entry has no `value` |
+| Publish a poem | new file in `poems/` |
+| Publish a short story | new file in `stories/` |
+| Publish a reading note | new file in `reading/` |
+| Publish a case study | new file in `case-studies/` |
+| Publish a technical note | new file in `notes/` |
+| Add a job | new file in `experience/` |
+| Add a project | new file in `projects/` |
+| Change your name, location, or footer links | `site.md` |
+| Change the homepage sentence or the two cards | `pages/home.md` |
+| Change the Work page headline and intro | `pages/work.md` |
+| Change the Writing page's one-line note | `pages/writing.md` |
+| Rewrite the About page | `pages/about.md` |
+| Update "what I'm up to now" | `pages/now.md` |
 
-All of them are prefixed with the file, e.g.
-`Frontmatter tidak valid di content/tulisan.mdx — title wajib diisi`.
+Two kinds of file live here, and the difference matters:
 
-## Adding a sheet of your own
+- **Collections** are folders of files, one per thing. Add as many as you like.
+  **The filename becomes the URL**, so name it the way you want the link to
+  read, and settle it before you publish. Renaming breaks every link anyone has
+  shared.
+- **Page copy** is a single file named after a route (`pages/now.md` → `/now`).
+  It holds that page's own headline and intro. Not writing; the words the page
+  is *made of*.
 
-Two steps, and the second is code:
+## Five things that will bite you
 
-1. Write `content/<name>.mdx` in the shape above.
-2. Add a row to `sheets` in `lib/site.ts` and call `loadSheet('<name>')` from the
-   page. The register is what gives the sheet its number, its nav entry and its
-   `LEMBAR n / m` — adding a row is all the renumbering there is.
+1. **Quote your dates.** `date: "2026-09-02"`, with the quotation marks.
+   Unquoted, YAML turns it into a date object rather than a string and the
+   build fails. This is deliberate: it fails loudly instead of sorting wrong.
+2. **A thing that is not ready is absent, not empty.** Delete the file and the
+   entry disappears cleanly. Delete a whole folder and its section disappears
+   with it. There is no on/off switch anywhere, because the file *is* the
+   switch.
+3. **A poem's line breaks come straight out of the file.** Type it the way it
+   should read. Poems never go through the markdown renderer, so a single line
+   break stays a line break and a blank line stays a stanza gap.
+4. **Reading times are computed, not written.** They come from the word count
+   at 200 words a minute. Only set `readingTime:` when the count lies.
+5. **No em dashes.** House style. Use a comma or a colon.
 
-## Publishing
+## Frontmatter, by folder
 
-```bash
-npm run dev     # look at it: http://localhost:3000/tulisan
-npm run build   # catch mistakes before pushing
-git add content/
-git commit -m "tulisan: perbarui judul lembar"
-git push
+### `poems/`
+
+```yaml
+---
+title: Hujan di Bintaro
+date: "2026-07-19"
+lang: id        # optional. `id` adds a "· ID" tag. Omit for English.
+align: center   # optional. Default is left.
+---
 ```
+
+The body is the poem, exactly as typed.
+
+### `stories/`
+
+```yaml
+---
+title: The Night Shift at Terminal Three
+date: "2026-08-14"
+lang: en
+readingTime: 14   # optional. Computed if absent.
+dropcap: true     # optional. Big first letter.
+---
+```
+
+The body is markdown prose. `dropcap` suits an opening that starts on a name
+and fights one that starts on dialogue.
+
+### `reading/`
+
+```yaml
+---
+title: "Book 47 of 125: Laut Bercerita, Leila S. Chudori"
+date: "2026-08-21"
+lang: id
+---
+```
+
+Quote a title that contains a colon, or YAML reads it as a key.
+
+### `case-studies/`
+
+```yaml
+---
+title: Strangling a live PHP payments monolith
+date: "2026-08-30"
+summary: One sentence. This is the card text on the Work page.
+readingTime: 12   # optional
+context:          # the three-cell block under the title, any keys you like
+  System: ...
+  Scale: ...
+  My role: ...
+reflection: |     # optional. Renders as "What I'd do differently".
+  Free text.
+---
+```
+
+Inside the body you can drop a diagram:
+
+```jsx
+<Diagram caption="Proxy routing between the monolith and the services" />
+<Diagram src="/diagrams/routing.svg" caption="Proxy routing" />
+```
+
+Without `src` it renders a dashed placeholder captioned with what the diagram
+should show. That is on purpose: an undrawn diagram stays visible as a hole in
+the piece instead of quietly vanishing, so it gets drawn.
+
+### `notes/`
+
+```yaml
+---
+title: "Outbox pattern without a framework: 200 lines and a cron"
+date: "2026-09-02"
+category: system design    # right-hand column on the Work page
+summary: ...               # optional, used for search engines
+---
+```
+
+### `experience/`
+
+Ordered by the `order:` field, lowest first. The `01-` prefix on the filename
+is only there so the folder reads in the same order; it is stripped from
+everything else.
+
+```yaml
+---
+company: OLX Indonesia
+role: Engineering Manager, Payments and Monetization
+period: 2022 to now        # printed as written, not parsed
+order: 1
+summary: What the company does.        # optional, grey line above
+scope: "Scope of ownership: ..."       # optional, grey line below
+---
+```
+
+The body is the main paragraph: what *you* did.
+
+### `projects/`
+
+```yaml
+---
+name: Subscription billing engine
+summary: One line.
+tags: [java 21, spring boot 3, postgres]   # lowercase
+order: 1
+link:                                      # optional
+  label: github
+  href: https://github.com/...
+---
+```
+
+### `pages/home.md`
+
+The homepage sentence is two fields because the typeface switch mid-sentence
+is the design: `lead` is set in sans, `leadSerif` in serif, on the same line.
+
+### `pages/about.md`
+
+Add `photo: /me.jpg` (a file in `public/`) and `photoAlt:` when you have one.
+Until then the page renders a dashed placeholder holding the space.
+
+## Adding a photo or a diagram
+
+Put the file in `public/` and reference it with a leading slash:
+`public/me.jpg` → `photo: /me.jpg`.

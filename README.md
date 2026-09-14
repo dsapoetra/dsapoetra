@@ -1,133 +1,97 @@
-# dsapoetra
+# dsapoetra.com
 
-A personal site for poems, short stories and book reviews, with a small shop
-attached. Next.js App Router, deployed on Vercel.
+A personal site in two wings. **Work** is payments engineering: experience,
+case studies, projects, technical notes. **Writing** is short stories, poems
+and reading notes. The graph paper under both is what makes them one site.
 
-**Everything published on this site is a Markdown file in [`content/`](content/).**
-There is no CMS, no database and no admin login. You edit a file, commit it, and
-it is live. You should never need to open a `.tsx` file to publish.
+Next.js App Router, no CMS, no database, no admin login. Every page is static.
 
----
+**Everything published here is a markdown file in [`content/`](content/).**
+You edit a file, commit it, and it is live. You should never need to open a
+`.tsx` file to publish. Start at [`content/README.md`](content/README.md).
 
-## Editing the content
-
-Find what you want to change, open the file, commit. That is the whole process.
-
-| I want to… | Edit | Guide |
-|---|---|---|
-| Publish a poem | new file in `content/puisi/` | [ADDING-CONTENT](docs/ADDING-CONTENT.md#a-poem--contentpuisihujan-di-bulan-junimdx) |
-| Publish a short story | new file in `content/cerita/` | [ADDING-CONTENT](docs/ADDING-CONTENT.md#a-short-story--contentceritajudul-ceritamdx) |
-| Publish a book review | new file in `content/ulasan/` | [ADDING-CONTENT](docs/ADDING-CONTENT.md#a-book-review--contentulasanjudul-bukumdx) |
-| Sell something | new file in `content/produk/` | [ADDING-CONTENT](docs/ADDING-CONTENT.md#a-product--contentproduksunyi-hanya-anganmdx) |
-| Update "what I'm up to now" | `content/sekarang.mdx` | [ADDING-CONTENT](docs/ADDING-CONTENT.md) |
-| Update novel progress | `content/novel.mdx` | [ADDING-CONTENT](docs/ADDING-CONTENT.md#novel-progress--contentnovelmdx) |
-| Change the words *on* a page — its headline, intro, title block | `content/tulisan.mdx` | [content/README](content/README.md) |
-| Turn the shop on or off | move files in/out of `content/produk/` | [content/produk-draf/README](content/produk-draf/README.md) |
-| Add the file a buyer downloads | `private/produk/` | [private/produk/README](private/produk/README.md) |
-
-Two kinds of file live in `content/`, and the difference matters:
-
-- **Collections** — a folder of files, one per thing (`puisi/`, `cerita/`,
-  `ulasan/`, `produk/`). Add as many as you like. **The filename becomes the
-  URL**, so name it the way you want the link to read, and settle it before you
-  publish — renaming breaks every link anyone has shared.
-- **Page copy** — one file named after a route (`tulisan.mdx` → `/tulisan`),
-  holding that page's own headline, intro and title block. Not writing; the
-  words the page is *made of*.
-
-### Three things that will bite you
-
-Each is covered properly in the guides, but they are worth knowing before your
-first file:
-
-1. **Quote your dates.** `date: "2026-08-25"`, with the quotation marks.
-   Unquoted, an impossible date like `2026-02-30` is silently rolled forward
-   instead of failing.
-2. **Write prices with no dots.** `price: 49000`, never `49.000` — in YAML that
-   second one means *forty-nine*.
-3. **A thing that is not ready is absent, not empty.** Delete the file and the
-   section disappears cleanly. There is no on/off switch anywhere, because the
-   file *is* the switch.
-
-### Publishing
-
-```bash
-npm run dev     # look at it: http://localhost:3000
-npm run build   # catch mistakes before pushing
-git add content/
-git commit -m "ulasan: judul buku"
-git push
-```
-
-The sitemap, both RSS feeds, share cards and structured data all update
-themselves from the file you wrote. A malformed file stops the build and names
-itself in the error, in Indonesian — it never publishes something broken.
-
----
-
-## Running it locally
+## Running it
 
 ```bash
 npm install
-npm run dev
+npm run dev      # http://localhost:3000
 ```
 
-Then open <http://localhost:3000>.
-
-| Command | Does |
+| Command | |
 |---|---|
-| `npm run dev` | Dev server with hot reload |
-| `npm run build` | Production build — the real check before pushing |
-| `npm test` | Test suite (vitest) |
-| `npm run lint` | ESLint |
+| `npm run dev` | development server |
+| `npm run build` | production build, and the content check |
+| `npm start` | serve the production build |
+| `npm test` | unit tests |
+| `npm run lint` | eslint |
 
-Payments need credentials to work end to end; copy `.env.example` to
-`.env.local` and see [docs/PAYMENTS.md](docs/PAYMENTS.md). Without them the shop
-still lists and the basket still works — it just says plainly that payment is
-not connected.
+There are no environment variables and nothing to configure. `npm install &&
+npm run build` is the whole deployment.
 
-## Where things live
+## Publishing
+
+| To do this | Edit |
+|---|---|
+| Publish a poem | new file in `content/poems/` |
+| Publish a short story | new file in `content/stories/` |
+| Publish a reading note | new file in `content/reading/` |
+| Publish a case study | new file in `content/case-studies/` |
+| Publish a technical note | new file in `content/notes/` |
+| Add a job or a project | new file in `content/experience/` or `content/projects/` |
+| Change your name, location, footer links | `content/site.md` |
+| Change a page's own words | the matching file in `content/pages/` |
+| Update "what I'm up to now" | `content/pages/now.md` |
+
+Full frontmatter reference, and the five things that will bite you, are in
+[`content/README.md`](content/README.md).
+
+**The build is the proofreader.** Every file is validated against a schema as
+it is read, and a bad date or a missing title fails the build with the
+filename and the field, rather than rendering a broken page. If `npm run build`
+passes, the content is well-formed.
+
+## How it fits together
 
 ```
-content/          everything published — see content/README.md
-  puisi/          poems
-  cerita/         short stories
-  ulasan/         book reviews
-  produk/         what is for sale (empty = no shop at all)
-  produk-draf/    parked products, invisible to the site
-  tulisan.mdx     the words on /tulisan
-  sekarang.mdx    /sekarang
-  novel.mdx       the novel progress strip
-private/produk/   files buyers download — never served publicly
-app/              routes
-components/       shared UI
-lib/              loaders, payments, email, site config
-docs/             the guides
+content/          every word on the site
+app/              one folder per route
+components/       header, footer, markdown renderer, theme switch
+lib/content/      read markdown -> validate -> typed objects
+lib/nav.ts        the four nav items and which URLs each owns
+lib/theme.ts      the light/dark/auto switch's shared logic
+docs/DESIGN.md    what the design boards specified
 ```
 
-Design note: the site is laid out as a set of numbered drawing sheets — a
-blueprint. The palette, the typography and the sheet frame are documented at the
-top of [`app/globals.css`](app/globals.css), and the sheet register that numbers
-the pages lives in [`lib/site.ts`](lib/site.ts).
+Routes: `/`, `/work`, `/work/<case-study>`, `/notes/<note>`, `/writing`,
+`/poems/<poem>`, `/stories/<story>`, `/reading/<note>`, `/about`, `/now`.
 
-## Docs
+A piece lives at a short URL of its own (`/poems/ledger`, not
+`/writing/poems/ledger`) because that is the better link to share. `lib/nav.ts`
+is what still marks **Writing** in the nav while you read it.
 
-- **[docs/ADDING-CONTENT.md](docs/ADDING-CONTENT.md)** — poems, stories,
-  reviews, products. Start here.
-- **[content/README.md](content/README.md)** — supplying a page's own words with
-  a Markdown file.
-- **[docs/PAYMENTS.md](docs/PAYMENTS.md)** — DOKU setup, credentials, how orders
-  are fulfilled.
+### Three things worth knowing before you change the code
 
-## Deploying
+1. **A missing collection is an empty section; a missing page file is a broken
+   build.** `readCollection` returns `[]` for a directory that is not there, so
+   deleting a folder cleanly removes its section. `readDoc` throws. The two are
+   different on purpose: a typo'd page filename must fail rather than render
+   blank.
 
-The repo is linked to the Vercel project `dimas-mart`, so `main` is what ships.
-Secrets are set on Vercel and never committed:
+2. **Poems never go through the markdown renderer.** Their line and stanza
+   breaks are the work itself, and markdown would collapse them. They render as
+   raw text under `white-space: pre-line`.
 
-```bash
-vercel env add DOKU_SECRET_KEY production
-```
+3. **Colour comes from a token, never a literal.** Every token in
+   `app/globals.css` has a dark-mode counterpart; a hex typed inline will look
+   right in one theme and wrong in the other.
 
-`.env.example` lists every variable the site reads, names only. See
-[docs/PAYMENTS.md](docs/PAYMENTS.md) for which ones payments need and what
-happens while they are unset.
+## Design
+
+The site implements a Claude Design handoff. `docs/DESIGN.md` is the record of
+what the boards specified: tokens, type scale, measures, layout rules and copy
+rules. When `app/globals.css` and that file disagree, the file is what the
+boards said.
+
+Dark mode follows the system by default, and the chip in the header switches
+between `auto`, `light` and `dark`. The choice is remembered per browser and
+applied before first paint, so there is no flash of the wrong theme.

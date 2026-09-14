@@ -1,9 +1,12 @@
 import type { MetadataRoute } from 'next'
-import { site } from '@/lib/site'
+import { loadSite } from '@/lib/content'
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const site = await loadSite()
+  const base = site.url.replace(/\/$/, '')
+
   return {
-    rules: { userAgent: '*', allow: '/' },
-    sitemap: `${site.url}/sitemap.xml`,
+    rules: [{ userAgent: '*', allow: '/' }],
+    sitemap: `${base}/sitemap.xml`,
   }
 }
