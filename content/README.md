@@ -85,10 +85,13 @@ and fights one that starts on dialogue.
 title: "Book 47 of 125: Laut Bercerita, Leila S. Chudori"
 date: "2026-08-21"
 lang: id
+instagramUrl: "https://www.instagram.com/reel/..."   # optional, links out to review video
+instagramCover: "/reviews/laut-bercerita.jpg"        # optional, thumbnail file in public/
+instagramLabel: "WATCH THE REVIEW ↗"                 # optional, button text
 ---
 ```
 
-Quote a title that contains a colon, or YAML reads it as a key.
+Quote a title that contains a colon, or YAML reads it as a key. Setting `instagramUrl` automatically renders the review card at the bottom of the page. You can also place an `<InstagramReview src="..." href="..." />` directly in the markdown body if you want it mid-piece.
 
 ### `case-studies/`
 

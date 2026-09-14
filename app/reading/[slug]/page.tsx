@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Markdown from '@/components/markdown'
+import InstagramReviewCard from '@/components/instagram-review-card'
 import { longDate } from '@/lib/content/dates'
 import { loadReadingNote, loadReadingNotes } from '@/lib/content'
 
@@ -55,6 +56,14 @@ export default async function ReadingNotePage({
 
       <div className="story__body prose">
         <Markdown source={note.body} />
+        {note.instagramUrl ? (
+          <InstagramReviewCard
+            url={note.instagramUrl}
+            cover={note.instagramCover}
+            label={note.instagramLabel}
+            title={note.title}
+          />
+        ) : null}
       </div>
     </main>
   )

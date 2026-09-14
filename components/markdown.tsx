@@ -1,4 +1,5 @@
 import { MDXRemote } from 'next-mdx-remote-client/rsc'
+import InstagramReviewCard from './instagram-review-card'
 
 /**
  * A figure inside an article body.
@@ -38,7 +39,21 @@ function Diagram({
   )
 }
 
-const components = { Diagram }
+function InstagramReview({
+  src,
+  href,
+  alt,
+  label,
+}: {
+  src?: string
+  href: string
+  alt?: string
+  label?: string
+}) {
+  return <InstagramReviewCard url={href} cover={src} label={label} title={alt} />
+}
+
+const components = { Diagram, InstagramReview, InstagramReviewCard }
 
 /**
  * Renders a markdown body.

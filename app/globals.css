@@ -995,6 +995,66 @@ img {
   font-weight: 500;
 }
 
+/* Instagram / Video Review Card */
+.review-card-wrapper {
+  display: block;
+}
+
+.review-card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 240px;
+  max-width: 100%;
+  padding: 8px;
+  border: 1.5px solid var(--acc);
+  border-radius: 14px;
+  background: var(--card);
+  text-decoration: none !important;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--fg);
+}
+
+.review-card__frame {
+  overflow: hidden;
+  border-radius: 10px;
+  aspect-ratio: 4 / 5;
+  background: var(--sunk);
+}
+
+.review-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.review-card__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border: 1.5px solid var(--acc);
+  border-radius: 6px;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--acc);
+  text-transform: uppercase;
+  text-align: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.review-card:hover .review-card__btn {
+  background: var(--acc);
+  color: var(--bg);
+}
+
 .pager {
   display: flex;
   justify-content: space-between;

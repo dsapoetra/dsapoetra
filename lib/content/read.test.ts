@@ -4,7 +4,7 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { byNewestFirst, byOrder, readCollection, readDoc } from './read'
-import { poemSchema } from './schema'
+import { poemSchema, readingNoteSchema } from './schema'
 import { slugFromFilename } from './paths'
 
 let root: string
@@ -154,3 +154,44 @@ describe('readDoc', () => {
     )
   })
 })
+
+describe('readingNoteSchema', () => {
+  it('parses a basic reading note without instagram fields', () => {
+    const parsed = readingNoteSchema.parse({
+      title: 'Laut Bercerita',
+      date: '2026-08-21',
+      lang: 'id',
+    })
+
+    expect(parsed.title).toBe('Laut Bercerita')
+    expect(parsed.instagramUrl).toBeUndefined()
+    expect(parsed.instagramCover).toBeUndefined()
+    expect(parsed.instagramLabel).toBe('WATCH THE REVIEW ↗')
+  })
+
+  it('accepts instagramUrl, instagramCover, and custom instagramLabel', () => {
+    const parsed = readingNoteSchema.parse({
+      title: 'The Hitchhiker\'s Guide to the Galaxy',
+      date: '2026-09-14',
+      lang: 'en',
+      instagramUrl: 'https://www.instagram.com/reel/C-xyz123/',
+      instagramCover: '/reviews/hitchhiker.jpg',
+      instagramLabel: 'VIEW ON INSTAGRAM ↗',
+    })
+
+    expect(parsed.instagramUrl).toBe('https://www.instagram.com/reel/C-xyz123/')
+    expect(parsed.instagramCover).toBe('/reviews/hitchhiker.jpg')
+    expect(parsed.instagramLabel).toBe('VIEW ON INSTAGRAM ↗')
+  })
+
+  it('tolerates empty string for instagramUrl', () => {
+    const parsed = readingNoteSchema.parse({
+      title: 'Note',
+      date: '2026-09-14',
+      instagramUrl: '',
+    })
+
+    expect(parsed.instagramUrl).toBe('')
+  })
+})
+

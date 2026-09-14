@@ -186,6 +186,12 @@ export const readingNoteSchema = z.object({
   title: z.string().min(1),
   date: isoDate,
   lang: language,
+  /** Optional link to an Instagram review or Reel. */
+  instagramUrl: z.string().url().or(z.literal('')).optional(),
+  /** Path under `public/` to the reel thumbnail/cover image (e.g. `/reviews/hitchhiker.jpg`). */
+  instagramCover: z.string().optional(),
+  /** Button label on the review card. Defaults to "WATCH THE REVIEW ↗". */
+  instagramLabel: z.string().default('WATCH THE REVIEW ↗'),
 })
 
 export type Site = z.infer<typeof siteSchema>
