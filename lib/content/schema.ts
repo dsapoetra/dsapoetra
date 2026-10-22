@@ -56,6 +56,8 @@ export const siteSchema = z.object({
   location: z.string().min(1),
   /** Footer, right side, in order. */
   links: z.array(link).default([]),
+  /** Medium RSS feed. Its newest posts show on the homepage; absent hides the section. */
+  medium: z.string().url().optional(),
 })
 
 export const homeSchema = z.object({

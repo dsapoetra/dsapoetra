@@ -3,6 +3,7 @@ name: Dimas Angga Saputra
 shortName: Dimas A. Saputra
 url: https://dsapoetra.com
 description: Engineering Manager for Payments and Monetization at OLX Indonesia. Short stories and poems on weekends.
+medium: https://medium.com/feed/@dsapoetra
 location: Bintaro, South Tangerang
 links:
   - label: angga.dimassaputra@gmail.com

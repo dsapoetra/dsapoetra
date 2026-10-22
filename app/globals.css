@@ -199,8 +199,10 @@ a {
   text-decoration: none;
 }
 
+/* Links glow in their side's colour: gold on Angel, crimson on Demon. */
 a:hover {
   color: var(--fg);
+  text-shadow: 0 0 12px var(--glow);
 }
 
 img {
@@ -212,6 +214,16 @@ img {
   outline: 2px solid var(--acc);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* Read aloud, never seen. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Reaches the keyboard on tab, invisible to everyone else. */
@@ -665,6 +677,137 @@ img {
   font-size: 44px;
   font-weight: 400;
   letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   Side cards: Medium posts, projects, case studies
+   -------------------------------------------------------------------------- */
+
+/*
+ * Each card carries `.side-angel` or `.side-demon`, which remaps the theme
+ * tokens on the card itself, so a Demon card stays dark on an Angel page and
+ * the other way round. Angel is soft (serif title, round corners); Demon is
+ * sharp (sans title, near-square corners).
+ *
+ * On hover a card tilts a little toward its own side: Angel leans left,
+ * Demon right. The tilt is motion, so it only exists without
+ * prefers-reduced-motion; the glow is not, so it stays.
+ */
+.side-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.side-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--fg);
+  transition: transform 220ms ease, border-color 120ms ease, box-shadow 220ms ease;
+}
+
+.side-card.side-demon {
+  border-radius: 2px;
+}
+
+.side-card:hover,
+.side-card:focus-within {
+  border-color: var(--line-hover);
+  box-shadow: 0 10px 30px -14px var(--glow);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .side-card.side-angel:hover,
+  .side-card.side-angel:focus-within {
+    transform: rotate(-1.2deg) translateY(-2px);
+  }
+
+  .side-card.side-demon:hover,
+  .side-card.side-demon:focus-within {
+    transform: rotate(1.2deg) translateY(-2px);
+  }
+}
+
+/* The stretched link draws no outline of its own; the card shows focus. */
+.side-card:has(.side-card__link:focus-visible) {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+}
+
+.side-card__link:focus-visible {
+  outline: none;
+}
+
+.side-card__meta {
+  font-size: 12px;
+  color: var(--fg3);
+}
+
+.side-card__title {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+.side-angel .side-card__title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.side-card__body {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg2);
+  text-wrap: pretty;
+}
+
+.side-card__link {
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--acc);
+}
+
+/* The whole card is the hit area. */
+.side-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.side-card:hover .side-card__link,
+.side-card__link:focus-visible {
+  color: var(--acc);
+  text-shadow: 0 0 10px var(--glow);
+}
+
+.home__posts {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.home__posts-all {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (min-width: 721px) {
+  .side-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* --------------------------------------------------------------------------
