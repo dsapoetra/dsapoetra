@@ -10,8 +10,8 @@ import { THEME_BOOT_SCRIPT } from '@/lib/theme'
 /*
  * Two faces, one per side, and no more.
  *
- * Newsreader is the Angel: humanist serif, the Writing wing, and an italic
- * because a story needs one. Space Grotesk is the Demon: geometric, a little
+ * Newsreader is the Angel: humanist serif, the hero name and Angel cards,
+ * with an italic for emphasis in prose. Space Grotesk is the Demon: geometric, a little
  * sharp, and it carries all apparatus too (nav, meta, dates, tags), which is
  * why there is no separate mono face.
  *

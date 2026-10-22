@@ -8,7 +8,6 @@ describe('activeHref', () => {
 
   it('marks the section itself', () => {
     expect(activeHref('/work')).toBe('/work')
-    expect(activeHref('/writing')).toBe('/writing')
     expect(activeHref('/about')).toBe('/about')
     expect(activeHref('/now')).toBe('/now')
   })
@@ -16,9 +15,7 @@ describe('activeHref', () => {
   it('marks the owning wing for a piece at its own short URL', () => {
     expect(activeHref('/work/strangling-a-monolith')).toBe('/work')
     expect(activeHref('/notes/outbox-pattern')).toBe('/work')
-    expect(activeHref('/poems/ledger')).toBe('/writing')
-    expect(activeHref('/stories/terminal-three')).toBe('/writing')
-    expect(activeHref('/reading/laut-bercerita')).toBe('/writing')
+    expect(activeHref('/poems/ledger')).toBeNull()
   })
 
   /*

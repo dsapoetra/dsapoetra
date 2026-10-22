@@ -16,7 +16,7 @@ export function contentRoot(): string {
 }
 
 /**
- * `poems/hujan-di-bintaro.md` -> `hujan-di-bintaro`.
+ * `notes/outbox-pattern.md` -> `outbox-pattern`.
  *
  * A leading sort prefix is stripped: `01-olx.md` -> `olx`. That lets a folder
  * whose order is a human decision rather than a date (experience, projects)

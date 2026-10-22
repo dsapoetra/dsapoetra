@@ -1,9 +1,8 @@
 /**
- * Dates on this site are three shapes and no more, per the design handoff:
+ * Dates on this site are two shapes and no more:
  *
- *   iso    2026-09-02        mono, in dated lists and the Now stamp
- *   long   6 September 2026  in prose, under a title
- *   short  Sep 2026          in the Writing lists, where the day is noise
+ *   iso    2026-09-02        in dated lists and the Now stamp
+ *   long   6 September 2026  in prose, under a title, on cards
  *
  * Every one of them is formatted in UTC. A date in frontmatter is a calendar
  * day, not an instant, and rendering `2026-09-01` through a Jakarta-local
@@ -14,11 +13,6 @@
 const MONTHS_LONG = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
-]
-
-const MONTHS_SHORT = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ]
 
 /**
@@ -42,22 +36,4 @@ export function isoDate(iso: string): string {
 export function longDate(iso: string): string {
   const { year, month, day } = parts(iso)
   return `${day} ${MONTHS_LONG[month - 1]} ${year}`
-}
-
-/** `Sep 2026`. For the Writing lists, where the day carries nothing. */
-export function shortDate(iso: string): string {
-  const { year, month } = parts(iso)
-  return `${MONTHS_SHORT[month - 1]} ${year}`
-}
-
-/**
- * Joins meta fragments with the site's separator, dropping anything empty.
- *
- * Every meta line on the site is some subset of date, reading time and
- * language, and which parts exist varies per piece. Filtering here is what
- * stops a poem with no reading time from rendering `Sep 2026 ·` with a
- * separator hanging off the end.
- */
-export function meta(...fragments: Array<string | false | null | undefined>): string {
-  return fragments.filter(Boolean).join(' · ')
 }

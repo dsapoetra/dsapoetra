@@ -1,6 +1,6 @@
 /**
  * Words per minute for prose read on a screen. Deliberately conservative:
- * these are short stories and case studies, not skimmable documentation, and
+ * these are case studies and technical notes, not skimmable documentation, and
  * an estimate that runs slightly long reads as honest where one that runs
  * short reads as a lie.
  */
@@ -11,7 +11,7 @@ const WORDS_PER_MINUTE = 200
  *
  * Computed rather than authored so the number cannot drift away from the text
  * after an edit. Frontmatter may still override it — see `readingTime` on the
- * story and case-study schemas — for the rare piece where the count lies,
+ * case-study and note schemas — for the rare piece where the count lies,
  * usually because it is mostly code or mostly white space.
  */
 export function readingTime(body: string): number {

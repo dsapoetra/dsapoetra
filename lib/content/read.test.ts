@@ -4,7 +4,7 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { byNewestFirst, byOrder, readCollection, readDoc } from './read'
-import { poemSchema, readingNoteSchema } from './schema'
+import { caseStudySchema, noteSchema } from './schema'
 import { slugFromFilename } from './paths'
 
 let root: string
@@ -43,57 +43,56 @@ describe('slugFromFilename', () => {
 
 describe('readCollection', () => {
   it('returns an empty list for a directory that does not exist', async () => {
-    await expect(readCollection('poems', poemSchema, byNewestFirst)).resolves.toEqual([])
+    await expect(readCollection('notes', noteSchema, byNewestFirst)).resolves.toEqual([])
   })
 
   it('parses frontmatter and keeps the body verbatim', async () => {
     await write(
-      'poems/ledger.md',
-      '---\ntitle: Ledger\ndate: "2026-09-06"\n---\n\nline one\nline two\n'
+      'notes/ledger.md',
+      '---\ntitle: Ledger\ndate: "2026-09-06"\ncategory: c\n---\n\nline one\nline two\n'
     )
 
-    const [poem] = await readCollection('poems', poemSchema, byNewestFirst)
+    const [note] = await readCollection('notes', noteSchema, byNewestFirst)
 
-    expect(poem.title).toBe('Ledger')
-    expect(poem.slug).toBe('ledger')
-    // The line break is the poem. It must survive the loader untouched.
-    expect(poem.body).toBe('line one\nline two')
+    expect(note.title).toBe('Ledger')
+    expect(note.slug).toBe('ledger')
+    // Line breaks are content. They must survive the loader untouched.
+    expect(note.body).toBe('line one\nline two')
   })
 
   it('applies schema defaults', async () => {
-    await write('poems/a.md', '---\ntitle: A\ndate: "2026-01-01"\n---\nbody\n')
+    await write('case-studies/a.md', '---\ntitle: A\ndate: "2026-01-01"\nsummary: S\n---\nbody\n')
 
-    const [poem] = await readCollection('poems', poemSchema, byNewestFirst)
+    const [study] = await readCollection('case-studies', caseStudySchema, byNewestFirst)
 
-    expect(poem.lang).toBe('en')
-    expect(poem.align).toBe('left')
+    expect(study.context).toEqual({})
   })
 
   it('sorts newest first', async () => {
-    await write('poems/old.md', '---\ntitle: Old\ndate: "2025-01-01"\n---\nx\n')
-    await write('poems/new.md', '---\ntitle: New\ndate: "2026-01-01"\n---\nx\n')
+    await write('notes/old.md', '---\ntitle: Old\ndate: "2025-01-01"\ncategory: c\n---\nx\n')
+    await write('notes/new.md', '---\ntitle: New\ndate: "2026-01-01"\ncategory: c\n---\nx\n')
 
-    const poems = await readCollection('poems', poemSchema, byNewestFirst)
+    const notes = await readCollection('notes', noteSchema, byNewestFirst)
 
-    expect(poems.map((poem) => poem.title)).toEqual(['New', 'Old'])
+    expect(notes.map((note) => note.title)).toEqual(['New', 'Old'])
   })
 
   it('ignores files that are not markdown', async () => {
-    await write('poems/a.md', '---\ntitle: A\ndate: "2026-01-01"\n---\nx\n')
-    await write('poems/.DS_Store', 'junk')
-    await write('poems/notes.txt', 'junk')
+    await write('notes/a.md', '---\ntitle: A\ndate: "2026-01-01"\ncategory: c\n---\nx\n')
+    await write('notes/.DS_Store', 'junk')
+    await write('notes/notes.txt', 'junk')
 
-    const poems = await readCollection('poems', poemSchema, byNewestFirst)
+    const notes = await readCollection('notes', noteSchema, byNewestFirst)
 
-    expect(poems).toHaveLength(1)
+    expect(notes).toHaveLength(1)
   })
 
   it('names the file and the field when frontmatter is wrong', async () => {
-    await write('poems/broken.md', '---\ndate: "2026-01-01"\n---\nx\n')
+    await write('notes/broken.md', '---\ndate: "2026-01-01"\ncategory: c\n---\nx\n')
 
     await expect(
-      readCollection('poems', poemSchema, byNewestFirst)
-    ).rejects.toThrow(/poems\/broken\.md[\s\S]*title/)
+      readCollection('notes', noteSchema, byNewestFirst)
+    ).rejects.toThrow(/notes\/broken\.md[\s\S]*title/)
   })
 
   /*
@@ -102,18 +101,18 @@ describe('readCollection', () => {
    * far cheaper than a list that silently sorts wrong in production.
    */
   it('rejects an unquoted date', async () => {
-    await write('poems/x.md', '---\ntitle: X\ndate: 2026-01-01\n---\nx\n')
+    await write('notes/x.md', '---\ntitle: X\ndate: 2026-01-01\ncategory: c\n---\nx\n')
 
     await expect(
-      readCollection('poems', poemSchema, byNewestFirst)
+      readCollection('notes', noteSchema, byNewestFirst)
     ).rejects.toThrow(/date/)
   })
 
   it('rejects a date that is not a real calendar day', async () => {
-    await write('poems/x.md', '---\ntitle: X\ndate: "2026-02-30"\n---\nx\n')
+    await write('notes/x.md', '---\ntitle: X\ndate: "2026-02-30"\ncategory: c\n---\nx\n')
 
     await expect(
-      readCollection('poems', poemSchema, byNewestFirst)
+      readCollection('notes', noteSchema, byNewestFirst)
     ).rejects.toThrow(/not a real calendar day/)
   })
 })
@@ -135,9 +134,9 @@ describe('byOrder', () => {
 
 describe('readDoc', () => {
   it('reads a single page file', async () => {
-    await write('poems/one.md', '---\ntitle: One\ndate: "2026-01-01"\n---\nbody\n')
+    await write('notes/one.md', '---\ntitle: One\ndate: "2026-01-01"\ncategory: c\n---\nbody\n')
 
-    const doc = await readDoc('poems/one.md', poemSchema)
+    const doc = await readDoc('notes/one.md', noteSchema)
 
     expect(doc.title).toBe('One')
     expect(doc.body).toBe('body')
@@ -149,49 +148,8 @@ describe('readDoc', () => {
    * page instead of failing.
    */
   it('throws when a required page file is missing', async () => {
-    await expect(readDoc('pages/home.md', poemSchema)).rejects.toThrow(
+    await expect(readDoc('pages/home.md', noteSchema)).rejects.toThrow(
       /Missing content file: pages\/home\.md/
     )
   })
 })
-
-describe('readingNoteSchema', () => {
-  it('parses a basic reading note without instagram fields', () => {
-    const parsed = readingNoteSchema.parse({
-      title: 'Laut Bercerita',
-      date: '2026-08-21',
-      lang: 'id',
-    })
-
-    expect(parsed.title).toBe('Laut Bercerita')
-    expect(parsed.instagramUrl).toBeUndefined()
-    expect(parsed.instagramCover).toBeUndefined()
-    expect(parsed.instagramLabel).toBe('WATCH THE REVIEW ↗')
-  })
-
-  it('accepts instagramUrl, instagramCover, and custom instagramLabel', () => {
-    const parsed = readingNoteSchema.parse({
-      title: 'The Hitchhiker\'s Guide to the Galaxy',
-      date: '2026-09-14',
-      lang: 'en',
-      instagramUrl: 'https://www.instagram.com/reel/C-xyz123/',
-      instagramCover: '/reviews/hitchhiker.jpg',
-      instagramLabel: 'VIEW ON INSTAGRAM ↗',
-    })
-
-    expect(parsed.instagramUrl).toBe('https://www.instagram.com/reel/C-xyz123/')
-    expect(parsed.instagramCover).toBe('/reviews/hitchhiker.jpg')
-    expect(parsed.instagramLabel).toBe('VIEW ON INSTAGRAM ↗')
-  })
-
-  it('tolerates empty string for instagramUrl', () => {
-    const parsed = readingNoteSchema.parse({
-      title: 'Note',
-      date: '2026-09-14',
-      instagramUrl: '',
-    })
-
-    expect(parsed.instagramUrl).toBe('')
-  })
-})
-

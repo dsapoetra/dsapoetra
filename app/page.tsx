@@ -65,7 +65,7 @@ export default async function HomePage() {
           <Link
             key={card.href}
             href={card.href}
-            className={`wing wing--${card.wing}`}
+            className="wing"
           >
             <span className="wing__blurb">{card.blurb}</span>
             <span className="wing__foot">

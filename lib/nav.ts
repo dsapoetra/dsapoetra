@@ -1,10 +1,10 @@
 /**
- * The four nav items, in order, and which URLs each of them owns.
+ * The nav items, in order, and which URLs each of them owns.
  *
- * A poem lives at `/poems/hujan-di-bintaro`, not under `/writing`, because the
- * short URL is the better one to share. But it is still a page of the Writing
- * wing, and the nav has to say so while you read it. `owns` is what makes that
- * true without hard-coding the relationship into every template.
+ * A technical note lives at `/notes/outbox-pattern`, not under `/work`,
+ * because the short URL is the better one to share. But it is still a page of
+ * the Work section, and the nav has to say so while you read it. `owns` is
+ * what makes that true without hard-coding it into every template.
  */
 export type NavItem = {
   href: string
@@ -15,7 +15,6 @@ export type NavItem = {
 
 export const nav: NavItem[] = [
   { href: '/work', label: 'Work', owns: ['/notes'] },
-  { href: '/writing', label: 'Writing', owns: ['/poems', '/stories', '/reading'] },
   { href: '/about', label: 'About' },
   { href: '/now', label: 'Now' },
 ]

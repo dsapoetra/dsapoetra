@@ -5,8 +5,8 @@ export default function NotFound() {
     <main className="page wrap wrap--read">
       <h1 className="page-title">Not here</h1>
       <p className="empty">
-        That page does not exist, or it moved. Try <Link href="/work">Work</Link>{' '}
-        or <Link href="/writing">Writing</Link>.
+        That page does not exist, or it moved. Try <Link href="/">the homepage</Link>{' '}
+        or <Link href="/work">Work</Link>.
       </p>
     </main>
   )

@@ -25,8 +25,6 @@ const isoDate = z
  * set as `lang` on the article element, so a screen reader switches voice.
  * Absent means English; there is no `lang: en` to remember to write.
  */
-const language = z.enum(['id', 'en']).default('en')
-
 /** An outbound link with its own label: `github →`, `demo →`, `visit →`. */
 const link = z.object({
   label: z.string().min(1),
@@ -63,10 +61,9 @@ export const siteSchema = z.object({
 export const homeSchema = z.object({
   title: z.string().min(1),
   /**
-   * The homepage paragraph is two sentences on one line in two different
-   * faces: the working life in sans, the writing life in serif. They are
-   * separate fields because the typeface switch mid-sentence IS the idea, and
-   * expressing it in markdown would mean smuggling a span through the body.
+   * The hero's two halves: the working life on the Demon side in sans, the
+   * writing life on the Angel side in serif. Separate fields because each
+   * lands in a different half of the hero.
    */
   lead: z.string().min(1),
   leadSerif: z.string().min(1),
@@ -78,22 +75,14 @@ export const homeSchema = z.object({
         label: z.string().min(1),
         href: z.string().min(1),
         blurb: z.string().min(1),
-        /** Which wing this card belongs to. Drives its face and weight. */
-        wing: z.enum(['work', 'writing']),
       })
     )
-    .length(2),
+    .min(1),
 })
 
 export const workPageSchema = z.object({
   title: z.string().min(1),
   intro: z.string().min(1),
-})
-
-export const writingPageSchema = z.object({
-  title: z.string().min(1),
-  /** One line, in sans, under the featured piece. */
-  note: z.string().min(1),
 })
 
 export const aboutSchema = z.object({
@@ -164,50 +153,12 @@ export const noteSchema = z.object({
   readingTime: z.number().int().positive().optional(),
 })
 
-// ---------------------------------------------------------------------------
-// Writing wing
-// ---------------------------------------------------------------------------
-
-export const poemSchema = z.object({
-  title: z.string().min(1),
-  date: isoDate,
-  lang: language,
-  /** Centred poems exist; most are not. */
-  align: z.enum(['left', 'center']).default('left'),
-})
-
-export const storySchema = z.object({
-  title: z.string().min(1),
-  date: isoDate,
-  lang: language,
-  readingTime: z.number().int().positive().optional(),
-  /** The oversized first letter. Off by default: it suits an opening that
-   *  starts on a name, and fights one that starts on dialogue. */
-  dropcap: z.boolean().default(false),
-})
-
-export const readingNoteSchema = z.object({
-  title: z.string().min(1),
-  date: isoDate,
-  lang: language,
-  /** Optional link to an Instagram review or Reel. */
-  instagramUrl: z.string().url().or(z.literal('')).optional(),
-  /** Path under `public/` to the reel thumbnail/cover image (e.g. `/reviews/hitchhiker.jpg`). */
-  instagramCover: z.string().optional(),
-  /** Button label on the review card. Defaults to "WATCH THE REVIEW ↗". */
-  instagramLabel: z.string().default('WATCH THE REVIEW ↗'),
-})
-
 export type Site = z.infer<typeof siteSchema>
 export type Home = z.infer<typeof homeSchema>
 export type WorkPage = z.infer<typeof workPageSchema>
-export type WritingPage = z.infer<typeof writingPageSchema>
 export type About = z.infer<typeof aboutSchema>
 export type Now = z.infer<typeof nowSchema>
 export type Experience = z.infer<typeof experienceSchema>
 export type Project = z.infer<typeof projectSchema>
 export type CaseStudy = z.infer<typeof caseStudySchema>
 export type Note = z.infer<typeof noteSchema>
-export type Poem = z.infer<typeof poemSchema>
-export type Story = z.infer<typeof storySchema>
-export type ReadingNote = z.infer<typeof readingNoteSchema>

@@ -1,5 +1,4 @@
 import { MDXRemote } from 'next-mdx-remote-client/rsc'
-import InstagramReviewCard from './instagram-review-card'
 
 /**
  * A figure inside an article body.
@@ -39,29 +38,13 @@ function Diagram({
   )
 }
 
-function InstagramReview({
-  src,
-  href,
-  alt,
-  label,
-}: {
-  src?: string
-  href: string
-  alt?: string
-  label?: string
-}) {
-  return <InstagramReviewCard url={href} cover={src} label={label} title={alt} />
-}
-
-const components = { Diagram, InstagramReview, InstagramReviewCard }
+const components = { Diagram }
 
 /**
  * Renders a markdown body.
  *
  * Every element is styled by the `.prose` class on the wrapper rather than by
- * a components map, so the same markdown renders in the Work wing's sans and
- * the Writing wing's serif depending only on where it is placed. A components
- * map would hard-code one wing's type into the renderer.
+ * a components map, so the markdown takes the type of wherever it is placed.
  */
 export default function Markdown({ source }: { source: string }) {
   return <MDXRemote source={source} components={components} />
