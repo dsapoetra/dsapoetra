@@ -11,6 +11,39 @@ import {
   loadCreationPage,
 } from '@/lib/content'
 
+type Role = Awaited<ReturnType<typeof loadExperience>>[number]
+
+/** One labelled list of roles. Renders nothing when the list is empty. */
+function RoleSection({ label, roles }: { label: string; roles: Role[] }) {
+  if (roles.length === 0) return null
+
+  return (
+    <section className="creation__section">
+      <h2 className="label">{label}</h2>
+      <div className="stack">
+        {roles.map((role) => (
+          <article key={role.slug} className="role">
+            <span className="role__period">{role.period}</span>
+            <div className="role__body">
+              <div className="role__head">
+                <strong className="role__company">{role.company}</strong>
+                <span className="role__title">{role.role}</span>
+              </div>
+              {role.summary && <p className="role__summary">{role.summary}</p>}
+              {role.body && (
+                <div className="prose">
+                  <Markdown source={role.body} />
+                </div>
+              )}
+              {role.scope && <p className="role__scope">{role.scope}</p>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const page = await loadCreationPage()
   return { title: page.title, description: page.intro }
@@ -29,6 +62,11 @@ export default async function CreationPage() {
     loadNotes(),
   ])
 
+  // A role is Leading if its title says so; everything else is Building.
+  const isLeading = (role: Role) => /manager|lead/i.test(role.role)
+  const leading = experience.filter(isLeading)
+  const building = experience.filter((role) => !isLeading(role))
+
   return (
     <main className="creation wrap wrap--creation">
       <div className="creation__intro">
@@ -37,43 +75,21 @@ export default async function CreationPage() {
       </div>
 
       {/*
-        The page is balanced across the seam: the career on the Angel side
-        (experience), the technical work on the Demon side (case studies,
-        projects, notes). Grouped this way the two halves carry about the same
-        amount of content, so neither runs long. Each
-        half carries its side's palette whatever the page theme, the same way
-        the homepage hero does.
+        The page is balanced across the seam: Leading on the Angel side (the
+        manager and lead roles), Building on the Demon side (the engineering
+        roles, then case studies, projects and notes). Grouped this way the
+        two halves carry about the same amount of content, so neither runs
+        long. Each half carries its side's palette whatever the page theme,
+        the same way the homepage hero does.
       */}
       <div className="creation__balance">
         <div className="creation__side side-angel">
-          {experience.length > 0 && (
-            <section className="creation__section">
-              <h2 className="label">Experience</h2>
-              <div className="stack">
-                {experience.map((role) => (
-                  <article key={role.slug} className="role">
-                    <span className="role__period">{role.period}</span>
-                    <div className="role__body">
-                      <div className="role__head">
-                        <strong className="role__company">{role.company}</strong>
-                        <span className="role__title">{role.role}</span>
-                      </div>
-                      {role.summary && <p className="role__summary">{role.summary}</p>}
-                      {role.body && (
-                        <div className="prose">
-                          <Markdown source={role.body} />
-                        </div>
-                      )}
-                      {role.scope && <p className="role__scope">{role.scope}</p>}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          )}
+          <RoleSection label="Leading" roles={leading} />
         </div>
 
         <div className="creation__side side-demon">
+          <RoleSection label="Building" roles={building} />
+
           {caseStudies.length > 0 && (
             <section className="creation__section">
               <h2 className="label">Case studies</h2>

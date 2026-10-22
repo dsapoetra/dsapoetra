@@ -152,9 +152,11 @@ optional, and the card reads "View on {label}".
 
 ## Creation
 
-`/creation` is balanced across the seam. The career sits on an Angel half
-(experience); the technical work sits on a Demon half (case studies,
-projects, technical notes). From 900px the halves stand side by side,
+`/creation` is balanced across the seam. **Leading** sits on an Angel half:
+every role whose title contains "Manager" or "Lead". **Building** sits on a
+Demon half: the remaining engineering roles, then case studies, projects and
+technical notes. The split is by job title, so a new experience file lands
+on the right side with no extra field. From 900px the halves stand side by side,
 stretched to the same height, with the hero's gold-to-crimson seam between
 them; below that they stack edge to edge and the seam runs across. The halves
 use `.side-angel` / `.side-demon`, so they keep their palettes in either
