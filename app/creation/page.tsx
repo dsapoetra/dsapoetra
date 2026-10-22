@@ -37,10 +37,10 @@ export default async function CreationPage() {
       </div>
 
       {/*
-        The page is balanced across the seam: the story on the Angel side
-        (experience, case studies, both prose), the technical work on the
-        Demon side (projects, notes). Grouped this way the two halves also
-        carry about the same amount of content, so neither runs long. Each
+        The page is balanced across the seam: the career on the Angel side
+        (experience), the technical work on the Demon side (case studies,
+        projects, notes). Grouped this way the two halves carry about the same
+        amount of content, so neither runs long. Each
         half carries its side's palette whatever the page theme, the same way
         the homepage hero does.
       */}
@@ -71,7 +71,9 @@ export default async function CreationPage() {
               </div>
             </section>
           )}
+        </div>
 
+        <div className="creation__side side-demon">
           {caseStudies.length > 0 && (
             <section className="creation__section">
               <h2 className="label">Case studies</h2>
@@ -79,7 +81,7 @@ export default async function CreationPage() {
                 {caseStudies.map((study) => (
                   <SideCard
                     key={study.slug}
-                    side="angel"
+                    side="demon"
                     title={study.title}
                     meta={`${study.minutes} min read`}
                     body={study.summary}
@@ -90,9 +92,7 @@ export default async function CreationPage() {
               </div>
             </section>
           )}
-        </div>
 
-        <div className="creation__side side-demon">
           {projects.length > 0 && (
             <section className="creation__section">
               <h2 className="label">Projects</h2>

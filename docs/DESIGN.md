@@ -99,8 +99,8 @@ and projects. Props: `side`, `title`, and optionally `meta`, `body`, `tags`,
 - Hover: the card tilts 1.2° toward its side (Angel left, Demon right) and
   glows in `--glow`. The tilt only runs under
   `prefers-reduced-motion: no-preference`.
-- Side: Medium posts by topic (see below). On Creation, case studies are
-  Angel and projects Demon, matching the half they sit in.
+- Side: Medium posts by topic (see below). On Creation, case studies and
+  projects are Demon, matching the half they sit in.
 
 All links glow on hover: gold on Angel, crimson on Demon.
 
@@ -152,9 +152,9 @@ optional, and the card reads "View on {label}".
 
 ## Creation
 
-`/creation` is balanced across the seam. The story sits on an Angel half
-(experience, case studies: both prose); the technical work sits on a Demon
-half (projects, technical notes). From 900px the halves stand side by side,
+`/creation` is balanced across the seam. The career sits on an Angel half
+(experience); the technical work sits on a Demon half (case studies,
+projects, technical notes). From 900px the halves stand side by side,
 stretched to the same height, with the hero's gold-to-crimson seam between
 them; below that they stack edge to edge and the seam runs across. The halves
 use `.side-angel` / `.side-demon`, so they keep their palettes in either
