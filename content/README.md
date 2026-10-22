@@ -8,6 +8,7 @@ edit it, commit. That is the whole process. You should never need to open a
 
 | To do this | Add or edit |
 |---|---|
+| Publish a Medium post | nothing: publish on Medium, it shows on the homepage within the hour |
 | Publish a poem | new file in `poems/` |
 | Publish a short story | new file in `stories/` |
 | Publish a reading note | new file in `reading/` |
@@ -15,8 +16,8 @@ edit it, commit. That is the whole process. You should never need to open a
 | Publish a technical note | new file in `notes/` |
 | Add a job | new file in `experience/` |
 | Add a project | new file in `projects/` |
-| Change your name, location, or footer links | `site.md` |
-| Change the homepage sentence or the two cards | `pages/home.md` |
+| Change your name, location, footer links, or Medium feed | `site.md` |
+| Change the homepage sentences, tagline, or the two cards | `pages/home.md` |
 | Change the Work page headline and intro | `pages/work.md` |
 | Change the Writing page's one-line note | `pages/writing.md` |
 | Rewrite the About page | `pages/about.md` |

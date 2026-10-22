@@ -1,136 +1,175 @@
 # Design
 
-The record of what the design boards specified. `app/globals.css` implements
-this; when the two disagree, this file is what the boards said.
-
-Source: Claude Design project `dsapoetra portfolio boards`
-(`935bb87a-da4f-4765-ad36-06bae6eae375`), boards 1a to 1l plus their dark-mode
-mirrors. Background option 2c, "Graph paper".
+Half Angel, half Demon. `app/globals.css` implements this file; when the two
+disagree, fix one of them.
 
 ## The idea
 
-Two wings, one grid.
+Every page is built from two palettes, used as an organising idea rather
+than a split down the middle of every screen.
 
-**Work** is sans. It sits in boxes and rows: cards, hairline-divided lists,
-a fixed label column. It is scanned more than it is read.
+- **Angel**: warm white, soft gold, pale sky. Humanist serif (Newsreader),
+  round corners. The writing life.
+- **Demon**: near-black, deep crimson, ember. Geometric sans (Space Grotesk),
+  near-square corners. The working life.
 
-**Writing** is serif. It sits in a single narrow column with air around it.
-It is read.
-
-The graph paper runs under both, and is what makes them one site rather than
-two. The header and footer paint solid `--bg` over it so the grid stops at
-their hairline and the bars read as the page's frame.
+Only the homepage hero shows both at once: a diagonal split (stacked, with a
+near-horizontal seam, under 721px) with the name and tagline sitting on a
+glowing gold-to-crimson seam. The visitor's chosen side colours the rest of
+the site, and cards lean to one side or the other within it.
 
 ## Tokens
 
-Light, on `:root`:
+There are two layers.
 
-| Token | Value | Used for |
+**Side palettes** never change with the theme. The hero and the cards read
+them directly.
+
+| Angel | Demon | Used for |
 |---|---|---|
-| `--bg` | `#FCFCFB` | page |
-| `--fg` | `#22272E` | text |
-| `--fg2` | `#5A636E` | secondary text |
-| `--fg3` | `#8A8A84` | meta, dates |
-| `--line` | `#E4E4E0` | hairlines |
-| `--card` | `#FFFFFF` | cards |
-| `--acc` | `#3D5A80` | links, active nav |
-| `--sunk` | `#F7F7F5` | placeholders |
-| `--grid` | `rgba(61,90,128,0.07)` | minor grid |
-| `--grid2` | `rgba(61,90,128,0.16)` | major grid |
-| `--line-hover` | `#B5B5AF` | card border on hover |
+| `--angel-bg` | `--demon-bg` | page |
+| `--angel-card` | `--demon-card` | card surface |
+| `--angel-sunk` | `--demon-sunk` | code blocks, placeholders |
+| `--angel-fg` | `--demon-fg` | body text |
+| `--angel-fg2` | `--demon-fg2` | secondary text |
+| `--angel-fg3` | `--demon-fg3` | meta: dates, reading times |
+| `--angel-acc` | `--demon-acc` | links, active nav (dark gold / ember) |
+| `--angel-line` | `--demon-line` | hairlines, card borders |
+| `--angel-line-hover` | `--demon-line-hover` | card border on hover |
+| `--angel-glow` | `--demon-glow` | link and card glow (gold / crimson). **Never text** |
+| `--angel-sky` | `--demon-ember` | decoration only |
+| `--angel-grid`, `--angel-grid2` | `--demon-grid`, `--demon-grid2` | graph-paper background |
 
-Dark, on `[data-theme="dark"]` and under `prefers-color-scheme: dark`:
+**Theme tokens** are what every other rule reads: `--bg`, `--fg`, `--fg2`,
+`--fg3`, `--acc`, `--card`, `--sunk`, `--line`, `--line-hover`, `--grid`,
+`--grid2`, `--glow`, plus `--halo` / `--horns` (display values for the toggle
+icon). They point at one side:
 
-| Token | Value |
-|---|---|
-| `--bg` | `#0E1B3A` |
-| `--fg` | `#E8ECF4` |
-| `--fg2` | `#A9B8D6` |
-| `--fg3` | `#7F92B8` |
-| `--line` | `#24365F` |
-| `--card` | `#142449` |
-| `--acc` | `#9BB8E8` |
-| `--sunk` | `#142449` |
-| `--grid` | `rgba(255,255,255,0.05)` |
-| `--grid2` | `rgba(255,255,255,0.13)` |
+- `:root` and `.side-angel` map them to Angel.
+- `:root[data-theme="dark"]`, `.side-demon`, and `prefers-color-scheme: dark`
+  (when no side has been picked) map them to Demon.
 
-Dark mode is declared **twice**, on purpose. The media query serves the reader
-who has never touched a toggle. The attribute selector serves one who has, and
-must win in both directions, which is why the media block is guarded with
-`:not([data-theme="light"])`.
+So `.side-angel` / `.side-demon` on any element puts that element on a side
+whatever the page theme. That is how the cards work.
 
-There is no toggle in the UI. The boards did not specify one; the CSS supports
-`data-theme` so that adding one later is a component, not a restyle.
+Rules:
+
+- Colour comes from a token, never a literal.
+- Text tokens (`fg`, `fg2`, `fg3`, `acc`) must be at least 4.5:1 against
+  `bg`, `card` and `sunk` of their own side. `lib/contrast.test.ts` reads the
+  hexes out of `globals.css` and fails `npm test` if one is not.
 
 ## Type
 
+Two families, self-hosted by `next/font` in `app/layout.tsx`.
+
 | Face | Variable | Where |
 |---|---|---|
-| Plus Jakarta Sans 400/500/600/700 | `--sans` | Work wing, nav, all meta |
-| Newsreader 400/500/600 + italic | `--serif` | Writing wing |
-| JetBrains Mono 400/500 | `--mono` | dates, tech tags, reading times |
+| Newsreader 400/500/600 + italic | `--serif` | Angel: Writing wing, hero name, Angel card titles |
+| Space Grotesk 400 to 700 | `--sans` | Demon: Work wing, nav, all meta, Demon card titles |
 
-Mono is for things read as **values**, not as language.
+`--mono` is an alias for `--sans`, kept so older rules for values (dates,
+tags) still have a name to point at.
 
-Work wing: body 15/1.45, h1 36/1.15 600 at `-0.02em`, h2 22/600, card h3 17/600,
-case-study body 16/1.55.
+## Theme toggle
 
-Writing wing: landing 19/1.7, poem 22/1.8 with `white-space: pre-line`, story
-20/1.7, titles 40 to 44 at weight 400. Meta drops back to sans 13px `--fg3`.
+`components/theme-toggle.tsx`, in the header. A round button with a head
+that wears a halo on the Angel side and horns on the Demon side.
 
-Home paragraph: sentence one in sans 24px, sentence two in serif 27px, on the
-same line. The serif is set larger because Newsreader's x-height is smaller;
-matching the point size makes it read as an afterthought rather than an equal
-half.
+- Values are stored under the CSS names: `light` = Angel, `dark` = Demon, in
+  localStorage key `dsapoetra-theme` (`lib/theme.ts`).
+- **Nothing stored** means the visitor has not picked a side. No
+  `data-theme` is set and `prefers-color-scheme` decides, live.
+- A click sets `data-theme` on `<html>` to the other side and stores it.
+  That attribute is the only thing that changes; the tokens do the rest.
+- `THEME_BOOT_SCRIPT` runs before first paint and applies a stored choice, so
+  there is no flash of the wrong side.
+- The icon is picked by CSS (`--halo` / `--horns`), so it is right before
+  hydration too. The accessible name says the current side and the next one.
 
-Drop cap (stories, opt in via `dropcap: true`):
+## Cards
 
-```css
-::first-letter { float: left; font-size: 3.6em; line-height: .82;
-                 padding: .08em .1em 0 0; font-weight: 500 }
+`components/side-card.tsx` is the one card for Medium posts, case studies
+and projects. Props: `side`, `title`, and optionally `meta`, `body`, `tags`,
+`href`, `cta`.
+
+- The link stretches over the whole card. External links (`http…`) open in a
+  new tab with `rel="noopener"` and say so to screen readers.
+- Hover: the card tilts 1.2° toward its side (Angel left, Demon right) and
+  glows in `--glow`. The tilt only runs under
+  `prefers-reduced-motion: no-preference`.
+- Side: Medium posts by topic (see below); case studies and projects
+  alternate.
+
+All links glow on hover: gold on Angel, crimson on Demon.
+
+## Motion
+
+Three things move: the card tilt, the seam's slow breathing glow, and colour
+transitions. The tilt and the seam are opt-in under
+`prefers-reduced-motion: no-preference`, so they are absent, not just fast,
+for anyone who asked for less motion.
+
+## Adding content
+
+### A Medium post
+
+Publish it on Medium. That is all.
+
+The homepage reads the feed in `content/site.md` (`medium:`) at build time
+and re-reads it at most once an hour (`revalidate = 3600` in `app/page.tsx`),
+so a new post appears within the hour with no commit or deploy.
+
+- The feed carries only the **newest 10** posts. Older ones drop off.
+- Side: a post leans **Demon** if any tag or title word starts with one of
+  `DEMON_WORDS` in `lib/medium.ts` (software, java, system, architecture,
+  aws, …). Everything else leans **Angel**. Tag a post `software-…` to push
+  it Demon; edit `DEMON_WORDS` to change the rule.
+- Excerpt: the first ~220 characters of the post's prose, with headings,
+  captions, quotes and code removed.
+- If the feed cannot be fetched, the section is hidden rather than breaking
+  the page. Remove `medium:` from `site.md` to hide it on purpose.
+
+### A project
+
+Add a file to `content/projects/`:
+
+```md
+---
+name: Subscription billing engine
+summary: Recurring billing with proration, dunning and invoice PDFs.
+tags: [java 21, spring boot 3, postgres]
+order: 1
+link:
+  label: github
+  href: https://github.com/dsapoetra
+---
 ```
 
+`order` sets position; the card's side alternates by position. `link` is
+optional, and the card reads "View on {label}".
+
 ## Layout
-
-Nav 64px tall (56px under 720px), 1px bottom hairline, padding `0 40px`
-(20px mobile). Name left at 600; Work / Writing / About / Now right at 14px.
-The active item is `--acc` at weight 500, the rest `--fg2`.
-
-Footer: 1px top hairline, 13px `--fg2`. Location left, links right. Under
-720px the two swap order, so the links sit above the place name.
 
 Measures, one per template:
 
 | Template | Max width |
 |---|---|
-| Home | 880 |
+| Home (below the hero) | 880 |
 | Work landing | 960 |
 | Case study, note, About, Now | 720 |
 | Writing landing | 680 |
 | Poem | 640 |
 | Story | 620 |
 
-A story is narrower than a case study because prose wants about 65 characters
-a line and technical writing tolerates more.
-
-Cards: `--card` background, 1px `--line`, radius 8, padding 20 to 28. Hover
-moves the border to `--line-hover`. **No shadows anywhere.**
-
-Lists (experience, projects, notes): rows divided by 1px `--line`, no boxes.
-
-Work section labels: 12px, 600, uppercase, `0.08em` tracking, `--fg2`, in a
-fixed 200px column with a 32px gap. The column is fixed so all four sections
-line up with each other.
-
-Tech tags: mono 11px, 1px `--line`, radius 4, padding `1px 6px`, lowercase.
-
-Everything collapses to one column under 720px. In the stacked experience and
-note rows the date moves **above** the entry.
+Cards: one column, two from 721px. Everything else collapses to one column
+under 720px. The hero is written mobile first; the rest of the stylesheet is
+desktop first with a `max-width: 720px` block at the end.
 
 ## Copy rules
 
 - No em dashes.
-- `2026-09-02` in mono lists; `6 September 2026` in prose; `Sep 2026` in the
-  Writing lists.
+- `2026-09-02` in lists; `6 September 2026` in prose and on cards; `Sep 2026`
+  in the Writing lists.
 - Meta separator is `·`.
 - The writing wing is called **Writing**, never "personal" or "misc".
