@@ -1,59 +1,53 @@
 'use client'
 
 import { useSyncExternalStore } from 'react'
-import { isTheme, nextTheme, THEME_KEY, type Theme } from '@/lib/theme'
+import { isTheme, nextTheme, SIDE_NAMES, THEME_KEY, type Theme } from '@/lib/theme'
 
 /*
- * The stored theme is external state: it lives in localStorage, it can change
- * in another tab, and the server cannot see it. `useSyncExternalStore` is the
- * hook for exactly that shape, and using it rather than an effect is what
- * makes the hydration handoff correct by construction — React renders the
- * server snapshot, then swaps to the client one in the same commit, with no
- * mismatch warning and no cascading render.
+ * The current side is external state: it lives in localStorage (or, unpicked,
+ * in the OS setting), it can change in another tab, and the server cannot see
+ * it. `useSyncExternalStore` is the hook for exactly that shape, and using it
+ * rather than an effect makes the hydration handoff correct by construction.
  */
 
 const listeners = new Set<() => void>()
+const DARK_QUERY = '(prefers-color-scheme: dark)'
 
 function subscribe(listener: () => void): () => void {
   listeners.add(listener)
-  // `storage` fires in OTHER tabs, so changing the theme in one syncs the rest.
+  // `storage` fires in OTHER tabs, so picking a side in one syncs the rest.
   window.addEventListener('storage', listener)
+  // Unpicked readers follow the OS, which can flip at sunset mid-visit.
+  const media = window.matchMedia(DARK_QUERY)
+  media.addEventListener('change', listener)
   return () => {
     listeners.delete(listener)
     window.removeEventListener('storage', listener)
+    media.removeEventListener('change', listener)
   }
 }
 
 function getSnapshot(): Theme {
   try {
     const stored = localStorage.getItem(THEME_KEY)
-    return isTheme(stored) ? stored : 'auto'
+    if (isTheme(stored)) return stored
   } catch {
     // Site data blocked. The page works; the choice just will not persist.
-    return 'auto'
   }
+  return window.matchMedia(DARK_QUERY).matches ? 'dark' : 'light'
 }
 
 /**
- * The server has no reader to ask, so it always renders `auto`.
- *
- * This costs nothing visible: the COLOURS were already correct before first
- * paint, applied by the boot script in the root layout. Only this chip's own
- * label is briefly generic, and it settles on hydration.
+ * The server has no reader to ask. It renders no side, and only the button's
+ * accessible name is briefly generic: the ICON is chosen by the stylesheet
+ * from the same tokens as the colours, so it is right before first paint.
  */
-function getServerSnapshot(): Theme {
-  return 'auto'
+function getServerSnapshot(): Theme | null {
+  return null
 }
 
 function applyTheme(value: Theme) {
-  if (value === 'auto') {
-    // No attribute at all, which hands the decision back to the
-    // `prefers-color-scheme` query and keeps tracking a system that changes
-    // while the page is open.
-    document.documentElement.removeAttribute('data-theme')
-  } else {
-    document.documentElement.setAttribute('data-theme', value)
-  }
+  document.documentElement.setAttribute('data-theme', value)
 
   try {
     localStorage.setItem(THEME_KEY, value)
@@ -66,33 +60,28 @@ function applyTheme(value: Theme) {
 }
 
 /**
- * The theme switch: a hairline chip reading `auto`, `light` or `dark`.
- *
- * The boards never drew a control for this, so rather than invent an idiom the
- * site does not otherwise use, it borrows one it already has. This is the
- * tech-tag treatment from the Work page (mono 11px, lowercase, hairline box,
- * radius 4), and mono is this site's face for things read as a VALUE rather
- * than as language, which is what a mode name is.
- *
- * Three states, not two. A plain light/dark pair is a trap: once you touch it
- * you are pinned to that choice forever, and a reader whose phone turns dark
- * at sunset has no way back to following it. `auto` is the way back, and it is
- * the default.
+ * Pick a side: a halo while you are on the Angel side, horns on the Demon one.
+ * One click crosses over and is remembered.
  */
 export default function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  const upcoming = nextTheme(theme)
-  const description = `Colour theme: ${theme}. Switch to ${upcoming}.`
+  const label = theme
+    ? `Pick a side. Now ${SIDE_NAMES[theme]}, switch to ${SIDE_NAMES[nextTheme(theme)]}.`
+    : 'Pick a side: Angel or Demon.'
 
   return (
     <button
       type="button"
       className="theme-toggle"
-      onClick={() => applyTheme(upcoming)}
-      aria-label={description}
-      title={description}
+      onClick={() => applyTheme(nextTheme(theme ?? getSnapshot()))}
+      aria-label={label}
+      title={label}
     >
-      {theme}
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="15" r="5" />
+        <ellipse className="theme-toggle__halo" cx="12" cy="5" rx="6.5" ry="2" />
+        <path className="theme-toggle__horns" d="M8.6 11.3 6.5 4.5l4 5.2M15.4 11.3l2.1-6.8-4 5.2" />
+      </svg>
     </button>
   )
 }

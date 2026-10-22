@@ -98,6 +98,8 @@
   /* The one hover colour. A card border only, never text. */
   --line-hover: var(--angel-line-hover);
   --glow: var(--angel-glow);
+  --halo: inline;
+  --horns: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -115,6 +117,8 @@
     --grid2: var(--demon-grid2);
     --line-hover: var(--demon-line-hover);
     --glow: var(--demon-glow);
+    --halo: none;
+    --horns: inline;
   }
 }
 
@@ -133,6 +137,8 @@
   --grid2: var(--demon-grid2);
   --line-hover: var(--demon-line-hover);
   --glow: var(--demon-glow);
+  --halo: none;
+  --horns: inline;
 }
 
 /* --------------------------------------------------------------------------
@@ -266,32 +272,40 @@ img {
 }
 
 /*
- * The theme chip borrows the tech-tag treatment from the Work page rather than
- * introducing a new idiom: mono, lowercase, hairline box, radius 4. Mono is
- * this site's face for things read as a value, and a mode name is one.
- *
- * `min-width` holds the widest label ("light"), so cycling through the three
- * states never nudges the header around.
+ * Pick a side. The icon is a head with a halo or horns, and WHICH one shows is
+ * a token (`--halo` / `--horns` hold a display value), so it flips in the same
+ * frame as the colours and never waits for hydration.
  */
 .theme-toggle {
   flex: none;
-  min-width: 52px;
-  padding: 2px 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 50%;
   background: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.5;
-  text-align: center;
-  color: var(--fg2);
+  color: var(--acc);
   cursor: pointer;
-  transition: border-color 120ms ease, color 120ms ease;
+  transition: border-color 120ms ease, filter 120ms ease;
 }
+
+.theme-toggle svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-toggle__halo { display: var(--halo); }
+.theme-toggle__horns { display: var(--horns); }
 
 .theme-toggle:hover {
   border-color: var(--line-hover);
-  color: var(--fg);
+  filter: drop-shadow(0 0 6px var(--glow));
 }
 
 .site-nav a {
@@ -1239,12 +1253,6 @@ img {
   .site-nav {
     gap: 14px;
     font-size: 13px;
-  }
-
-  /* At this width the chip's label is what goes; the box is still tappable. */
-  .theme-toggle {
-    min-width: 0;
-    padding: 2px 6px;
   }
 
   .site-footer {
