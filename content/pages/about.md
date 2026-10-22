@@ -11,8 +11,6 @@ a manager who cannot do that eventually stops knowing what the team is carrying.
 
 The writing is not a side project so much as the same habit pointed elsewhere.
 Payments teach you to care about what is missing: the transaction that did not
-reconcile, the line that does not agree. Stories and poems start in the same
-place. I run early in the morning, I am forty-seven books into a 125-book
-reading plan, and I keep notes on each one at
-[@dsapoetra.reads](https://www.instagram.com/dsapoetra.reads/) on Instagram, in
-Indonesian when the book is.
+reconcile, the line that does not agree. Writing starts in the same place, and
+these days it goes on Medium. I run early in the morning, and I am forty-seven
+books into a 125-book reading plan.
