@@ -1,6 +1,7 @@
 ---
 lead: I am an Engineering Manager leading Payments and Monetization at OLX Indonesia, and I still review code before it ships.
 leadSerif: On weekends I write short stories and poems, some of them in Indonesian.
+tagline: Payments engineering · Stories and poems
 cards:
   - label: Work
     href: /work

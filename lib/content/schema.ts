@@ -68,6 +68,8 @@ export const homeSchema = z.object({
    */
   lead: z.string().min(1),
   leadSerif: z.string().min(1),
+  /** The short line under the name, on the hero's seam. */
+  tagline: z.string().optional(),
   cards: z
     .array(
       z.object({

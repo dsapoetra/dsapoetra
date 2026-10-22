@@ -1,22 +1,28 @@
 import Link from 'next/link'
-import { loadHome } from '@/lib/content'
+import { loadHome, loadSite } from '@/lib/content'
 
 export default async function HomePage() {
-  const home = await loadHome()
+  const [home, site] = await Promise.all([loadHome(), loadSite()])
 
   return (
-    <main className="home wrap wrap--home">
+    <main className="home">
       {/*
-        The two sentences are one paragraph and two faces. The <em> is not
-        emphasis in the usual sense and the stylesheet strips its italic; it is
-        the hook the serif hangs on, and using a real element keeps the
-        sentence a single readable run for a screen reader.
+        The name comes first in the DOM so a screen reader meets it first; the
+        grid places it on the seam between the two halves. The writing life is
+        the Angel half, the working life the Demon half.
       */}
-      <p className="home__lead">
-        {home.lead} <em>{home.leadSerif}</em>
-      </p>
+      <section className="hero" aria-labelledby="hero-name">
+        <div className="hero__seam-text">
+          <h1 id="hero-name" className="hero__name">
+            {site.name}
+          </h1>
+          {home.tagline && <p className="hero__tagline">{home.tagline}</p>}
+        </div>
+        <p className="hero__angel">{home.leadSerif}</p>
+        <p className="hero__demon">{home.lead}</p>
+      </section>
 
-      <div className="home__wings">
+      <div className="home__wings wrap wrap--home">
         {home.cards.map((card) => (
           <Link
             key={card.href}
