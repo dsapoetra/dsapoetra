@@ -1,9 +1,9 @@
 ---
-name: sportyyangkaupinta.com
-summary: A small site for finding weekend sports partners in South Tangerang.
+name: Sporty Yang Kau Pinta
+summary: A directory of gyms, studios and hourly sports courts across Indonesia, with membership and rental prices shown upfront.
 tags: [go, htmx, sqlite]
-order: 4
+order: 1
 link:
-  label: visit
-  href: https://sportyyangkaupinta.com
+  label: sportyyangkaupinta.com
+  href: https://sportyyangkaupinta.com/
 ---
