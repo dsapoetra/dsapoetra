@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { JetBrains_Mono, Newsreader, Plus_Jakarta_Sans } from 'next/font/google'
+import { Newsreader, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 import SiteHeader from '@/components/site-header'
 import SiteFooter from '@/components/site-footer'
@@ -8,19 +8,19 @@ import { loadSite } from '@/lib/content'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
 
 /*
- * Three faces, one per job, and no more.
+ * Two faces, one per side, and no more.
  *
- * Plus Jakarta Sans is the Work wing and all apparatus: nav, meta, labels.
- * Newsreader is the Writing wing, and carries an italic because a story needs
- * one. JetBrains Mono is for things that are read as VALUES rather than as
- * language: dates, tech tags, reading times.
+ * Newsreader is the Angel: humanist serif, the Writing wing, and an italic
+ * because a story needs one. Space Grotesk is the Demon: geometric, a little
+ * sharp, and it carries all apparatus too (nav, meta, dates, tags), which is
+ * why there is no separate mono face.
  *
- * `next/font` self-hosts all three at build time, so there is no request to
+ * `next/font` self-hosts both at build time, so there is no request to
  * fonts.googleapis.com at runtime and no flash of fallback text. Each one is
  * bound to the CSS variable the stylesheet already names, which is what lets
  * globals.css stay pure CSS with no knowledge of Next.
  */
-const sans = Plus_Jakarta_Sans({
+const sans = Space_Grotesk({
   variable: '--sans',
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -32,13 +32,6 @@ const serif = Newsreader({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
-  display: 'swap',
-})
-
-const mono = JetBrains_Mono({
-  variable: '--mono',
-  subsets: ['latin'],
-  weight: ['400', '500'],
   display: 'swap',
 })
 
@@ -74,7 +67,7 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
      */
     <html
       lang="en"
-      className={`${sans.variable} ${serif.variable} ${mono.variable}`}
+      className={`${sans.variable} ${serif.variable}`}
       suppressHydrationWarning
     >
       <body>

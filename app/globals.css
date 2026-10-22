@@ -25,63 +25,114 @@
  *    characters a line and technical writing tolerates more.
  */
 
+/*
+ * The two sides, as fixed palettes. These never change with the theme: the
+ * hero paints both at once, and a card that leans to one side borrows its
+ * palette whatever the page is doing. `lib/contrast.test.ts` holds every text
+ * token here to 4.5:1 against every surface of its own side.
+ */
 :root {
-  color-scheme: light dark;
+  /* Angel: warm white, soft gold, pale sky. */
+  --angel-bg: #fbf8f1;
+  --angel-card: #fffdf8;
+  --angel-sunk: #f4efe3;
+  --angel-fg: #2b2620;
+  --angel-fg2: #5b5348;
+  --angel-fg3: #6c6356;
+  --angel-acc: #8a6416;
+  --angel-line: #e6dcc8;
+  --angel-line-hover: #c9b68f;
+  /* Decorative only, never text: too pale to read on warm white. */
+  --angel-glow: #e2b54a;
+  --angel-sky: #cfe2f3;
+  --angel-grid: rgba(184, 140, 40, 0.07);
+  --angel-grid2: rgba(184, 140, 40, 0.15);
 
-  --bg: #fcfcfb;
-  --fg: #22272e;
-  --fg2: #5a636e;
-  --fg3: #8a8a84;
-  --line: #e4e4e0;
-  --card: #ffffff;
-  --acc: #3d5a80;
-  --sunk: #f7f7f5;
-  --grid: rgba(61, 90, 128, 0.07);
-  --grid2: rgba(61, 90, 128, 0.16);
-  /* The one hover colour. A card border only, never text. */
-  --line-hover: #b5b5af;
+  /* Demon: near-black, deep crimson, ember. */
+  --demon-bg: #0c0a0b;
+  --demon-card: #171213;
+  --demon-sunk: #120e0f;
+  --demon-fg: #f2e9e4;
+  --demon-fg2: #c4b3ab;
+  --demon-fg3: #a08f87;
+  --demon-acc: #ff7a4d;
+  --demon-line: #33252a;
+  --demon-line-hover: #6b2b33;
+  /* Decorative only, never text: crimson on black is under 4.5:1. */
+  --demon-glow: #d4213d;
+  --demon-ember: #ff7a4d;
+  --demon-grid: rgba(212, 33, 61, 0.06);
+  --demon-grid2: rgba(212, 33, 61, 0.13);
 
-  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --serif: "Newsreader", Georgia, serif;
-  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  /* Two families max: values (dates, tags) ride the sans, not a third face. */
+  --mono: var(--sans);
 }
 
 /*
- * Dark mode is declared twice on purpose.
+ * The theme tokens every rule below reads. Angel is the default; Demon is
+ * declared twice on purpose.
  *
- * The media query serves the reader who has never touched the toggle, which is
- * most of them. The attribute selector serves the one who has, and it must win
- * in BOTH directions: `:not([data-theme="light"])` is what lets someone on a
- * dark OS choose light and actually get it.
+ * The media query serves the reader who has never picked a side. The
+ * attribute selector serves the one who has, and it must win in BOTH
+ * directions: `:not([data-theme="light"])` is what lets someone on a dark OS
+ * choose Angel and actually get it.
+ *
+ * `.side-angel` / `.side-demon` remap the same tokens on one element, so a
+ * card can lean to a side regardless of the page theme.
  */
+:root,
+.side-angel {
+  color-scheme: light;
+  --bg: var(--angel-bg);
+  --fg: var(--angel-fg);
+  --fg2: var(--angel-fg2);
+  --fg3: var(--angel-fg3);
+  --line: var(--angel-line);
+  --card: var(--angel-card);
+  --acc: var(--angel-acc);
+  --sunk: var(--angel-sunk);
+  --grid: var(--angel-grid);
+  --grid2: var(--angel-grid2);
+  /* The one hover colour. A card border only, never text. */
+  --line-hover: var(--angel-line-hover);
+  --glow: var(--angel-glow);
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1b3a;
-    --fg: #e8ecf4;
-    --fg2: #a9b8d6;
-    --fg3: #7f92b8;
-    --line: #24365f;
-    --card: #142449;
-    --acc: #9bb8e8;
-    --sunk: #142449;
-    --grid: rgba(255, 255, 255, 0.05);
-    --grid2: rgba(255, 255, 255, 0.13);
-    --line-hover: #3c5288;
+    color-scheme: dark;
+    --bg: var(--demon-bg);
+    --fg: var(--demon-fg);
+    --fg2: var(--demon-fg2);
+    --fg3: var(--demon-fg3);
+    --line: var(--demon-line);
+    --card: var(--demon-card);
+    --acc: var(--demon-acc);
+    --sunk: var(--demon-sunk);
+    --grid: var(--demon-grid);
+    --grid2: var(--demon-grid2);
+    --line-hover: var(--demon-line-hover);
+    --glow: var(--demon-glow);
   }
 }
 
-:root[data-theme="dark"] {
-  --bg: #0e1b3a;
-  --fg: #e8ecf4;
-  --fg2: #a9b8d6;
-  --fg3: #7f92b8;
-  --line: #24365f;
-  --card: #142449;
-  --acc: #9bb8e8;
-  --sunk: #142449;
-  --grid: rgba(255, 255, 255, 0.05);
-  --grid2: rgba(255, 255, 255, 0.13);
-  --line-hover: #3c5288;
+:root[data-theme="dark"],
+.side-demon {
+  color-scheme: dark;
+  --bg: var(--demon-bg);
+  --fg: var(--demon-fg);
+  --fg2: var(--demon-fg2);
+  --fg3: var(--demon-fg3);
+  --line: var(--demon-line);
+  --card: var(--demon-card);
+  --acc: var(--demon-acc);
+  --sunk: var(--demon-sunk);
+  --grid: var(--demon-grid);
+  --grid2: var(--demon-grid2);
+  --line-hover: var(--demon-line-hover);
+  --glow: var(--demon-glow);
 }
 
 /* --------------------------------------------------------------------------
