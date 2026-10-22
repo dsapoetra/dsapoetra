@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Markdown from '@/components/markdown'
+import SideCard from '@/components/side-card'
 import { isoDate } from '@/lib/content/dates'
 import {
   loadCaseStudies,
@@ -62,22 +63,24 @@ export default async function WorkPage() {
         </section>
       )}
 
+      {/*
+        Case studies and projects share the homepage's side cards. Neither has
+        a tag that says which side it is on, so they alternate.
+      */}
       {caseStudies.length > 0 && (
         <section className="section">
           <h2 className="label">Case studies</h2>
-          <div className="cards">
-            {caseStudies.map((study) => (
-              <Link
+          <div className="side-cards">
+            {caseStudies.map((study, i) => (
+              <SideCard
                 key={study.slug}
+                side={i % 2 ? 'demon' : 'angel'}
+                title={study.title}
+                meta={`${study.minutes} min read`}
+                body={study.summary}
                 href={`/work/${study.slug}`}
-                className="card"
-              >
-                <span className="stack" style={{ gap: 8 }}>
-                  <span className="card__title">{study.title}</span>
-                  <span className="card__summary">{study.summary}</span>
-                </span>
-                <span className="mono">{study.minutes} min read</span>
-              </Link>
+                cta="Read the case study"
+              />
             ))}
           </div>
         </section>
@@ -86,32 +89,17 @@ export default async function WorkPage() {
       {projects.length > 0 && (
         <section className="section">
           <h2 className="label">Projects</h2>
-          <div className="stack">
-            {projects.map((project) => (
-              <article key={project.slug} className="project">
-                {project.link ? (
-                  <a href={project.link.href} className="project__name">
-                    {project.name}
-                  </a>
-                ) : (
-                  <span className="project__name">{project.name}</span>
-                )}
-                <div className="project__body">
-                  <span>{project.summary}</span>
-                  {project.tags.length > 0 && (
-                    <span className="tags">
-                      {project.tags.map((tag) => (
-                        <span key={tag}>{tag}</span>
-                      ))}
-                    </span>
-                  )}
-                </div>
-                {project.link && (
-                  <a href={project.link.href} className="project__link">
-                    {project.link.label} →
-                  </a>
-                )}
-              </article>
+          <div className="side-cards">
+            {projects.map((project, i) => (
+              <SideCard
+                key={project.slug}
+                side={i % 2 ? 'demon' : 'angel'}
+                title={project.name}
+                body={project.summary}
+                tags={project.tags}
+                href={project.link?.href}
+                cta={project.link && `View on ${project.link.label}`}
+              />
             ))}
           </div>
         </section>
