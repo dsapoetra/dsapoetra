@@ -1,9 +1,9 @@
 /**
  * The nav items, in order, and which URLs each of them owns.
  *
- * A technical note lives at `/notes/outbox-pattern`, not under `/work`,
+ * A technical note lives at `/notes/outbox-pattern`, not under `/creation`,
  * because the short URL is the better one to share. But it is still a page of
- * the Work section, and the nav has to say so while you read it. `owns` is
+ * the Creation section, and the nav has to say so while you read it. `owns` is
  * what makes that true without hard-coding it into every template.
  */
 export type NavItem = {
@@ -14,7 +14,7 @@ export type NavItem = {
 }
 
 export const nav: NavItem[] = [
-  { href: '/work', label: 'Work', owns: ['/notes'] },
+  { href: '/creation', label: 'Creation', owns: ['/notes'] },
   { href: '/about', label: 'About' },
   { href: '/now', label: 'Now' },
 ]

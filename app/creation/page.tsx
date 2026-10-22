@@ -8,22 +8,22 @@ import {
   loadExperience,
   loadNotes,
   loadProjects,
-  loadWorkPage,
+  loadCreationPage,
 } from '@/lib/content'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await loadWorkPage()
+  const page = await loadCreationPage()
   return { title: page.title, description: page.intro }
 }
 
-export default async function WorkPage() {
+export default async function CreationPage() {
   /*
    * Four independent reads, so they run together rather than one after
    * another. Awaiting them in sequence would make the page as slow as the sum
    * of four directory walks for no reason: none of them needs the others.
    */
   const [page, experience, caseStudies, projects, notes] = await Promise.all([
-    loadWorkPage(),
+    loadCreationPage(),
     loadExperience(),
     loadCaseStudies(),
     loadProjects(),
@@ -78,7 +78,7 @@ export default async function WorkPage() {
                 title={study.title}
                 meta={`${study.minutes} min read`}
                 body={study.summary}
-                href={`/work/${study.slug}`}
+                href={`/creation/${study.slug}`}
                 cta="Read the case study"
               />
             ))}

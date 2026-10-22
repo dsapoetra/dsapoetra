@@ -80,7 +80,7 @@ export const homeSchema = z.object({
     .min(1),
 })
 
-export const workPageSchema = z.object({
+export const creationPageSchema = z.object({
   title: z.string().min(1),
   intro: z.string().min(1),
 })
@@ -102,7 +102,7 @@ export const nowSchema = z.object({
 })
 
 // ---------------------------------------------------------------------------
-// Work wing
+// Creation
 // ---------------------------------------------------------------------------
 
 export const experienceSchema = z.object({
@@ -147,7 +147,7 @@ export const caseStudySchema = z.object({
 export const noteSchema = z.object({
   title: z.string().min(1),
   date: isoDate,
-  /** Right-hand column on the Work list: `system design`, `payments`. */
+  /** Right-hand column on the Creation list: `system design`, `payments`. */
   category: z.string().min(1),
   summary: z.string().optional(),
   readingTime: z.number().int().positive().optional(),
@@ -155,7 +155,7 @@ export const noteSchema = z.object({
 
 export type Site = z.infer<typeof siteSchema>
 export type Home = z.infer<typeof homeSchema>
-export type WorkPage = z.infer<typeof workPageSchema>
+export type CreationPage = z.infer<typeof creationPageSchema>
 export type About = z.infer<typeof aboutSchema>
 export type Now = z.infer<typeof nowSchema>
 export type Experience = z.infer<typeof experienceSchema>

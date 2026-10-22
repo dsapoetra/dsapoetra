@@ -12,14 +12,14 @@ export async function generateStaticParams() {
 
 /*
  * The set of case studies is fixed at build time, because it is a set of
- * files. Anything else under /work/ is a typo, and should 404 immediately
+ * files. Anything else under /creation/ is a typo, and should 404 immediately
  * rather than be rendered on demand and then 404 anyway.
  */
 export const dynamicParams = false
 
 export async function generateMetadata({
   params,
-}: PageProps<'/work/[slug]'>): Promise<Metadata> {
+}: PageProps<'/creation/[slug]'>): Promise<Metadata> {
   const { slug } = await params
   const study = await loadCaseStudy(slug)
   if (!study) return {}
@@ -38,7 +38,7 @@ export async function generateMetadata({
 
 export default async function CaseStudyPage({
   params,
-}: PageProps<'/work/[slug]'>) {
+}: PageProps<'/creation/[slug]'>) {
   const { slug } = await params
   const study = await loadCaseStudy(slug)
   if (!study) notFound()
@@ -48,8 +48,8 @@ export default async function CaseStudyPage({
   return (
     <main className="article wrap wrap--read">
       <div className="article__head">
-        <Link href="/work" className="back-link">
-          ← Work / Case studies
+        <Link href="/creation" className="back-link">
+          ← Creation / Case studies
         </Link>
         <h1 className="page-title">{study.title}</h1>
         <div className="article__meta">

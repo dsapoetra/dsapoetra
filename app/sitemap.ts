@@ -14,13 +14,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const base = site.url.replace(/\/$/, '')
 
-  const pages = ['', '/work', '/about', '/now'].map((path) => ({
+  const pages = ['', '/creation', '/about', '/now'].map((path) => ({
     url: `${base}${path}`,
     changeFrequency: 'monthly' as const,
   }))
 
   const dated = [
-    ...caseStudies.map((entry) => ({ path: `/work/${entry.slug}`, date: entry.date })),
+    ...caseStudies.map((entry) => ({ path: `/creation/${entry.slug}`, date: entry.date })),
     ...notes.map((entry) => ({ path: `/notes/${entry.slug}`, date: entry.date })),
   ].map((entry) => ({
     url: `${base}${entry.path}`,

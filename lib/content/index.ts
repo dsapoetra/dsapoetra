@@ -10,7 +10,7 @@ import {
   nowSchema,
   projectSchema,
   siteSchema,
-  workPageSchema,
+  creationPageSchema,
   type About,
   type CaseStudy,
   type Experience,
@@ -19,13 +19,13 @@ import {
   type Now,
   type Project,
   type Site,
-  type WorkPage,
+  type CreationPage,
 } from './schema'
 
 export type { Entry }
 export type {
   About, CaseStudy, Experience, Home, Note, Now,
-  Project, Site, WorkPage,
+  Project, Site, CreationPage,
 } from './schema'
 
 /*
@@ -48,8 +48,8 @@ export const loadHome = cache(
   async (): Promise<Entry<Home>> => readDoc('pages/home.md', homeSchema)
 )
 
-export const loadWorkPage = cache(
-  async (): Promise<Entry<WorkPage>> => readDoc('pages/work.md', workPageSchema)
+export const loadCreationPage = cache(
+  async (): Promise<Entry<CreationPage>> => readDoc('pages/creation.md', creationPageSchema)
 )
 
 export const loadAbout = cache(
@@ -61,7 +61,7 @@ export const loadNow = cache(
 )
 
 // ---------------------------------------------------------------------------
-// Work wing
+// Creation
 // ---------------------------------------------------------------------------
 
 export const loadExperience = cache(
@@ -77,7 +77,7 @@ export const loadProjects = cache(
 /**
  * A case study or note as the page renders it: the file, plus the reading-time
  * estimate resolved. Doing it here rather than in each template is what keeps
- * the number on the Work landing card identical to the one on the article.
+ * the number on the Creation card identical to the one on the article.
  */
 export type Timed<T> = Entry<T> & { minutes: number }
 

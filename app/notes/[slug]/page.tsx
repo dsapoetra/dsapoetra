@@ -39,8 +39,8 @@ export default async function NotePage({ params }: PageProps<'/notes/[slug]'>) {
   return (
     <main className="article wrap wrap--read">
       <div className="article__head">
-        <Link href="/work" className="back-link">
-          ← Work / Technical notes
+        <Link href="/creation" className="back-link">
+          ← Creation / Technical notes
         </Link>
         <h1 className="page-title">{note.title}</h1>
         <div className="article__meta">

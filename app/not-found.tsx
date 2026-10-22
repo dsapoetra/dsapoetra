@@ -6,7 +6,7 @@ export default function NotFound() {
       <h1 className="page-title">Not here</h1>
       <p className="empty">
         That page does not exist, or it moved. Try <Link href="/">the homepage</Link>{' '}
-        or <Link href="/work">Work</Link>.
+        or <Link href="/creation">Creation</Link>.
       </p>
     </main>
   )

@@ -7,14 +7,14 @@ describe('activeHref', () => {
   })
 
   it('marks the section itself', () => {
-    expect(activeHref('/work')).toBe('/work')
+    expect(activeHref('/creation')).toBe('/creation')
     expect(activeHref('/about')).toBe('/about')
     expect(activeHref('/now')).toBe('/now')
   })
 
   it('marks the owning wing for a piece at its own short URL', () => {
-    expect(activeHref('/work/strangling-a-monolith')).toBe('/work')
-    expect(activeHref('/notes/outbox-pattern')).toBe('/work')
+    expect(activeHref('/creation/strangling-a-monolith')).toBe('/creation')
+    expect(activeHref('/notes/outbox-pattern')).toBe('/creation')
     expect(activeHref('/poems/ledger')).toBeNull()
   })
 
@@ -24,6 +24,6 @@ describe('activeHref', () => {
    */
   it('does not claim a route that merely starts with the same letters', () => {
     expect(activeHref('/notebooks')).toBeNull()
-    expect(activeHref('/workshop')).toBeNull()
+    expect(activeHref('/creations')).toBeNull()
   })
 })
