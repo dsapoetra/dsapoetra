@@ -13,10 +13,11 @@ than a split down the middle of every screen.
 - **Demon**: near-black, deep crimson, ember. Geometric sans (Space Grotesk),
   near-square corners. The working life.
 
-Only the homepage hero shows both at once: a diagonal split (stacked, with a
-near-horizontal seam, under 721px) with the name and tagline sitting on a
-glowing gold-to-crimson seam. The visitor's chosen side colours the rest of
-the site, and cards lean to one side or the other within it.
+Two places show both sides at once, joined by the same glowing
+gold-to-crimson seam: the homepage hero (a diagonal split, stacked under
+721px, with the name and tagline on the seam) and the Creation page (two
+balanced halves). The visitor's chosen side colours the rest of the site,
+and cards lean to one side or the other within it.
 
 ## Tokens
 
@@ -65,8 +66,8 @@ Two families, self-hosted by `next/font` in `app/layout.tsx`.
 
 | Face | Variable | Where |
 |---|---|---|
-| Newsreader 400/500/600 + italic | `--serif` | Angel: Writing wing, hero name, Angel card titles |
-| Space Grotesk 400 to 700 | `--sans` | Demon: Work wing, nav, all meta, Demon card titles |
+| Newsreader 400/500/600 + italic | `--serif` | Angel: hero name, Angel card titles |
+| Space Grotesk 400 to 700 | `--sans` | Demon: body, nav, all meta, Demon card titles |
 
 `--mono` is an alias for `--sans`, kept so older rules for values (dates,
 tags) still have a name to point at.
@@ -98,8 +99,8 @@ and projects. Props: `side`, `title`, and optionally `meta`, `body`, `tags`,
 - Hover: the card tilts 1.2° toward its side (Angel left, Demon right) and
   glows in `--glow`. The tilt only runs under
   `prefers-reduced-motion: no-preference`.
-- Side: Medium posts by topic (see below); case studies and projects
-  alternate.
+- Side: Medium posts by topic (see below). On Creation, case studies are
+  Angel and projects Demon, matching the half they sit in.
 
 All links glow on hover: gold on Angel, crimson on Demon.
 
@@ -146,8 +147,19 @@ link:
 ---
 ```
 
-`order` sets position; the card's side alternates by position. `link` is
+`order` sets position. Projects sit on Creation's Demon half. `link` is
 optional, and the card reads "View on {label}".
+
+## Creation
+
+`/creation` is balanced across the seam. The story sits on an Angel half
+(experience, case studies: both prose); the technical work sits on a Demon
+half (projects, technical notes). From 900px the halves stand side by side,
+stretched to the same height, with the hero's gold-to-crimson seam between
+them; below that they stack edge to edge and the seam runs across. The halves
+use `.side-angel` / `.side-demon`, so they keep their palettes in either
+theme. The grouping was chosen so both halves carry about the same amount of
+content; if one grows much longer, move a section across.
 
 ## Layout
 
@@ -156,11 +168,8 @@ Measures, one per template:
 | Template | Max width |
 |---|---|
 | Home (below the hero) | 880 |
-| Work landing | 960 |
+| Creation | 1120 |
 | Case study, note, About, Now | 720 |
-| Writing landing | 680 |
-| Poem | 640 |
-| Story | 620 |
 
 Cards: one column, two from 721px. Everything else collapses to one column
 under 720px. The hero is written mobile first; the rest of the stylesheet is
@@ -169,7 +178,6 @@ desktop first with a `max-width: 720px` block at the end.
 ## Copy rules
 
 - No em dashes.
-- `2026-09-02` in lists; `6 September 2026` in prose and on cards; `Sep 2026`
-  in the Writing lists.
+- `2026-09-02` in lists; `6 September 2026` in prose and on cards.
 - Meta separator is `·`.
-- The writing wing is called **Writing**, never "personal" or "misc".
+- The portfolio section is called **Creation**.

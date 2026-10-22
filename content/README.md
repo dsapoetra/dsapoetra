@@ -9,17 +9,13 @@ edit it, commit. That is the whole process. You should never need to open a
 | To do this | Add or edit |
 |---|---|
 | Publish a Medium post | nothing: publish on Medium, it shows on the homepage within the hour |
-| Publish a poem | new file in `poems/` |
-| Publish a short story | new file in `stories/` |
-| Publish a reading note | new file in `reading/` |
 | Publish a case study | new file in `case-studies/` |
 | Publish a technical note | new file in `notes/` |
 | Add a job | new file in `experience/` |
 | Add a project | new file in `projects/` |
 | Change your name, location, footer links, or Medium feed | `site.md` |
-| Change the homepage sentences, tagline, or the two cards | `pages/home.md` |
-| Change the Work page headline and intro | `pages/work.md` |
-| Change the Writing page's one-line note | `pages/writing.md` |
+| Change the homepage sentences, tagline, or the card below the posts | `pages/home.md` |
+| Change the Creation page headline and intro | `pages/creation.md` |
 | Rewrite the About page | `pages/about.md` |
 | Update "what I'm up to now" | `pages/now.md` |
 
@@ -33,7 +29,7 @@ Two kinds of file live here, and the difference matters:
   It holds that page's own headline and intro. Not writing; the words the page
   is *made of*.
 
-## Five things that will bite you
+## Four things that will bite you
 
 1. **Quote your dates.** `date: "2026-09-02"`, with the quotation marks.
    Unquoted, YAML turns it into a date object rather than a string and the
@@ -42,57 +38,11 @@ Two kinds of file live here, and the difference matters:
    entry disappears cleanly. Delete a whole folder and its section disappears
    with it. There is no on/off switch anywhere, because the file *is* the
    switch.
-3. **A poem's line breaks come straight out of the file.** Type it the way it
-   should read. Poems never go through the markdown renderer, so a single line
-   break stays a line break and a blank line stays a stanza gap.
-4. **Reading times are computed, not written.** They come from the word count
+3. **Reading times are computed, not written.** They come from the word count
    at 200 words a minute. Only set `readingTime:` when the count lies.
-5. **No em dashes.** House style. Use a comma or a colon.
+4. **No em dashes.** House style. Use a comma or a colon.
 
 ## Frontmatter, by folder
-
-### `poems/`
-
-```yaml
----
-title: Hujan di Bintaro
-date: "2026-07-19"
-lang: id        # optional. `id` adds a "· ID" tag. Omit for English.
-align: center   # optional. Default is left.
----
-```
-
-The body is the poem, exactly as typed.
-
-### `stories/`
-
-```yaml
----
-title: The Night Shift at Terminal Three
-date: "2026-08-14"
-lang: en
-readingTime: 14   # optional. Computed if absent.
-dropcap: true     # optional. Big first letter.
----
-```
-
-The body is markdown prose. `dropcap` suits an opening that starts on a name
-and fights one that starts on dialogue.
-
-### `reading/`
-
-```yaml
----
-title: "Book 47 of 125: Laut Bercerita, Leila S. Chudori"
-date: "2026-08-21"
-lang: id
-instagramUrl: "https://www.instagram.com/reel/..."   # optional, links out to review video
-instagramCover: "/reviews/laut-bercerita.jpg"        # optional, thumbnail file in public/
-instagramLabel: "WATCH THE REVIEW ↗"                 # optional, button text
----
-```
-
-Quote a title that contains a colon, or YAML reads it as a key. Setting `instagramUrl` automatically renders the review card at the bottom of the page. You can also place an `<InstagramReview src="..." href="..." />` directly in the markdown body if you want it mid-piece.
 
 ### `case-studies/`
 
@@ -100,7 +50,7 @@ Quote a title that contains a colon, or YAML reads it as a key. Setting `instagr
 ---
 title: Strangling a live PHP payments monolith
 date: "2026-08-30"
-summary: One sentence. This is the card text on the Work page.
+summary: One sentence. This is the card text on the Creation page.
 readingTime: 12   # optional
 context:          # the three-cell block under the title, any keys you like
   System: ...
@@ -128,7 +78,7 @@ the piece instead of quietly vanishing, so it gets drawn.
 ---
 title: "Outbox pattern without a framework: 200 lines and a cron"
 date: "2026-09-02"
-category: system design    # right-hand column on the Work page
+category: system design    # right-hand column on the Creation page
 summary: ...               # optional, used for search engines
 ---
 ```
