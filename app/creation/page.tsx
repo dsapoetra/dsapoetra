@@ -18,9 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CreationPage() {
   /*
-   * Four independent reads, so they run together rather than one after
-   * another. Awaiting them in sequence would make the page as slow as the sum
-   * of four directory walks for no reason: none of them needs the others.
+   * Five independent reads, so they run together rather than one after
+   * another. None of them needs the others.
    */
   const [page, experience, caseStudies, projects, notes] = await Promise.all([
     loadCreationPage(),
@@ -31,94 +30,104 @@ export default async function CreationPage() {
   ])
 
   return (
-    <main className="work wrap wrap--work">
-      <div className="work__intro">
+    <main className="creation wrap wrap--creation">
+      <div className="creation__intro">
         <h1 className="page-title">{page.title}</h1>
         <p>{page.intro}</p>
       </div>
 
-      {experience.length > 0 && (
-        <section className="section">
-          <h2 className="label">Experience</h2>
-          <div className="stack">
-            {experience.map((role) => (
-              <article key={role.slug} className="role">
-                <div className="role__body">
-                  <div className="role__head">
-                    <strong className="role__company">{role.company}</strong>
-                    <span className="role__title">{role.role}</span>
-                  </div>
-                  {role.summary && <p className="role__summary">{role.summary}</p>}
-                  {role.body && (
-                    <div className="prose">
-                      <Markdown source={role.body} />
-                    </div>
-                  )}
-                  {role.scope && <p className="role__scope">{role.scope}</p>}
-                </div>
-                <span className="role__period">{role.period}</span>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/*
-        Case studies and projects share the homepage's side cards. Neither has
-        a tag that says which side it is on, so they alternate.
+        The page is balanced across the seam: the story on the Angel side
+        (experience, case studies, both prose), the technical work on the
+        Demon side (projects, notes). Grouped this way the two halves also
+        carry about the same amount of content, so neither runs long. Each
+        half carries its side's palette whatever the page theme, the same way
+        the homepage hero does.
       */}
-      {caseStudies.length > 0 && (
-        <section className="section">
-          <h2 className="label">Case studies</h2>
-          <div className="side-cards">
-            {caseStudies.map((study, i) => (
-              <SideCard
-                key={study.slug}
-                side={i % 2 ? 'demon' : 'angel'}
-                title={study.title}
-                meta={`${study.minutes} min read`}
-                body={study.summary}
-                href={`/creation/${study.slug}`}
-                cta="Read the case study"
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      <div className="creation__balance">
+        <div className="creation__side side-angel">
+          {experience.length > 0 && (
+            <section className="creation__section">
+              <h2 className="label">Experience</h2>
+              <div className="stack">
+                {experience.map((role) => (
+                  <article key={role.slug} className="role">
+                    <span className="role__period">{role.period}</span>
+                    <div className="role__body">
+                      <div className="role__head">
+                        <strong className="role__company">{role.company}</strong>
+                        <span className="role__title">{role.role}</span>
+                      </div>
+                      {role.summary && <p className="role__summary">{role.summary}</p>}
+                      {role.body && (
+                        <div className="prose">
+                          <Markdown source={role.body} />
+                        </div>
+                      )}
+                      {role.scope && <p className="role__scope">{role.scope}</p>}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
 
-      {projects.length > 0 && (
-        <section className="section">
-          <h2 className="label">Projects</h2>
-          <div className="side-cards">
-            {projects.map((project, i) => (
-              <SideCard
-                key={project.slug}
-                side={i % 2 ? 'demon' : 'angel'}
-                title={project.name}
-                body={project.summary}
-                tags={project.tags}
-                href={project.link?.href}
-                cta={project.link && `View on ${project.link.label}`}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+          {caseStudies.length > 0 && (
+            <section className="creation__section">
+              <h2 className="label">Case studies</h2>
+              <div className="creation__cards">
+                {caseStudies.map((study) => (
+                  <SideCard
+                    key={study.slug}
+                    side="angel"
+                    title={study.title}
+                    meta={`${study.minutes} min read`}
+                    body={study.summary}
+                    href={`/creation/${study.slug}`}
+                    cta="Read the case study"
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
 
-      {notes.length > 0 && (
-        <section className="section">
-          <h2 className="label">Technical notes</h2>
-          <div className="stack">
-            {notes.map((note) => (
-              <Link key={note.slug} href={`/notes/${note.slug}`} className="note-row">
-                <span className="note-row__date">{isoDate(note.date)}</span>
-                <span>{note.title}</span>
-                <span className="note-row__category">{note.category}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+        <div className="creation__side side-demon">
+          {projects.length > 0 && (
+            <section className="creation__section">
+              <h2 className="label">Projects</h2>
+              <div className="creation__cards">
+                {projects.map((project) => (
+                  <SideCard
+                    key={project.slug}
+                    side="demon"
+                    title={project.name}
+                    body={project.summary}
+                    tags={project.tags}
+                    href={project.link?.href}
+                    cta={project.link && `View on ${project.link.label}`}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {notes.length > 0 && (
+            <section className="creation__section">
+              <h2 className="label">Technical notes</h2>
+              <div className="stack">
+                {notes.map((note) => (
+                  <Link key={note.slug} href={`/notes/${note.slug}`} className="note-row">
+                    <span className="note-row__date">{isoDate(note.date)}</span>
+                    <span>{note.title}</span>
+                    <span className="note-row__category">{note.category}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
     </main>
   )
 }

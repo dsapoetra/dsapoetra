@@ -16,7 +16,7 @@
  *    part of the page rather than as its frame.
  *
  * 3. Reading measures are fixed per template, not global: 880 for the home
- *    page below the hero, 960 for Work, 720 for a case study or note.
+ *    page below the hero, 1120 for Creation, 720 for a case study or note.
  */
 
 /*
@@ -364,7 +364,7 @@ img {
 }
 
 .wrap--home { max-width: 880px; }
-.wrap--work { max-width: 960px; }
+.wrap--creation { max-width: 1120px; }
 .wrap--read { max-width: 720px; }   /* case study, note, about, now */
 
 /* --------------------------------------------------------------------------
@@ -379,7 +379,7 @@ img {
   text-wrap: pretty;
 }
 
-/* The small uppercase label that opens a section in the Work wing. */
+/* The small uppercase label that opens a section. */
 .label {
   font-size: 12px;
   font-weight: 600;
@@ -788,51 +788,131 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   Work landing
+   Creation
    -------------------------------------------------------------------------- */
 
-.work {
+.creation {
   display: flex;
   flex-direction: column;
-  gap: 72px;
+  gap: 48px;
   padding-top: 64px;
   padding-bottom: 80px;
 }
 
-.work__intro {
+.creation__intro {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.work__intro p {
+.creation__intro p {
   max-width: 640px;
   color: var(--fg2);
   text-wrap: pretty;
 }
 
 /*
- * Every Work section is a label in a fixed 200px column with its content
- * beside it. The fixed column is what lines the four sections up with each
- * other: a grid that sized itself to the longest label would put "Technical
- * notes" and "Projects" at different left edges.
+ * Balance: two halves of equal weight, Angel and Demon, meeting at the same
+ * gold-to-crimson seam as the homepage hero. Mobile first: the halves stack
+ * edge to edge and the seam runs across; from 900px they sit side by side,
+ * the grid stretches both to the same height, and the seam stands upright.
+ *
+ * Each half carries `.side-angel` / `.side-demon`, so it keeps its own
+ * palette whichever side the reader picked.
  */
-.section {
+.creation__balance {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 32px;
+  grid-template-columns: minmax(0, 1fr);
+  margin-inline: -20px;
 }
 
-.section > .label {
-  padding-top: 6px;
+.creation__side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 36px 20px;
+  color: var(--fg);
+}
+
+.creation__side.side-angel {
+  background:
+    radial-gradient(ellipse 70% 30% at 0% 0%, color-mix(in srgb, var(--angel-glow) 22%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 30% at 100% 60%, color-mix(in srgb, var(--angel-sky) 45%, transparent), transparent 70%),
+    var(--bg);
+}
+
+.creation__side.side-demon {
+  background:
+    conic-gradient(
+      from 250deg at 100% 100%,
+      transparent 0 14deg,
+      color-mix(in srgb, var(--demon-glow) 16%, transparent) 14deg 19deg,
+      transparent 19deg 31deg,
+      color-mix(in srgb, var(--demon-ember) 10%, transparent) 31deg 33deg,
+      transparent 33deg
+    ),
+    var(--bg);
+}
+
+/* The seam, on the Demon half's leading edge. */
+.creation__side.side-demon::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--angel-glow), var(--demon-glow));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--demon-glow) 60%, transparent);
+}
+
+.creation__section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.creation__cards {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .creation__balance {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-inline: 0;
+  }
+
+  .creation__side {
+    padding: 40px;
+  }
+
+  .creation__side.side-angel {
+    border-radius: 14px 0 0 14px;
+  }
+
+  .creation__side.side-demon {
+    border-radius: 0 2px 2px 0;
+  }
+
+  .creation__side.side-demon::before {
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    right: auto;
+    width: 2px;
+    height: auto;
+    background: linear-gradient(to bottom, var(--angel-glow), var(--demon-glow));
+  }
 }
 
 /* Experience --------------------------------------------------------------- */
 
 .role {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px 24px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
   padding: 20px 0;
   border-top: 1px solid var(--line);
 }
@@ -893,8 +973,8 @@ img {
 
 .note-row {
   display: grid;
-  grid-template-columns: 120px 1fr auto;
-  gap: 24px;
+  grid-template-columns: 96px 1fr auto;
+  gap: 16px;
   padding: 11px 0;
   border-top: 1px solid var(--line);
   color: var(--fg);
@@ -985,7 +1065,7 @@ img {
   margin: 0;
 }
 
-/* Markdown body in the Work wing. */
+/* Markdown body: case studies, notes, experience. */
 .prose > * + * {
   margin-top: 20px;
 }
@@ -1245,23 +1325,12 @@ img {
     grid-auto-flow: row;
   }
 
-  .section {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .section > .label {
-    padding-top: 0;
-  }
-
-  .role,
   .note-row {
     grid-template-columns: 1fr;
     gap: 8px;
   }
 
   /* The date moves above the entry once the row stops being a row. */
-  .role__period,
   .note-row__date {
     order: -1;
   }
@@ -1285,8 +1354,8 @@ img {
     font-size: 30px;
   }
 
-  .work {
-    gap: 48px;
+  .creation {
+    gap: 40px;
     padding-top: 40px;
     padding-bottom: 56px;
   }
