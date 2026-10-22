@@ -7,5 +7,4 @@ summary: Payments and monetization for a classifieds marketplace with millions o
 scope: "Scope of ownership: order and checkout, coupons, catalog, invoicing, payment gateway integrations."
 ---
 
-11 engineers across 17 backend services. Leading the strangler migration of a
-live PHP payments monolith to Java 21 / Spring Boot 3 without pausing checkout.
+11 engineers across 17 services. Using Java and PHP for developing great payment experience.

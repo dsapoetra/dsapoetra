@@ -6,5 +6,4 @@ order: 5
 summary: Custom software for enterprise clients.
 ---
 
-First production systems: inventory and invoicing modules in Java, delivered to
-three clients.
+Build store system and user facing app for telco client

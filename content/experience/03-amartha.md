@@ -6,5 +6,4 @@ order: 3
 summary: Peer-to-peer microfinance for women-led businesses in rural Indonesia.
 ---
 
-Built loan disbursement and weekly repayment services in Go and Node.js used by
-field agents in over 20 provinces.
+Built and migrating the core banking system.

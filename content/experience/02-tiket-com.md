@@ -6,5 +6,4 @@ order: 2
 summary: "Online travel booking: flights, hotels, events."
 ---
 
-Owned refund and payment-status services in Go through two holiday peaks at
-several thousand bookings per minute.
+Managing the inventory for hotel tribe, utilizing Java and Go
