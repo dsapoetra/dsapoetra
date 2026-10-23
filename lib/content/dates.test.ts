@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { isoDate, longDate } from './dates'
+import { longDate } from './dates'
 
 describe('date formatting', () => {
-  it('keeps the ISO form exactly as written', () => {
-    expect(isoDate('2026-09-02')).toBe('2026-09-02')
-  })
-
   it('writes prose dates with no leading zero', () => {
     expect(longDate('2026-09-06')).toBe('6 September 2026')
     expect(longDate('2026-01-01')).toBe('1 January 2026')

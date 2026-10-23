@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Markdown from '@/components/markdown'
-import { isoDate } from '@/lib/content/dates'
 import { loadCaseStudies, loadCaseStudy } from '@/lib/content'
 
 export async function generateStaticParams() {
@@ -53,7 +52,7 @@ export default async function CaseStudyPage({
         </Link>
         <h1 className="page-title">{study.title}</h1>
         <div className="article__meta">
-          <time dateTime={study.date}>{isoDate(study.date)}</time>
+          <time dateTime={study.date}>{study.date}</time>
           <span>{study.minutes} min read</span>
         </div>
       </div>

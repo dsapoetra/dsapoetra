@@ -50,6 +50,22 @@ function invalid(where: string, error: z.ZodError): Error {
   return new Error(`Invalid frontmatter in ${where}\n${detail}`)
 }
 
+function isMissing(error: unknown): boolean {
+  return error instanceof Error && 'code' in error && error.code === 'ENOENT'
+}
+
+/** Splits frontmatter from body and validates the frontmatter. */
+function parse<T>(raw: string, where: string, schema: z.ZodType<T>): Entry<T> {
+  const { data, content } = matter(raw)
+  const parsed = schema.safeParse(data)
+  if (!parsed.success) throw invalid(where, parsed.error)
+  return {
+    ...parsed.data,
+    slug: slugFromFilename(path.basename(where)),
+    body: content.trim(),
+  }
+}
+
 /**
  * Reads and validates one markdown file at `relativePath` under `content/`.
  *
@@ -67,21 +83,11 @@ export async function readDoc<T>(
   try {
     raw = await readFile(absolute, 'utf8')
   } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      throw new Error(`Missing content file: ${relativePath}`)
-    }
+    if (isMissing(error)) throw new Error(`Missing content file: ${relativePath}`)
     throw error
   }
 
-  const { data, content } = matter(raw)
-  const parsed = schema.safeParse(data)
-  if (!parsed.success) throw invalid(relativePath, parsed.error)
-
-  return {
-    ...parsed.data,
-    slug: slugFromFilename(path.basename(relativePath)),
-    body: content.trim(),
-  }
+  return parse(raw, relativePath, schema)
 }
 
 /**
@@ -103,27 +109,16 @@ export async function readCollection<T>(
   try {
     filenames = await readdir(absolute)
   } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      return []
-    }
+    if (isMissing(error)) return []
     throw error
   }
 
   const entries = await Promise.all(
     filenames
       .filter((name) => /\.mdx?$/.test(name) && !name.startsWith('.'))
-      .map(async (name) => {
-        const raw = await readFile(path.join(absolute, name), 'utf8')
-        const { data, content } = matter(raw)
-        const parsed = schema.safeParse(data)
-        if (!parsed.success) throw invalid(`${dir}/${name}`, parsed.error)
-
-        return {
-          ...parsed.data,
-          slug: slugFromFilename(name),
-          body: content.trim(),
-        }
-      })
+      .map(async (name) =>
+        parse(await readFile(path.join(absolute, name), 'utf8'), `${dir}/${name}`, schema)
+      )
   )
 
   return entries.sort(compare)

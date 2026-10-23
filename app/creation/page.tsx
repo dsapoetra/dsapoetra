@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Markdown from '@/components/markdown'
 import SideCard from '@/components/side-card'
-import { isoDate } from '@/lib/content/dates'
 import {
   loadCaseStudies,
   loadExperience,
@@ -134,7 +133,7 @@ export default async function CreationPage() {
               <div className="stack">
                 {notes.map((note) => (
                   <Link key={note.slug} href={`/notes/${note.slug}`} className="note-row">
-                    <span className="note-row__date">{isoDate(note.date)}</span>
+                    <span className="note-row__date">{note.date}</span>
                     <span>{note.title}</span>
                     <span className="note-row__category">{note.category}</span>
                   </Link>

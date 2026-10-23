@@ -1,7 +1,7 @@
 /**
  * Dates on this site are two shapes and no more:
  *
- *   iso    2026-09-02        in dated lists and the Now stamp
+ *   iso    2026-09-02        in dated lists and the Now stamp (printed as written)
  *   long   6 September 2026  in prose, under a title, on cards
  *
  * Every one of them is formatted in UTC. A date in frontmatter is a calendar
@@ -25,11 +25,6 @@ const MONTHS_LONG = [
 function parts(iso: string): { year: string; month: number; day: number } {
   const [year, month, day] = iso.split('-')
   return { year, month: Number(month), day: Number(day) }
-}
-
-/** `2026-09-02`. The date exactly as written; used in mono. */
-export function isoDate(iso: string): string {
-  return iso
 }
 
 /** `2 September 2026`. For prose and under titles. No leading zero. */

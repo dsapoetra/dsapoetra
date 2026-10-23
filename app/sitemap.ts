@@ -12,10 +12,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     loadNotes(),
   ])
 
-  const base = site.url.replace(/\/$/, '')
 
   const pages = ['', '/creation', '/about', '/now'].map((path) => ({
-    url: `${base}${path}`,
+    url: `${site.url}${path}`,
     changeFrequency: 'monthly' as const,
   }))
 
@@ -23,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...caseStudies.map((entry) => ({ path: `/creation/${entry.slug}`, date: entry.date })),
     ...notes.map((entry) => ({ path: `/notes/${entry.slug}`, date: entry.date })),
   ].map((entry) => ({
-    url: `${base}${entry.path}`,
+    url: `${site.url}${entry.path}`,
     lastModified: entry.date,
     changeFrequency: 'yearly' as const,
   }))

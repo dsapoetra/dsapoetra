@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Markdown from '@/components/markdown'
-import { isoDate } from '@/lib/content/dates'
 import { loadNote, loadNotes } from '@/lib/content'
 
 export async function generateStaticParams() {
@@ -44,7 +43,7 @@ export default async function NotePage({ params }: PageProps<'/notes/[slug]'>) {
         </Link>
         <h1 className="page-title">{note.title}</h1>
         <div className="article__meta">
-          <time dateTime={note.date}>{isoDate(note.date)}</time>
+          <time dateTime={note.date}>{note.date}</time>
           <span>{note.minutes} min read</span>
           <span>{note.category}</span>
         </div>

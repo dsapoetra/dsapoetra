@@ -20,11 +20,6 @@ const isoDate = z
     return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(value)
   }, 'is not a real calendar day')
 
-/**
- * Marks a piece written in Indonesian. Rendered as a `· ID` tag in lists and
- * set as `lang` on the article element, so a screen reader switches voice.
- * Absent means English; there is no `lang: en` to remember to write.
- */
 /** An outbound link with its own label: `github →`, `demo →`, `visit →`. */
 const link = z.object({
   label: z.string().min(1),
@@ -47,8 +42,8 @@ export const siteSchema = z.object({
   name: z.string().min(1),
   /** Abbreviated name, in the mobile header where the full one wraps. */
   shortName: z.string().min(1),
-  /** Absolute, no trailing slash. Used for metadata and the sitemap. */
-  url: z.string().url(),
+  /** Absolute. A trailing slash is trimmed, so `${url}/path` is always right. */
+  url: z.string().url().transform((url) => url.replace(/\/$/, '')),
   description: z.string().min(1),
   /** Footer, left side. */
   location: z.string().min(1),
